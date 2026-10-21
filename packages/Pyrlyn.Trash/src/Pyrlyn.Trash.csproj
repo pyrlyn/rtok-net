@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Moves files and folders to the OS trash: the macOS Trash, the FreeDesktop trash on Linux and the Windows Recycle Bin. A failure leaves the item in place.</Description>
+    <PackageTags>trash;recycle-bin;freedesktop;filesystem;delete</PackageTags>
+    <!-- objc_msgSend function pointers and the generated COM interfaces. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <InternalsVisibleTo Include="Pyrlyn.Trash.Tests" />
+  </ItemGroup>
+</Project>

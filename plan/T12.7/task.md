@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P3
 complexity: 2
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T12.7. Package Pyrlyn.Trash: move to the OS trash
@@ -32,3 +32,12 @@ Spec: catalog B17 in [docs/port/catalog.md](../../docs/port/catalog.md).
 Ports: no rtok task; new for .NET.
 
 Check: Tests on each OS show a trashed file is gone from its path and present in the trash.
+
+Plan:
+1. `eng/new-package.sh Pyrlyn.Trash`; no new NuGet dependency (Pyrlyn.FsKit for device ids).
+2. `OsTrash.Move(path)` moves a file, folder or symlink to the trash and returns where it went (null when the OS does not say). It throws `TrashException` (an `IOException`) and leaves the item in place on failure, or `FileNotFoundException` when there is nothing to move.
+3. macOS: `NSFileManager trashItemAtURL:resultingItemURL:error:` through `objc_msgSend` with `LibraryImport`, in an autorelease pool.
+4. Linux, the FreeDesktop trash spec: the home trash (`$XDG_DATA_HOME/Trash`) when the item is on its device; otherwise `$topdir/.Trash/$uid` (sticky, not a symlink) or `$topdir/.Trash-$uid`. The `.trashinfo` file is created first with `O_EXCL` to reserve the name, then the item is moved with `rename(2)`; never a copy. If the rename fails, the info file is removed.
+5. Windows: `IFileOperation.DeleteItem` with `FOFX_RECYCLEONDELETE` and no UI, on an STA thread, through `[GeneratedComInterface]`. A progress sink rejects any delete without `TSF_DELETE_RECYCLE_IF_POSSIBLE`, so nothing is destroyed for good, and takes the recycled path from `PostDeleteItem`.
+6. Tests per OS: a trashed file and folder are gone from their path and present in the trash. On Linux the `.trashinfo` holds `Path` and `DeletionDate`. A missing path throws and a failed move leaves the item in place. Linux runs in a container here; Windows runs in CI.
+

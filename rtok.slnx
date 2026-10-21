@@ -40,6 +40,10 @@
     <Project Path="packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
     <Project Path="packages/Pyrlyn.Shlex/tests/Pyrlyn.Shlex.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.Trash/">
+    <Project Path="packages/Pyrlyn.Trash/src/Pyrlyn.Trash.csproj" />
+    <Project Path="packages/Pyrlyn.Trash/tests/Pyrlyn.Trash.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.TreeSitter/">
     <Project Path="packages/Pyrlyn.TreeSitter/src/Pyrlyn.TreeSitter.csproj" />
     <Project Path="packages/Pyrlyn.TreeSitter/tests/Pyrlyn.TreeSitter.Tests.csproj" />
