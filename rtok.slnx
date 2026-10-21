@@ -16,6 +16,10 @@
     <Project Path="packages/Pyrlyn.Jsonc/src/Pyrlyn.Jsonc.csproj" />
     <Project Path="packages/Pyrlyn.Jsonc/tests/Pyrlyn.Jsonc.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.OperationIcons/">
+    <Project Path="packages/Pyrlyn.OperationIcons/src/Pyrlyn.OperationIcons.csproj" />
+    <Project Path="packages/Pyrlyn.OperationIcons/tests/Pyrlyn.OperationIcons.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.RotatingLog/">
     <Project Path="packages/Pyrlyn.RotatingLog/src/Pyrlyn.RotatingLog.csproj" />
     <Project Path="packages/Pyrlyn.RotatingLog/tests/Pyrlyn.RotatingLog.Tests.csproj" />
