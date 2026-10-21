@@ -17,6 +17,20 @@ Done when:
   - the output is never longer than the raw text;
   - on failure, stderr and the exit line are kept.
 
+Tests:
+- `Rtok.Plugins.Cmd.Tests` Verify: every formatter arm has a golden from rtok's `cmd_golden` fixtures (`argv`, `exit`, `min_saving` header) and meets its `min_saving` floor.
+- `Rtok.Plugins.Cmd.Tests` unit: a coverage test fails when a registered formatter arm has no golden fixture.
+- `Rtok.Plugins.Cmd.Tests` CsCheck: for any input each formatter's output is never longer than the raw text.
+- `Rtok.Plugins.Cmd.Tests` CsCheck: every commit hash, path and WARN/ERROR line in a generated input appears in each formatter's output.
+- `Rtok.Plugins.Cmd.Tests` unit: on a non-zero exit every formatter keeps the stderr lines and the exit line.
+- `Rtok.Plugins.Cmd.Tests` unit: a formatter that declines falls back to the rule, and the Measurement kind is `formatter` or `rule` accordingly.
+- `Rtok.Plugins.Cmd.Tests` Verify: git log prints the `[N commits, +A/-D]` header, git status prints one line per XY code with ahead/behind in the branch line, and a diff over 120 lines prints the per-file table with 100 % of paths.
+- `Rtok.Plugins.Cmd.Tests` Verify: grep, rg and git grep print each path once with ±60 chars around a match, 12 matches per file and a 16-line budget, then `path:l1,l2` anchors.
+- `Rtok.Plugins.Cmd.Tests` unit: cat of a source file over 80 lines prints definition spans and signatures, and a repeat in the same session prints a pointer or a unified diff.
+- `Rtok.Plugins.Cmd.Tests` unit: loop collapse prints `shape ×N (vals: a..b)` for for/while/until output and never collapses a line with an error word.
+- `Rtok.Plugins.Cmd.Tests` unit: `shorten_ago` shortens only number plus unit, `podman ps` takes the docker ps formatter, and kubectl columns split by header offsets.
+- `Rtok.Plugins.Cmd.Tests` unit: JSON compaction strips nulls from gh `--json`, aws and `kubectl -o json` output and the result still parses.
+
 Spec: catalog A4, catalog B12 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T3.3, T673, T674, T675, T676, T677, T678, T679, T680, T681, T682, T683, T684, T685, T905.

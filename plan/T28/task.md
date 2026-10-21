@@ -16,6 +16,22 @@ Done when:
 - toon tables and json_tree folding work, each archiving the original first.
 - `tools_rewrite`, `compact_schema`, `context_management`, terminal-noise stripping and `live_blobs` work. `live_blobs` never touches image or document data (rtok T55.15).
 
+Tests:
+- `Rtok.Proxy.Tests` unit: in compress mode a tool_result older than `keep_turns` (4) and over `min_tokens` (1500) becomes `[archived <id>: first 8 lines …`, while the system prompt, `tools[]` and the last two turns stay byte-identical.
+- `Rtok.Proxy.Tests` integration: replaying a recorded session twice, and again after a proxy restart on the same store, gives byte-identical upstream requests because decisions are persisted by (session, tool_use_id).
+- `Rtok.Proxy.Tests` integration: after `expand` freezes an id the proxy stops rewriting that tool_result in later requests.
+- `Rtok.Proxy.Tests` CsCheck: every pointer, toon table and json_tree fold in a replayed session expands back to its original byte for byte.
+- `Rtok.Proxy.Tests` unit: skill bodies (`isMeta` records) outside the live zone are archived, and inside it they are left alone.
+- `Rtok.Plugins.Toon.Tests` Verify: a JSON array of objects in a tool result, and one inside an MCP `[{type:text}]` block, renders as a TOON table with `\n \r \t` escaped in cells.
+- `Rtok.Plugins.JsonTree.Tests` Verify: json_tree folds a large JSON tool result before the archive pointer is placed, and the original is archived first.
+- `Rtok.Proxy.Tests` Verify: `tools_rewrite` with `max_description_tokens` 60 cuts descriptions at a sentence boundary, honours allow/deny, leaves schemas byte-identical and archives the original `tools[]` content-addressed.
+- `Rtok.Proxy.Tests` Verify: `compact_schema` drops duplicate defaults and examples and compacts enums.
+- `Rtok.Proxy.Tests` unit: `context_management=true`, or `RTOK_PROXY_CONTEXT_MANAGEMENT`, adds the `clear_tool_uses_20250919` edit, and false leaves the body unchanged.
+- `Rtok.Proxy.Tests` CsCheck: terminal-noise stripping removes ANSI, control and zero-width characters, keeps `\n \r \t`, never touches assistant turns, and stripping twice equals stripping once.
+- `Rtok.Proxy.Tests` unit: `live_blobs` shrinks JSON and code text blocks in the live zone and leaves every image and document block byte-identical (rtok T55.15).
+- `Rtok.Proxy.Tests` unit: each rewrite writes one Measurement row whose before and after bytes equal the original and the sent bytes.
+- `Rtok.Proxy.Tests` WireMock: in passthrough mode no rewriter runs, and a rewriter that throws in compress mode forwards the original body.
+
 Spec: catalog A14, catalog A6 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T5.3, T5.4, T11.7, T11.8, T36.1, T36.2, T55.15, T59.5, T61.2, T127, T609; open T55.15 ([open work](../../docs/port/open-work.md)).

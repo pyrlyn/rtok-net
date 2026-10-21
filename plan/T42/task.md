@@ -17,6 +17,17 @@ Done when:
 - Lockfile resolvers cover the ecosystems rtok supported plus `packages.lock.json`.
 - It is off by default.
 
+Tests:
+- `Rtok.Plugins.Docs.Tests` integration: a docs fixture is ingested into the FTS table, and `docs_resolve` resolves a package to its lockfile-pinned version.
+- `Rtok.Plugins.Docs.Tests` Verify: `docs_query` and `docs_get` answers on the ingested fixture.
+- `Rtok.Plugins.Docs.Tests` unit: a `docs_query` answer writes a Measurement row estimated against the full bodies.
+- `Rtok.Plugins.Docs.Tests` integration: an unchanged re-ingest keeps every doc id (SHA compare).
+- `Rtok.Plugins.Docs.Tests` WireMock: `rtok docs fetch` downloads pinned-version docs from a fake upstream and ingests them, and a 404 or timeout leaves existing docs untouched.
+- `Rtok.Plugins.Docs.Tests` integration: a local docs directory and an `llms.txt` with links are ingested under the scope `local:<canonical cwd>` and are queryable.
+- `Rtok.Plugins.Docs.Tests` unit: each lockfile resolver rtok supported, starting with `Cargo.lock`, plus `packages.lock.json`, returns the pinned name and version from its fixture.
+- `Rtok.Plugins.Docs.Tests` unit: a missing or malformed lockfile resolves to nothing instead of throwing.
+- `Rtok.Plugins.Docs.Tests` unit: with default config the plugin is off and `docs_resolve`, `docs_query` and `docs_get` are not listed.
+
 Spec: catalog A23 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T455.

@@ -121,7 +121,8 @@ N11. **Tests: xUnit v3 on Microsoft.Testing.Platform**, with Verify for snapshot
 for property tests, WireMock.Net for upstream fakes and NSubstitute for interface mocks.
 Tests run on the JIT; only a small AOT test project, which checks that AOT works and uses
 no mocks, and smoke tests against the published binaries run AOT, on every OS in CI.
-Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
+Every task lists the tests that prove it under `Tests:` (project, kind, case); it closes
+only when they exist and pass. Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
 `Directory.Build.props`), renewed yearly and valid only while rtok-net earns no revenue.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
