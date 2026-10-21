@@ -1,0 +1,52 @@
+<Project>
+  <!-- OutputType is known only here, after the project file: AOT for executables in Release
+       and DebugAot only, so Debug stays pure JIT with hot reload (plan/README.md N2). -->
+  <PropertyGroup Condition="'$(OutputType)' == 'Exe' and ('$(Configuration)' == 'Release' or '$(Configuration)' == 'DebugAot') and '$(IsTestProject)' != 'true'">
+    <PublishAot>true</PublishAot>
+    <!-- The SDK infers SelfContained from PublishAot before this file is imported; set it here too. -->
+    <SelfContained Condition="'$(RuntimeIdentifier)' != ''">true</SelfContained>
+    <UseSystemResourceKeys Condition="'$(Configuration)' == 'Release'">true</UseSystemResourceKeys>
+    <StackTraceSupport>true</StackTraceSupport>
+    <StripSymbols Condition="'$(Configuration)' == 'Release'">true</StripSymbols>
+  </PropertyGroup>
+
+  <!-- Libraries keep the trim and AOT analyzers on in every configuration. -->
+  <PropertyGroup Condition="'$(OutputType)' == 'Library' and '$(IsTestProject)' != 'true'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!-- Only surface projects (RtokSurface) write to the console; only ProgressRunner
+       (RtokProcessRunner) starts processes. -->
+  <ItemGroup>
+    <AdditionalFiles
+      Include="$(MSBuildThisFileDirectory)eng/BannedSymbols.Console.txt"
+      Condition="'$(RtokSurface)' != 'true' and '$(IsTestProject)' != 'true'"
+    />
+    <AdditionalFiles
+      Include="$(MSBuildThisFileDirectory)eng/BannedSymbols.Process.txt"
+      Condition="'$(RtokProcessRunner)' != 'true'"
+    />
+  </ItemGroup>
+
+  <!-- The version option prints the short commit: SourceRevisionId lands in the informational version. -->
+  <Target
+    Name="RtokSourceRevision"
+    BeforeTargets="AddSourceRevisionToInformationalVersion;GetAssemblyVersion"
+    Condition="'$(SourceRevisionId)' == ''"
+  >
+    <Exec
+      Command="git rev-parse --short=9 HEAD"
+      ConsoleToMSBuild="true"
+      StandardOutputImportance="low"
+      IgnoreExitCode="true"
+      WorkingDirectory="$(MSBuildThisFileDirectory)"
+    >
+      <Output TaskParameter="ConsoleOutput" PropertyName="RtokGitSha" />
+      <Output TaskParameter="ExitCode" PropertyName="RtokGitExit" />
+    </Exec>
+    <PropertyGroup>
+      <SourceRevisionId Condition="'$(RtokGitExit)' == '0'">$(RtokGitSha)</SourceRevisionId>
+      <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">unknown</SourceRevisionId>
+    </PropertyGroup>
+  </Target>
+</Project>

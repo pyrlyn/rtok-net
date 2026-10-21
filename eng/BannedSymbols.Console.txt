@@ -1,0 +1,4 @@
+P:System.Console.Out;Only surface projects write to the console (plan/README.md solution layout)
+M:System.Console.Write(System.String);Only surface projects write to the console
+M:System.Console.WriteLine(System.String);Only surface projects write to the console
+M:System.Console.WriteLine;Only surface projects write to the console

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>rtok</AssemblyName>
+    <RootNamespace>Rtok.Cli</RootNamespace>
+    <RtokSurface>true</RtokSurface>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference
+      Include="ConsoleAppFramework"
+      PrivateAssets="all"
+      IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"
+    />
+  </ItemGroup>
+</Project>

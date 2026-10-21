@@ -1,0 +1,37 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <Configurations>Debug;Release;DebugAot</Configurations>
+    <Version>0.1.0</Version>
+    <Authors>Ivan Tugay</Authors>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors Condition="'$(CI)' == 'true'">true</TreatWarningsAsErrors>
+    <WarningsAsErrors>$(WarningsAsErrors);nullable;IL2026;IL2104;IL3050;IL3053;IL3058;RS0030</WarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Fast JIT inner loop (plan/README.md N3). -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TieredPGO>false</TieredPGO>
+    <Deterministic>false</Deterministic>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
+  <!-- DebugAot: an unoptimized AOT build for debugging AOT-only failures. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'DebugAot'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+</Project>
