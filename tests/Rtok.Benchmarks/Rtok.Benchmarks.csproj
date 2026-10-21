@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- BenchmarkDotNet micro-benchmarks; run them as tests/README.md says. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RtokSurface>true</RtokSurface>
+    <RtokJitOnly>true</RtokJitOnly>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Project>
+  <!-- Test lanes (plan/T2): JIT tests (*.Tests), tests/Rtok.AotTests (published with AOT) and
+       tests/Rtok.Smoke (drives the published binaries). All are xUnit v3 on MTP v2 (N11). -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <RtokIsTests
+      Condition="$(MSBuildProjectName.EndsWith('.Tests')) or '$(MSBuildProjectName)' == 'Rtok.Smoke' or '$(MSBuildProjectName)' == 'Rtok.AotTests'"
+      >true</RtokIsTests>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RtokIsTests)' == 'true'">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- SharpFuzz targets for libFuzzer (tests/README.md). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>rtok-fuzz</AssemblyName>
+    <RtokSurface>true</RtokSurface>
+    <RtokJitOnly>true</RtokJitOnly>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpFuzz" />
+  </ItemGroup>
+</Project>

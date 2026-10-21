@@ -7,6 +7,8 @@ obj/
 .idea/
 TestResults/
 *.binlog
+# Verify snapshots awaiting review (tests/README.md)
+*.received.*
 
 # Agent worktrees must not be indexed or committed
 .worktrees/

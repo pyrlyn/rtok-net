@@ -12,6 +12,14 @@
     <Project Path="packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
     <Project Path="packages/Pyrlyn.FsKit/tests/Pyrlyn.FsKit.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.Jsonc/">
+    <Project Path="packages/Pyrlyn.Jsonc/src/Pyrlyn.Jsonc.csproj" />
+    <Project Path="packages/Pyrlyn.Jsonc/tests/Pyrlyn.Jsonc.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/Pyrlyn.OperationIcons/">
+    <Project Path="packages/Pyrlyn.OperationIcons/src/Pyrlyn.OperationIcons.csproj" />
+    <Project Path="packages/Pyrlyn.OperationIcons/tests/Pyrlyn.OperationIcons.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.RotatingLog/">
     <Project Path="packages/Pyrlyn.RotatingLog/src/Pyrlyn.RotatingLog.csproj" />
     <Project Path="packages/Pyrlyn.RotatingLog/tests/Pyrlyn.RotatingLog.Tests.csproj" />
@@ -20,8 +28,21 @@
     <Project Path="packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
     <Project Path="packages/Pyrlyn.Shlex/tests/Pyrlyn.Shlex.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Rtok.Agent.Sdk/">
+    <Project Path="packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
+    <Project Path="packages/Rtok.Agent.Sdk/tests/Rtok.Agent.Sdk.Tests.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Rtok.Cli/Rtok.Cli.csproj" />
     <Project Path="src/Rtok.Hook/Rtok.Hook.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
+    <Project Path="tests/Rtok.Benchmarks/Rtok.Benchmarks.csproj" />
+    <Project Path="tests/Rtok.Fuzz/Rtok.Fuzz.csproj" />
+    <Project Path="tests/Rtok.Latency/Rtok.Latency.csproj" />
+    <Project Path="tests/Rtok.Smoke/Rtok.Smoke.csproj" />
+    <Project Path="tests/Rtok.Testing.Tests/Rtok.Testing.Tests.csproj" />
+    <Project Path="tests/Rtok.Testing/Rtok.Testing.csproj" />
   </Folder>
 </Solution>

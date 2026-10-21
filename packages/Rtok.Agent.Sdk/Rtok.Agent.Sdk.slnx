@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Rtok.Agent.Sdk.csproj" />
+  <Project Path="tests/Rtok.Agent.Sdk.Tests.csproj" />
+</Solution>

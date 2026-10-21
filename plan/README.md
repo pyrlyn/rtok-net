@@ -119,6 +119,8 @@ pipes.
 N11. **Tests: xUnit v3 on Microsoft.Testing.Platform**, with Verify for snapshots, CsCheck
 for property tests and WireMock.Net for upstream fakes. Most tests run on the JIT; a small
 AOT test project and smoke tests against the published binaries run on every OS in CI.
+Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
+`Directory.Build.props`), renewed yearly and valid only while rtok-net earns no revenue.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
 runtime, so a plugin is a project referenced at build time. A build includes or leaves out
@@ -161,6 +163,28 @@ html and pdf. QuestPDF is referenced only by `Rtok.Report.Pdf`, which implements
 interface. Nothing else sees a QuestPDF type, so the PDF layer can be rewritten or replaced
 without touching the report logic. The project sets the QuestPDF licence type explicitly.
 
+N19. **rtok's flag-gated experiments (catalog A33).** The creator decided these from the
+evidence in T51's `done.md`:
+- Embeddings beside FTS5: **deferred**. FTS5 is the only memory search; no vector table.
+  Reopen as a task, on the `http` provider only, when a bench shows a recall gain over FTS5.
+- WASM plugin host: **dropped**. Out-of-tree plugins build their own `rtok` (N12). Runtime
+  loading of third-party plugins would be a new decision, not a port.
+- Tiered L0/L1/L2 archive context: **deferred**. The archive ships without tiers. Reopen as
+  a task behind `plugins.archive.tiers` when a real-session Measurement beats the plain archive.
+
+N20. **Logging: Serilog in `rtok`, nothing in `rtok-hook`.** The creator decided this. Every
+log line in `rtok` (CLI, resident `hook --serve`, `mcp`, `proxy`, `web`, demon) goes through
+one Serilog pipeline, set up in `Rtok.Log` from the `[log]` section in code (no
+`Serilog.Settings.Configuration`: it uses reflection and is not AOT-clean). The rotating file
+sink is a small `ILogEventSink` over Pyrlyn.RotatingLog (T12.10), which keeps the catalog's
+`.N` files, the `errors.log` copy and lock-safe appends from several processes;
+Serilog.Sinks.File is not used, because its size rolling names files `_001` and is not
+lock-safe across processes. The `to_db` logs row is another sink, and `RTOK_LOG` debug output
+goes to stderr through Serilog.Sinks.Console. Libraries that take an `ILogger` (EF Core,
+ASP.NET Core, the MCP SDK) join the same pipeline through Serilog.Extensions.Logging.
+`rtok-hook` does not log at all (N6): it passes its lines to the resident, and drops them
+when the resident is down.
+
 ## Measured on this machine (2026-10-21, M3 Max, SDK 10.0.402)
 
 | Probe | Size | Start-to-exit |
@@ -183,6 +207,7 @@ macOS and Linux with the full binary, the resident and both fallbacks: research.
 | Regex | `[GeneratedRegex]`; `NonBacktracking` for user patterns | |
 | CLI parsing | ConsoleAppFramework 5.7.x (source generator, `PrivateAssets=all`) | N9 |
 | Console output, prompts, progress | Spectre.Console | N10 |
+| Logging | Serilog 4, Serilog.Sinks.Console, Serilog.Extensions.Logging; file sink over Pyrlyn.RotatingLog | N20; `rtok` only, never `rtok-hook` |
 | TUI | Terminal.Gui v2 | AOT publish is clean; interactive AOT behaviour unverified |
 | Store | Microsoft.EntityFrameworkCore.Sqlite 10 + SQLitePCLRaw (e_sqlite3 with FTS5) | N7 |
 | TOML | Tomlyn 2 (source-gen serializer; syntax tree for comment-preserving edits) | lossless round-trip to verify on a golden corpus |
@@ -223,7 +248,7 @@ Each one lives in `packages/<Name>/` and gets its own task (T12.x, T5, T33).
 | Pyrlyn.Trash | move to the OS trash on macOS, Linux and Windows |
 | Pyrlyn.OperationIcons | verb-to-icon table and icon gutter |
 | Pyrlyn.Config.Layered | TOML layers (defaults, user, project, `.env`, env, flags) with per-key provenance |
-| Pyrlyn.RotatingLog | small rotating file log usable from the hook path |
+| Pyrlyn.RotatingLog | `.N` rotating file log, lock-safe across processes; the file sink behind Serilog (N20) |
 | Pyrlyn.CommandLine.Docs | command model from ConsoleAppFramework `--help` output; roff man pages and static shell completions from it |
 
 ## Solution layout

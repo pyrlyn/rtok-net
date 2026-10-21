@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Shared test helpers for every lane: temp dirs, the virtual file system, repo paths and
+       the published binaries. -->
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+    <PackageReference Include="Testably.Abstractions.Testing" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions" />
+  </ItemGroup>
+</Project>
