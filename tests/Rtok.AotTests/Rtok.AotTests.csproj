@@ -12,4 +12,20 @@
     <PackageReference Include="xunit.v3.aot.mtp-v2" />
     <Using Include="Xunit" />
   </ItemGroup>
+  <!-- Pyrlyn.TreeSitter on NativeAOT: its static library linked in, its fixtures checked
+       against the same goldens as its JIT tests. -->
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Pyrlyn.TreeSitter/src/Pyrlyn.TreeSitter.csproj" />
+    <Compile
+      Include="../../packages/Pyrlyn.TreeSitter/tests/TagsGolden.cs"
+      Link="TreeSitter/TagsGolden.cs"
+    />
+    <None
+      Include="../../packages/Pyrlyn.TreeSitter/tests/fixtures/**"
+      Link="tree-sitter-fixtures/%(RecursiveDir)%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+  <Import Project="../../packages/Pyrlyn.TreeSitter/src/build/Pyrlyn.TreeSitter.targets" />
 </Project>

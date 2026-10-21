@@ -1,0 +1,22 @@
+import Foundation
+
+protocol Greeter {
+    func greet() -> String
+}
+
+class Person: Greeter {
+    let name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func greet() -> String {
+        return "Hello, \(name)"
+    }
+}
+
+func main() {
+    let p = Person(name: "Ann")
+    print(p.greet())
+}

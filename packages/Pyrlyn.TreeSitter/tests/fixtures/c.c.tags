@@ -1,0 +1,6 @@
+has_error=false
+5:16 def class point range=44..82 utf16=15..20 line="typedef struct point {"
+8:3 def type point_t range=36..91 utf16=2..9 line="} point_t;"
+10:6 def type color range=93..118 utf16=5..10 line="enum color { RED, GREEN };"
+12:12 def function square range=132..145 utf16=11..17 line="static int square(int v) {"
+16:5 def function main range=173..183 utf16=4..8 line="int main(void) {"

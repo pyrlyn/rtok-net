@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Pyrlyn.TreeSitter.csproj" />
+  <Project Path="tests/Pyrlyn.TreeSitter.Tests.csproj" />
+</Solution>

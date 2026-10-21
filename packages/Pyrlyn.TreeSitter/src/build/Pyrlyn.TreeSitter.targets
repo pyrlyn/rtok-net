@@ -1,0 +1,95 @@
+<Project>
+  <!-- The native side of Pyrlyn.TreeSitter: one library holding the tree-sitter runtime and the
+       grammars. The JIT loads the shared library; a NativeAOT publish links the static archive
+       into the binary (DirectPInvoke + NativeLibrary) and ships no shared library.
+
+       Packed as buildTransitive/, it finds the shared library under runtimes/<rid>/native (NuGet
+       copies it for the JIT) and the static one under static/<rid>. In this repo it builds the
+       library from native/sources.txt (native/build-native.sh, cached per machine); an
+       executable that references the project imports this file for AOT. Set
+       PyrlynTreeSitterNativeDir to use prebuilt files instead. -->
+  <PropertyGroup>
+    <_PyrlynTsRid>$(RuntimeIdentifier)</_PyrlynTsRid>
+    <_PyrlynTsRid Condition="'$(_PyrlynTsRid)' == ''">$(NETCoreSdkRuntimeIdentifier)</_PyrlynTsRid>
+    <_PyrlynTsPackaged Condition="Exists('$(MSBuildThisFileDirectory)../static')"
+      >true</_PyrlynTsPackaged>
+    <_PyrlynTsStatic Condition="$(_PyrlynTsRid.StartsWith('win'))"
+      >pyrlyn_tree_sitter.lib</_PyrlynTsStatic>
+    <_PyrlynTsStatic Condition="'$(_PyrlynTsStatic)' == ''"
+      >libpyrlyn_tree_sitter.a</_PyrlynTsStatic>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(PublishAot)' == 'true'">
+    <DirectPInvoke Include="pyrlyn_tree_sitter" />
+  </ItemGroup>
+
+  <Target Name="PyrlynTreeSitterResolveNative">
+    <PropertyGroup Condition="'$(PyrlynTreeSitterNativeDir)' == '' and '$(_PyrlynTsPackaged)' == 'true'">
+      <PyrlynTreeSitterNativeDir>$(MSBuildThisFileDirectory)../static/$(_PyrlynTsRid)</PyrlynTreeSitterNativeDir>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(PyrlynTreeSitterNativeDir)' == ''">
+      <_PyrlynTsDirFile>$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)', 'pyrlyn-tree-sitter-$(_PyrlynTsRid).txt'))</_PyrlynTsDirFile>
+    </PropertyGroup>
+    <MakeDir
+      Condition="'$(_PyrlynTsDirFile)' != ''"
+      Directories="$([System.IO.Path]::GetDirectoryName($(_PyrlynTsDirFile)))"
+    />
+    <Exec
+      Condition="'$(_PyrlynTsDirFile)' != ''"
+      Command="bash &quot;$(MSBuildThisFileDirectory)../../native/build-native.sh&quot; --rid $(_PyrlynTsRid) &gt; &quot;$(_PyrlynTsDirFile)&quot;"
+      StandardOutputImportance="low"
+    />
+    <ReadLinesFromFile Condition="'$(_PyrlynTsDirFile)' != ''" File="$(_PyrlynTsDirFile)">
+      <Output TaskParameter="Lines" PropertyName="PyrlynTreeSitterNativeDir" />
+    </ReadLinesFromFile>
+    <Error
+      Condition="!Exists('$(PyrlynTreeSitterNativeDir)/$(_PyrlynTsStatic)')"
+      Text="Pyrlyn.TreeSitter: no native library for $(_PyrlynTsRid) in '$(PyrlynTreeSitterNativeDir)'."
+    />
+  </Target>
+
+  <!-- In this repo the shared library is copied next to the assembly, and from there into every
+       project that references it. -->
+  <Target
+    Name="PyrlynTreeSitterCopyShared"
+    BeforeTargets="AssignTargetPaths"
+    DependsOnTargets="PyrlynTreeSitterResolveNative"
+    Condition="'$(_PyrlynTsPackaged)' != 'true' and '$(PyrlynTreeSitterIsLibrary)' == 'true'"
+  >
+    <ItemGroup>
+      <_PyrlynTsShared Include="$(PyrlynTreeSitterNativeDir)/libpyrlyn_tree_sitter.dylib;$(PyrlynTreeSitterNativeDir)/libpyrlyn_tree_sitter.so;$(PyrlynTreeSitterNativeDir)/pyrlyn_tree_sitter.dll" />
+      <None
+        Include="@(_PyrlynTsShared)"
+        Condition="Exists('%(Identity)')"
+        Link="%(Filename)%(Extension)"
+        CopyToOutputDirectory="PreserveNewest"
+        Pack="false"
+        Visible="false"
+      />
+    </ItemGroup>
+  </Target>
+
+  <Target
+    Name="PyrlynTreeSitterLinkStatic"
+    BeforeTargets="SetupOSSpecificProps"
+    DependsOnTargets="PyrlynTreeSitterResolveNative"
+    Condition="'$(PublishAot)' == 'true'"
+  >
+    <ItemGroup>
+      <NativeLibrary Include="$(PyrlynTreeSitterNativeDir)/$(_PyrlynTsStatic)" />
+    </ItemGroup>
+  </Target>
+
+  <Target
+    Name="PyrlynTreeSitterDropShared"
+    AfterTargets="ComputeResolvedFilesToPublishList"
+    Condition="'$(PublishAot)' == 'true'"
+  >
+    <ItemGroup>
+      <ResolvedFileToPublish
+        Remove="@(ResolvedFileToPublish)"
+        Condition="'%(Filename)' == 'libpyrlyn_tree_sitter' or '%(Filename)' == 'pyrlyn_tree_sitter'"
+      />
+    </ItemGroup>
+  </Target>
+</Project>

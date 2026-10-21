@@ -1,0 +1,17 @@
+# C sources of the tree-sitter runtime and the grammars, as the crates.io tarballs that
+# rtok's Cargo.lock pins (rtok ef091589). Only their C files are compiled; nothing else in
+# them is used. Columns: crate, version, sha256 of the .crate file, C files inside it.
+tree-sitter            0.25.10 78f873475d258561b06f1c595d93308a7ed124d9977cb26b148c2084a4a3cc87 src/lib.c
+tree-sitter-c          0.24.2  a9b2eb57a55fed6b00812912e730b7a275cf4fe98bfd6a5d76263d4438371728 src/parser.c
+tree-sitter-c-sharp    0.23.5  c1aac67f1ad71de1d6d39708d34811081c26dfa495658de6c14c34200849357c src/parser.c src/scanner.c
+tree-sitter-dart       0.2.0   325dd1e24ee9ee21111e9c43680ae7d6010aaa9f282b048a99b9c7163c1cf553 src/parser.c src/scanner.c
+tree-sitter-go         0.25.0  c8560a4d2f835cc0d4d2c2e03cbd0dde2f6114b43bc491164238d333e28b16ea src/parser.c
+tree-sitter-java       0.23.5  0aa6cbcdc8c679b214e616fd3300da67da0e492e066df01bcf5a5921a71e90d6 src/parser.c
+tree-sitter-javascript 0.25.0  68204f2abc0627a90bdf06e605f5c470aa26fdcb2081ea553a04bdad756693f5 src/parser.c src/scanner.c
+tree-sitter-kotlin-ng  1.1.0   e800ebbda938acfbf224f4d2c34947a31994b1295ee6e819b65226c7b51b4450 src/parser.c src/scanner.c
+tree-sitter-php        0.25.1  d9779e392d38af4254f48be0e57b7eed4d50ec7a6e55a7e5e2e74df8f8f032d3 php/src/parser.c php/src/scanner.c
+tree-sitter-python     0.25.0  6bf85fd39652e740bf60f46f4cda9492c3a9ad75880575bf14960f775cb74a1c src/parser.c src/scanner.c
+tree-sitter-ruby       0.23.1  be0484ea4ef6bb9c575b4fdabde7e31340a8d2dbc7d52b321ac83da703249f95 src/parser.c src/scanner.c
+tree-sitter-rust       0.24.2  439e577dbe07423ec2582ac62c7531120dbfccfa6e5f92406f93dd271a120e45 src/parser.c src/scanner.c
+tree-sitter-swift      0.7.4   2688c06564afa397313e0db17d140a73e2c6a47f3884794614246167c9dd5dfd src/parser.c src/scanner.c
+tree-sitter-typescript 0.23.2  6c5f76ed8d947a75cc446d5fccd8b602ebf0cde64ccf2ffa434d873d7a575eff typescript/src/parser.c typescript/src/scanner.c tsx/src/parser.c tsx/src/scanner.c

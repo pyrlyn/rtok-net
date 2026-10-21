@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+#define MAX 10
+
+typedef struct point {
+    int x;
+    int y;
+} point_t;
+
+enum color { RED, GREEN };
+
+static int square(int v) {
+    return v * v;
+}
+
+int main(void) {
+    point_t p = {1, 2};
+    printf("%d\n", square(p.x));
+    return 0;
+}

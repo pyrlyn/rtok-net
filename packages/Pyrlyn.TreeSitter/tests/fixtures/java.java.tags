@@ -1,0 +1,6 @@
+has_error=false
+5:14 def class Library range=39..296 utf16=13..20 line="public class Library {"
+12:16 def method count range=177..232 utf16=15..20 line="public int count() {"
+13:22 ref call size range=219..225 utf16=21..25 line="return books.size();"
+16:15 def interface Visitor range=238..294 utf16=14..21 line="interface Visitor {"
+17:14 def method visit range=266..288 utf16=13..18 line="void visit(Book book);"

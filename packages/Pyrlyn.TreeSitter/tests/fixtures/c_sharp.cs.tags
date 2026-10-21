@@ -1,0 +1,6 @@
+has_error=false
+3:11 def module Demo range=15..240 utf16=10..14 line="namespace Demo"
+5:22 def interface IShape range=36..94 utf16=21..27 line="public interface IShape"
+7:16 def method Area range=74..88 utf16=15..19 line="double Area();"
+10:18 def class Circle range=100..238 utf16=17..23 line="public class Circle : IShape"
+14:23 def method Area range=182..232 utf16=22..26 line="public double Area() => Math.PI * Radius * Radius;"

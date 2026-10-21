@@ -1,0 +1,56 @@
+# Pyrlyn.TreeSitter per RID: builds the native library from native/sources.txt, runs the
+# package's tests on the JIT and its goldens in the NativeAOT lane, and keeps the library as an
+# artifact. packages.yml calls it to pack every RID into one package.
+name: tree-sitter
+
+on:
+  push:
+    paths: ["packages/Pyrlyn.TreeSitter/**", "tests/Rtok.AotTests/**", ".github/workflows/tree-sitter.yml"]
+  pull_request:
+    paths: ["packages/Pyrlyn.TreeSitter/**", "tests/Rtok.AotTests/**", ".github/workflows/tree-sitter.yml"]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: linux-x64, os: ubuntu-latest }
+          - { rid: linux-arm64, os: ubuntu-24.04-arm }
+          - { rid: osx-arm64, os: macos-latest }
+          - { rid: osx-x64, os: macos-15-intel }
+          - { rid: win-x64, os: windows-latest }
+          - { rid: win-arm64, os: windows-11-arm }
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYRLYN_TREESITTER_CACHE: ${{ github.workspace }}/.native-cache
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - uses: actions/cache@v4
+        with:
+          path: .native-cache
+          key: tree-sitter-${{ matrix.rid }}-${{ hashFiles('packages/Pyrlyn.TreeSitter/native/**') }}
+      - name: Build the native library
+        id: native
+        run: echo "dir=$(packages/Pyrlyn.TreeSitter/native/build-native.sh --rid ${{ matrix.rid }})" >> "$GITHUB_OUTPUT"
+      - name: Test on the JIT
+        run: dotnet test --solution packages/Pyrlyn.TreeSitter/Pyrlyn.TreeSitter.slnx -c Release
+      - name: Test the NativeAOT lane
+        run: |
+          dotnet publish tests/Rtok.AotTests -c Release -r ${{ matrix.rid }} -o artifacts/aot-lane
+          artifacts/aot-lane/Rtok.AotTests --results-directory artifacts/aot-lane-results
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tree-sitter-${{ matrix.rid }}
+          path: ${{ steps.native.outputs.dir }}/*pyrlyn_tree_sitter.*
+          if-no-files-found: error

@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>tree-sitter bindings with grammars linked statically per RID, plus tags extraction and bundled tags queries</Description>
+    <PackageTags>tree-sitter;parser;tags;ctags;nativeaot</PackageTags>
+    <!-- LibraryImport generates unsafe marshalling stubs. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PyrlynTreeSitterIsLibrary>true</PyrlynTreeSitterIsLibrary>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource
+      Include="Queries/**/*.scm"
+      LogicalName="Pyrlyn.TreeSitter.Queries/$([System.String]::Copy('%(RecursiveDir)').Replace('\','/'))%(Filename)%(Extension)"
+    />
+    <InternalsVisibleTo Include="Pyrlyn.TreeSitter.Tests" />
+    <None Include="build/Pyrlyn.TreeSitter.targets" Pack="true" PackagePath="buildTransitive/" />
+  </ItemGroup>
+
+  <Import Project="build/Pyrlyn.TreeSitter.targets" />
+
+  <!-- Shared libraries go to runtimes/<rid>/native, static ones to static/<rid> so NuGet never
+       copies them into an output folder. The package carries every RID found under
+       PyrlynTreeSitterPackNativeRoot (<root>/<rid>/, as CI collects them), or else the host RID.
+       A release sets PyrlynTreeSitterRequireAllRids. -->
+  <PropertyGroup>
+    <PyrlynTreeSitterRids>osx-arm64;osx-x64;linux-x64;linux-arm64;win-x64;win-arm64</PyrlynTreeSitterRids>
+  </PropertyGroup>
+  <Target
+    Name="PyrlynTreeSitterPackNative"
+    BeforeTargets="_GetPackageFiles"
+    DependsOnTargets="PyrlynTreeSitterResolveNative"
+  >
+    <ItemGroup Condition="'$(PyrlynTreeSitterPackNativeRoot)' != ''">
+      <_PyrlynTsPackRid Include="$(PyrlynTreeSitterRids)" />
+      <_PyrlynTsPackFile
+        Include="$(PyrlynTreeSitterPackNativeRoot)/%(_PyrlynTsPackRid.Identity)/*pyrlyn_tree_sitter.*"
+        Rid="%(_PyrlynTsPackRid.Identity)"
+      />
+    </ItemGroup>
+    <ItemGroup Condition="'$(PyrlynTreeSitterPackNativeRoot)' == ''">
+      <_PyrlynTsPackFile
+        Include="$(PyrlynTreeSitterNativeDir)/*pyrlyn_tree_sitter.*"
+        Rid="$(_PyrlynTsRid)"
+      />
+    </ItemGroup>
+    <ItemGroup>
+      <_PyrlynTsPackedRid Include="@(_PyrlynTsPackFile->'%(Rid)')" />
+      <_PyrlynTsMissingRid Include="$(PyrlynTreeSitterRids)" Exclude="@(_PyrlynTsPackedRid)" />
+      <None
+        Include="@(_PyrlynTsPackFile)"
+        Condition="'%(Extension)' != '.a' and '%(Extension)' != '.lib'"
+        Pack="true"
+        PackagePath="runtimes/%(Rid)/native/"
+        Visible="false"
+      />
+      <None
+        Include="@(_PyrlynTsPackFile)"
+        Condition="'%(Extension)' == '.a' or '%(Extension)' == '.lib'"
+        Pack="true"
+        PackagePath="static/%(Rid)/"
+        Visible="false"
+      />
+    </ItemGroup>
+    <Error
+      Condition="'$(PyrlynTreeSitterRequireAllRids)' == 'true' and '@(_PyrlynTsMissingRid)' != ''"
+      Text="Pyrlyn.TreeSitter: no native library for @(_PyrlynTsMissingRid) to pack."
+    />
+  </Target>
+</Project>

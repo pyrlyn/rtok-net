@@ -28,6 +28,10 @@
     <Project Path="packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
     <Project Path="packages/Pyrlyn.Shlex/tests/Pyrlyn.Shlex.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.TreeSitter/">
+    <Project Path="packages/Pyrlyn.TreeSitter/src/Pyrlyn.TreeSitter.csproj" />
+    <Project Path="packages/Pyrlyn.TreeSitter/tests/Pyrlyn.TreeSitter.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Rtok.Agent.Sdk/">
     <Project Path="packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
     <Project Path="packages/Rtok.Agent.Sdk/tests/Rtok.Agent.Sdk.Tests.csproj" />

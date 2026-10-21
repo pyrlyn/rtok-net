@@ -1,0 +1,6 @@
+has_error=false
+5:7 def class Account range=38..109 utf16=6..13 line="class Account(val owner: String) {"
+6:9 def function balance range=77..107 utf16=8..15 line="fun balance(): Int = max(0, 1)"
+9:8 def class Registry range=111..174 utf16=7..15 line="object Registry {"
+10:9 def function find range=133..172 utf16=8..12 line="fun find(name: String): Account? = null"
+13:5 def function main range=176..222 utf16=4..8 line="fun main() {"

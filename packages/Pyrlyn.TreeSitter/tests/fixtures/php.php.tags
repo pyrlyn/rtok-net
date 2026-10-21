@@ -1,0 +1,10 @@
+has_error=false
+3:11 def module App range=7..21 utf16=10..13 line="namespace App;"
+7:11 def interface Repository range=45..111 utf16=10..20 line="interface Repository"
+9:21 def function find range=72..109 utf16=20..24 line="public function find(int $id): ?User;"
+12:7 def class UserRepository range=113..245 utf16=6..20 line="class UserRepository implements Repository"
+12:33 ref implementation Repository range=134..155 utf16=32..42 line="class UserRepository implements Repository"
+14:21 def function find range=162..243 utf16=20..24 line="public function find(int $id): ?User"
+16:22 ref call query range=220..236 utf16=21..26 line="return User::query($id);"
+20:10 def function helper range=247..328 utf16=9..15 line="function helper(): void"
+23:12 ref call find range=311..325 utf16=11..15 line="$repo->find(1);"

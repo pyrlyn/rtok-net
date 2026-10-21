@@ -1,0 +1,23 @@
+import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
+/// A counter widget.
+class Counter extends StatelessWidget {
+  final int value;
+
+  const Counter(this.value);
+
+  int doubled() => value * 2;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = format(value);
+    return Text(label);
+  }
+}
+
+String format(int n) {
+  return math.max(n, 0).toString();
+}
+
+enum Mode { light, dark }

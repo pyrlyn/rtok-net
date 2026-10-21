@@ -1,0 +1,9 @@
+has_error=false
+3:10 def interface Greeter range=19..66 utf16=9..16 line="protocol Greeter {"
+4:10 def method greet range=19..66 utf16=9..14 line="func greet() -> String"
+7:7 def class Person range=68..239 utf16=6..12 line="class Person: Greeter {"
+8:9 def property name range=68..239 utf16=8..12 line="let name: String"
+10:5 def method init range=68..239 utf16=4..8 line="init(name: String) {"
+14:10 def method greet range=68..239 utf16=9..14 line="func greet() -> String {"
+19:6 def function main range=241..309 utf16=5..9 line="func main() {"
+20:9 def property p range=259..286 utf16=8..9 line="let p = Person(name: \"Ann\")"

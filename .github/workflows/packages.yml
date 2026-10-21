@@ -9,7 +9,14 @@ permissions:
   contents: read
 
 jobs:
+  # Pyrlyn.TreeSitter carries a native library per RID, each built on its own runner.
+  tree-sitter-native:
+    if: startsWith(github.ref_name, 'Pyrlyn.TreeSitter/')
+    uses: ./.github/workflows/tree-sitter.yml
+
   publish:
+    needs: tree-sitter-native
+    if: always() && (needs.tree-sitter-native.result == 'success' || needs.tree-sitter-native.result == 'skipped')
     runs-on: ubuntu-latest
     environment: nuget
     permissions:
@@ -20,6 +27,18 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
+      - name: Collect the native libraries
+        if: needs.tree-sitter-native.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: tree-sitter-*
+          path: artifacts/tree-sitter-native
+      - name: Pack every RID
+        if: needs.tree-sitter-native.result == 'success'
+        run: |
+          for d in artifacts/tree-sitter-native/tree-sitter-*; do mv "$d" "${d%/tree-sitter-*}/${d##*/tree-sitter-}"; done
+          echo "PyrlynTreeSitterPackNativeRoot=$PWD/artifacts/tree-sitter-native" >> "$GITHUB_ENV"
+          echo "PyrlynTreeSitterRequireAllRids=true" >> "$GITHUB_ENV"
       - name: Dry run
         run: eng/publish-package.sh "$GITHUB_REF_NAME" --dry-run
       - name: NuGet login

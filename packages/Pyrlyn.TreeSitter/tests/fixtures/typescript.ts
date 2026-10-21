@@ -1,0 +1,33 @@
+import { readFile } from "node:fs/promises";
+import * as path from "path";
+
+/** A user record. */
+export interface User {
+  name: string;
+}
+
+export type Id = string | number;
+
+export class Store {
+  private rows: Map<Id, User> = new Map();
+
+  /** Adds a user. */
+  add(user: User): void {
+    this.rows.set(user.name, user);
+  }
+}
+
+export function load(file: string): Promise<Array<User>> {
+  const full = path.join("/data", file);
+  const store = new Store();
+  const extra = new ns.Builder();
+  return readFile(full).then(parse);
+}
+
+enum Color {
+  Red,
+}
+
+namespace Shapes {
+  export const unit = 1;
+}

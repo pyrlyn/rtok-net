@@ -1,0 +1,7 @@
+has_error=false
+1:19 ref import "react" range=0..26 utf16=18..25 line="import React from \"react\";"
+3:11 def interface Props range=28..64 utf16=10..15 line="interface Props {"
+7:31 ref type Props range=94..101 utf16=30..35 line="export function Header(props: Props) {"
+8:17 ref call format range=121..140 utf16=16..22 line="const label = format(props.title);"
+12:7 ref type Panel range=196..201 utf16=6..11 line="class Panel extends React.Component<Props> {"
+12:37 ref type Props range=226..231 utf16=36..41 line="class Panel extends React.Component<Props> {"

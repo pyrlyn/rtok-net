@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../src/Pyrlyn.TreeSitter.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="fixtures/**" />
+    <None Include="fixtures/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
