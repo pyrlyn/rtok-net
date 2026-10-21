@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

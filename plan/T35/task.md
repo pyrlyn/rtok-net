@@ -14,6 +14,7 @@ Done when:
 - `rtok agents install|update|uninstall|list|info|outdated` behave as in the catalog for every host listed there, as data-driven descriptors on Rtok.Agent.Sdk and the MCP core. Covered: hooks, MCP, proxy base URL, host plugin link, skills, desktop restart, `--dry-run`, `--yes`.
 - There is one plugin version scheme for every install source: a version file and a receipt, a SemVer compare, and `agents outdated --exit-code 10` (rtok T279).
 - A support-matrix doc table is generated from the descriptors.
+- `agents info` and `agents list` report the real MCP state from Rtok.Mcp.Install's `McpStatus` rows, the same in `--json` and the web model (moved from T34; T43 consumes the web-model part).
 
 Spec: catalog A19, catalog B3 in [docs/port/catalog.md](../../docs/port/catalog.md).
 

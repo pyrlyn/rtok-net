@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- rtok's own MCP entry in every host's config: one spec table, one core (plan/T34). -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Mcp.Install.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="TestableIO.System.IO.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Jsonc/src/Pyrlyn.Jsonc.csproj" />
+    <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
+  </ItemGroup>
+</Project>
