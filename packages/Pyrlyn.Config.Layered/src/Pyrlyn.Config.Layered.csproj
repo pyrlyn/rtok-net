@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Merges ordered configuration layers (defaults, TOML files, .env, environment, flags) into one TOML tree with per-key provenance, and edits TOML files in place without losing comments.</Description>
+    <PackageTags>configuration;toml;dotenv;layers;provenance</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Tomlyn" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Pyrlyn.Config.Layered.csproj" />
+  <Project Path="tests/Pyrlyn.Config.Layered.Tests.csproj" />
+</Solution>
