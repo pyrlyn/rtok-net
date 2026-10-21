@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 2
-readiness: 0%
-agent:
+readiness: 10%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T21. inject plugin, prompt modes and prose compression
@@ -34,3 +34,10 @@ Ports: rtok closed T2.4, T7.1, T188, T604, T606, T608.
 Fuzz: `prose-compress` in `tests/Rtok.Fuzz`: `compress_prose` over any Markdown keeps code fences byte-identical, is deterministic and never grows the text.
 
 Check: Repeated runs give byte-identical output, and the fence and glue cases from the catalog pass.
+
+Plan:
+1. `src/Rtok.Plugins.Inject`: `InjectPlugin` (manifest `inject`, Hook surface, on by default) offers the configured modes on SessionStart at priority 5; nothing on UserPromptSubmit. The budget itself stays in `Rtok.Core.InjectBudget` (T6), one logic in one place.
+2. `ModeFiles`: `modes/{terse,yagni,nudges}.md` copied from rtok and embedded; aliases `cave` and `pony`; a file in `plugins.inject.modes_dir` wins over the built-in one, read capped at `(ceil(budget·rate)+1)·4` bytes with a partial UTF-8 tail dropped. Names come from `plugins.inject.modes`, else `setup.modes`.
+3. `ProsePress.Compress` (rtok `compress_prose`, intensities Lite, Full, Ultra): CommonMark fences, inline backtick spans, glue on both sides of a word.
+4. `tests/Rtok.Plugins.Inject.Tests`: the cases above, the CsCheck properties, and a Dispatcher run with several plugins.
+5. Gates: Release build with `-warnaserror`, `dotnet test`, `dotnet csharpier check .`.
