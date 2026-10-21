@@ -1,0 +1,31 @@
+.TH SAMPLE-WORKTREE-REMOVE 1
+.SH NAME
+sample\-worktree\-remove \- Removes worktrees.
+.SH SYNOPSIS
+\fBsample worktree remove\fR [\fIoptions\fR] [\fIstring\fR...]
+.br
+\fBsample rm\fR [\fIoptions\fR] [\fIstring\fR...]
+.SH DESCRIPTION
+Removes worktrees.
+Their branches stay.
+.SH ARGUMENTS
+.TP
+[\fIstring\fR...]
+The worktrees.
+.SH OPTIONS
+.TP
+\fB\-\-since\fR \fIstring\fR
+Only those idle this long.
+Default: 7d.
+.TP
+\fB\-\-ratio\fR \fIdouble?\fR
+The share of files that may differ.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Log more.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show help.
+.TP
+\fB\-\-version\fR
+Show version.

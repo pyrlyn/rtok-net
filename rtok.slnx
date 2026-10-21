@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/packages/" />
+  <Folder Name="/packages/Pyrlyn.CommandLine.Docs/">
+    <Project Path="packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
+    <Project Path="packages/Pyrlyn.CommandLine.Docs/tests/Pyrlyn.CommandLine.Docs.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.Config.Layered/">
     <Project Path="packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
     <Project Path="packages/Pyrlyn.Config.Layered/tests/Pyrlyn.Config.Layered.Tests.csproj" />

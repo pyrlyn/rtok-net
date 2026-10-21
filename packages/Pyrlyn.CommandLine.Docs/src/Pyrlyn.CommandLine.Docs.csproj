@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>A command model read from ConsoleAppFramework --help output, saved as JSON, with roff man pages and static bash, zsh, fish, PowerShell and clink completions generated from it.</Description>
+    <PackageTags></PackageTags>
+  </PropertyGroup>
+</Project>

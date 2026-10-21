@@ -1,0 +1,251 @@
+{
+  "name": "sample",
+  "commands": [
+    {
+      "path": "",
+      "aliases": [],
+      "description": "Shows the sample's state.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print what would change.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config",
+      "aliases": [],
+      "description": "Shows the configuration.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--format"
+          ],
+          "type": "SampleFormat",
+          "description": "Output format.",
+          "default": "Text",
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config get",
+      "aliases": [],
+      "description": "Reads one key.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The key."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "-s",
+            "--scope"
+          ],
+          "type": "string",
+          "description": "Where to look.",
+          "default": "user",
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config set",
+      "aliases": [
+        "put"
+      ],
+      "description": "Sets one key.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The key."
+        },
+        {
+          "type": "string?",
+          "description": "The value; the key is removed without one."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "-f",
+            "--yes",
+            "--force"
+          ],
+          "type": null,
+          "description": "Overwrite without asking.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "stats",
+      "aliases": [],
+      "description": "Shows the savings.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--since"
+          ],
+          "type": "string",
+          "description": "The window, for example 7d.",
+          "default": null,
+          "required": true
+        },
+        {
+          "names": [
+            "--by"
+          ],
+          "type": "string",
+          "description": "Group the rows by this column.",
+          "default": "day",
+          "required": false
+        },
+        {
+          "names": [
+            "--color"
+          ],
+          "type": "bool",
+          "description": "Colour the output.",
+          "default": "true",
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "worktree list",
+      "aliases": [
+        "ls"
+      ],
+      "description": "Lists the worktrees.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "-n",
+            "--limit",
+            "--lines"
+          ],
+          "type": "int",
+          "description": "How many to show.",
+          "default": "10",
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "worktree remove",
+      "aliases": [
+        "rm"
+      ],
+      "description": "Removes worktrees.\nTheir branches stay.",
+      "arguments": [
+        {
+          "type": "string[]",
+          "description": "The worktrees."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--since"
+          ],
+          "type": "string",
+          "description": "Only those idle this long.",
+          "default": "7d",
+          "required": false
+        },
+        {
+          "names": [
+            "--ratio"
+          ],
+          "type": "double?",
+          "description": "The share of files that may differ.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "-v",
+            "--verbose"
+          ],
+          "type": null,
+          "description": "Log more.",
+          "default": null,
+          "required": false
+        }
+      ]
+    }
+  ]
+}

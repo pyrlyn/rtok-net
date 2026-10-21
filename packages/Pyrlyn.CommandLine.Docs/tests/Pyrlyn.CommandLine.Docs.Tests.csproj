@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- The tests start the sample app for its help and the shells for their syntax checks;
+         ProgressRunner lives in src/, which a package may not reference. -->
+    <RtokProcessRunner>true</RtokProcessRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/Pyrlyn.CommandLine.Docs.csproj" />
+    <PackageReference
+      Include="ConsoleAppFramework"
+      PrivateAssets="all"
+      IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"
+    />
+  </ItemGroup>
+</Project>
