@@ -593,12 +593,99 @@ The `test.runner` key opts `dotnet test` into MTP (.NET 10 SDK). [doc] https://l
 
 ---
 
+## F. T4: hook latency and the store on NativeAOT (2026-10-22)
+
+Measured 2026-10-22 **[measured]** with `spikes/T4/bench.sh` (`hyperfine -N`, 20 warmups, 300 runs, stdin
+= a 424-byte Claude PreToolUse payload). Linux runs in `spikes/T4/bench-linux.sh`: the
+`mcr.microsoft.com/dotnet/sdk:10.0-noble-aot` container (SDK 10.0.402) in a colima VZ VM (4 vCPU,
+Ubuntu kernel 6.8, aarch64) on the same M3 Max, with the store on a Docker volume (the container
+overlay made fsync slow: the first Linux run, on the overlay, showed 14 ms for the resident's warm
+write). Windows had no host and moved to T52.
+
+macOS ran while five other lanes were building (load average 11 to 31 on 16 cores), so its p95
+column is inflated; the p50 column matches an earlier run at load 9 within 0.5 ms. Linux p95 is
+clean.
+
+Probes (`spikes/T4/`): `rtok-hook` is the real `src/Rtok.Hook` (prints `{}`); `hook-client` is
+`rtok-hook` as T14 will build it (Unix socket, one length-prefixed frame, 50 ms timeouts,
+`posix_spawn`/`execv` by P/Invoke); `rtok-probe` is the full binary's shape: ConsoleAppFramework,
+Spectre.Console, Tomlyn (source-generated, user + project layer), EF Core with a compiled model and
+precompiled queries, Kestrel and the MCP SDK; `ef-probe` and `sqlite-probe` open a WAL store, insert
+one calls row and count by event.
+
+| Probe | macOS p50 | macOS p95 | Linux p50 | Linux p95 |
+|---|---|---|---|---|
+| process floor (`true`) | 3.22 | 3.71 | 0.15 | 0.21 |
+| empty `rtok-hook` | 4.63 | 5.09 | 0.59 | 0.76 |
+| `rtok-hook` + socket round trip, resident replies at once | 6.49 | 26.88 | 0.92 | 1.10 |
+| `rtok-hook` + socket round trip, resident writes a calls row (warm EF) | 7.96 | 17.85 | 3.46 | 5.76 |
+| full `rtok hook` + config load | 11.86 | 21.24 | 7.60 | 8.62 |
+| full `rtok hook` + config load + EF store (cold) | 23.13 | 65.72 | 19.17 | 22.25 |
+| EF Core compiled model: open, insert, query | 18.73 | 37.47 | 15.34 | 18.54 |
+| Microsoft.Data.Sqlite: open, insert, query | 8.79 | 19.36 | 3.29 | 5.42 |
+| same, SQLite linked statically (StaticLink.e_sqlite3) | 6.94 | 9.36 | 2.97 | 5.25 |
+| same, SQLite linked statically (SQLitePCLRaw 3 + SourceGear.sqlite3 `.a`) | n/a | n/a | 2.43 | 3.32 |
+| fallback a: resident down, no-op reply + detached spawn | 5.75 | 10.67 | 2.74 | 4.02 |
+| fallback a + the request queued in the run dir for the resident | 5.67 | 7.94 | 1.95 | 3.83 |
+| fallback b: resident down, `execv` the full hook with the store | 29.63 | 58.88 | 20.18 | 22.52 |
+
+All times in ms, start to exit.
+
+Static init and module initializers of the full binary. `hook-client` spawns each binary, and the
+child logs the monotonic time when its `Main` starts:
+
+| Spawned binary | Size | exec→Main p50 | exec→Main p95 | spawn→exit p50 |
+|---|---|---|---|---|
+| macOS `hook-client` | 2.1 MB | 4.46 | 5.99 | 5.06 |
+| macOS `rtok-probe` | 30.5 MB | 10.21 | 11.58 | 11.08 |
+| Linux `hook-client` | 2.2 MB | 0.59 | 0.71 | 0.70 |
+| Linux `rtok-probe` | 32.0 MB | 6.75 | 7.44 | 7.45 |
+
+- The full binary pays **6 to 6.5 ms before `Main`** on both OSes, and its hook work after `Main`
+  (TOML load, JSON parse, reply) is under 1 ms. That cost is the image, not initializers: the ILC
+  map lists **one** module initializer (`__module_initializers` is 4 bytes), while `__DATA` is
+  14.1 MB with 10.5k dyld fixups against 0.4 MB and 0.8k for `hook-client`. So the full `rtok hook`
+  misses the 10 ms budget on macOS even without the store, and every feature linked into `rtok`
+  adds to it. The hook path must not start `rtok`.
+- A cold EF context costs 12 to 15 ms over plain Microsoft.Data.Sqlite. Warm in the resident, the
+  same insert and query take 1 to 3 ms.
+- Sizes: `rtok-hook` 1.1 MB (macOS) / 1.2 MB (Linux); `ef-probe` 16.9 / 17.8 MB; `rtok-probe`
+  30.5 / 32.0 MB; `sqlite-probe` 2.7 / 2.9 MB plus a 1.7 MB native SQLite, or 4.2 / 4.4 MB
+  with SQLite linked in.
+
+SQLite linked into the binary:
+- **macOS**: SourceGear.sqlite3 (3.53.3 and 3.53.4) ships only a dylib. StaticLink.e_sqlite3
+  2.1.10.1 ships `libe_sqlite3.a` for osx-arm64/x64, linux(-musl)-arm64/x64 and win-arm64/x64/x86
+  (`e_sqlite3.lib`) and wires `DirectPInvoke` + `NativeLibrary` itself. With it the binary runs with
+  no dylib beside it, EF Core included, SQLite 3.46.1 with FTS5 working. Its nuspec names
+  "StaticLink.e_sqlite3 contributors", points `projectUrl` at SQLitePCL.raw and has no repository:
+  the provenance of its prebuilt `.a` files is unverified.
+- **Linux**: both work. SourceGear.sqlite3 **3.53.3** ships `libe_sqlite3.a` for linux-x64/arm64
+  (3.53.4 dropped it), and with SQLitePCLRaw 3.0.5 (`SQLitePCLRaw.config.e_sqlite3` +
+  `Microsoft.Data.Sqlite.Core`), `<DirectPInvoke Include="e_sqlite3" />`, the `.a` as
+  `NativeLibrary` and `-lm` it links SQLite 3.53.3 with FTS5. StaticLink.e_sqlite3 works too.
+- **Windows**: not measured (T52).
+- `rtok-hook` links no SQLite at all (N6), so "both binaries" means `rtok`, which is also the
+  resident.
+
+EF Core under AOT, found while building the probes (adds to C.4):
+- The query precompiler (EF 10.0.13) takes only locals. A context or a captured value that is a
+  method parameter fails the publish with "Dynamic LINQ queries are not supported when
+  precompiling queries" or `UnreachableException: IdentifierName of type ParameterSymbol`. Copy
+  parameters into locals before the query. A query inside the `DbContext` class fails the same way.
+- The generated interceptors use `?` outside a `#nullable` context (CS8669), which
+  `WarningsAsErrors=nullable` turns into an error: the store project needs `NoWarn` CS8669.
+- Without an `IDesignTimeDbContextFactory`, the Tasks package runs the app's entry point at publish
+  to find a host.
+
+---
+
 ## Unverified / open items
 
-- Startup numbers on Linux and Windows (I measured only macOS arm64).
+- Startup numbers on Windows (T52; macOS and Linux are in F).
 - Terminal.Gui v2 and XenoAtom interactive behavior under AOT (only a rooted publish was clean).
 - Tomlyn: TOML 1.0 compliance and lossless round-trip on real rtok configs. CsToml comment preservation.
-- Static SQLite on macOS and Windows (amalgamation build), and StaticLink.e_sqlite3 compatibility with SQLitePCLRaw v3.
+- Static SQLite on Windows (T52), and where its `.a`/`.lib` should come from (F: StaticLink.e_sqlite3 has unverified provenance).
 - YARP has no official AOT statement; it was rooted clean and SSE was runtime-tested here.
 - TUnit AOT details; the exact xunit.v3 AOT package ids.
 - The MCP SDK stateless/session default over HTTP.

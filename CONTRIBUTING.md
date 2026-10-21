@@ -21,8 +21,6 @@ dotnet test
 dotnet csharpier check .
 ```
 
-`dotnet test` runs the JIT, AOT and smoke lanes; the smoke lane publishes `rtok` and `rtok-hook` with AOT first. Lanes, helpers, the latency gate, benchmarks and fuzzing: [tests/README.md](tests/README.md).
-
 Release runs every analyzer, including the banned-API rules in `eng/BannedSymbols.*.txt`: only surface projects (`<RtokSurface>true</RtokSurface>`) write to the console, and only ProgressRunner (`<RtokProcessRunner>true</RtokProcessRunner>`) starts processes.
 
 ## Release (NativeAOT)

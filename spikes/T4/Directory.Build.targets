@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="../../Directory.Build.targets" />
+
+  <!-- -p:StaticSqlite=true: link SQLite into the binary (StaticLink.e_sqlite3, SQLitePCLRaw 2.x).
+       -p:StaticSqlite=v3: SQLitePCLRaw 3 + SourceGear.sqlite3's own libe_sqlite3.a (Linux only). -->
+  <ItemGroup Condition="'$(ProbeSqlite)' == 'true' and '$(StaticSqlite)' == 'true'">
+    <PackageReference Include="StaticLink.e_sqlite3" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ProbeSqlite)' == 'true' and '$(StaticSqlite)' == 'v3'">
+    <PackageReference Include="SQLitePCLRaw.config.e_sqlite3" />
+    <PackageReference Include="SourceGear.sqlite3" GeneratePathProperty="true" />
+    <DirectPInvoke Include="e_sqlite3" />
+    <NativeLibrary Include="$(PkgSourceGear_sqlite3)/runtimes/$(RuntimeIdentifier)/native/libe_sqlite3.a" />
+    <LinkerArg Include="-lm" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stand-in for the full rtok binary: CLI, TOML config, EF Core store, Kestrel, MCP, Spectre. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ProbeSqlite>true</ProbeSqlite>
+    <AssemblyName>rtok-probe</AssemblyName>
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.EntityFrameworkCore.GeneratedInterceptors</InterceptorsNamespaces>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile Include="../Shared/Store.cs" />
+    <PackageReference
+      Include="ConsoleAppFramework"
+      PrivateAssets="all"
+      IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"
+    />
+    <PackageReference Include="Spectre.Console" />
+    <PackageReference Include="Tomlyn" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stand-in for rtok-hook as T14 will build it: stdin over a Unix socket to the resident. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>hook-client</AssemblyName>
+  </PropertyGroup>
+</Project>

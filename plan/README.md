@@ -67,7 +67,30 @@ Microsoft.Data.Sqlite, so the hook path relies on the resident server (N8).
 
 N8. **Hook latency comes from the resident server.** `rtok hook --serve` keeps the store,
 config and plugins warm; `rtok-hook` talks to it over a Unix socket (a named pipe on
-Windows). The fallback when the resident is absent is decided by T4 from measurements.
+Windows). T4 measured it (research.md F): the round trip costs 0.9 ms p50 on Linux and
+6.5 ms on macOS, where the process floor alone is 3.2 ms. With a warm EF write it is 3.5 and
+8.0 ms.
+
+When the resident is absent, `rtok-hook` prints the host's no-op reply, writes the request
+into the resident's 0700 run directory and spawns the resident detached (stdio on
+`/dev/null`, new session, no inherited fds, rate-limited by the lock file). The resident
+replays queued requests for their writes only (calls row, SessionEnd's `ended_at`); their
+reply is already lost, which is fail-open (rtok D1). Measured: 2.0 ms p50 / 3.8 ms p95 on
+Linux, 5.7 / 7.9 ms on macOS. The other candidate, running the full hook in place (`execv`
+into `rtok hook`), costs 20.2 / 22.5 ms on Linux and 29.6 ms p50 on macOS. That is a cold EF
+context (12 to 15 ms over plain SQLite) plus the full binary's 6 to 6.5 ms before `Main`,
+which comes from its 14 MB `__DATA` image, not initializers: it has one module initializer.
+So the hook path never starts `rtok`, and hook manifests name `rtok-hook` first. This
+fallback is provisional for Windows until T52 measures it there.
+
+SQLite: `rtok-hook` links none. For `rtok`, static linking works on macOS and Linux (T4):
+- StaticLink.e_sqlite3 2.1.10.1 links on both, and ships Windows `.lib` files too, but its
+  prebuilt archives have unverified provenance.
+- On Linux, SourceGear.sqlite3 3.53.3's own `libe_sqlite3.a` with SQLitePCLRaw 3 also links.
+- On macOS, SourceGear ships only a dylib.
+
+Which source the store uses is T8's call, with the creator. Until then the native library
+ships beside the binary.
 
 N9. **CLI parsing: ConsoleAppFramework v5, output: Spectre.Console.** The creator decided
 this. ConsoleAppFramework is a source generator: commands are plain methods, options and
@@ -96,8 +119,6 @@ pipes.
 N11. **Tests: xUnit v3 on Microsoft.Testing.Platform**, with Verify for snapshots, CsCheck
 for property tests and WireMock.Net for upstream fakes. Most tests run on the JIT; a small
 AOT test project and smoke tests against the published binaries run on every OS in CI.
-Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
-`Directory.Build.props`), renewed yearly and valid only while rtok-net earns no revenue.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
 runtime, so a plugin is a project referenced at build time. A build includes or leaves out
@@ -140,28 +161,6 @@ html and pdf. QuestPDF is referenced only by `Rtok.Report.Pdf`, which implements
 interface. Nothing else sees a QuestPDF type, so the PDF layer can be rewritten or replaced
 without touching the report logic. The project sets the QuestPDF licence type explicitly.
 
-N19. **rtok's flag-gated experiments (catalog A33).** The creator decided these from the
-evidence in T51's `done.md`:
-- Embeddings beside FTS5: **deferred**. FTS5 is the only memory search; no vector table.
-  Reopen as a task, on the `http` provider only, when a bench shows a recall gain over FTS5.
-- WASM plugin host: **dropped**. Out-of-tree plugins build their own `rtok` (N12). Runtime
-  loading of third-party plugins would be a new decision, not a port.
-- Tiered L0/L1/L2 archive context: **deferred**. The archive ships without tiers. Reopen as
-  a task behind `plugins.archive.tiers` when a real-session Measurement beats the plain archive.
-
-N20. **Logging: Serilog in `rtok`, nothing in `rtok-hook`.** The creator decided this. Every
-log line in `rtok` (CLI, resident `hook --serve`, `mcp`, `proxy`, `web`, demon) goes through
-one Serilog pipeline, set up in `Rtok.Log` from the `[log]` section in code (no
-`Serilog.Settings.Configuration`: it uses reflection and is not AOT-clean). The rotating file
-sink is a small `ILogEventSink` over Pyrlyn.RotatingLog (T12.10), which keeps the catalog's
-`.N` files, the `errors.log` copy and lock-safe appends from several processes;
-Serilog.Sinks.File is not used, because its size rolling names files `_001` and is not
-lock-safe across processes. The `to_db` logs row is another sink, and `RTOK_LOG` debug output
-goes to stderr through Serilog.Sinks.Console. Libraries that take an `ILogger` (EF Core,
-ASP.NET Core, the MCP SDK) join the same pipeline through Serilog.Extensions.Logging.
-`rtok-hook` does not log at all (N6): it passes its lines to the resident, and drops them
-when the resident is down.
-
 ## Measured on this machine (2026-10-21, M3 Max, SDK 10.0.402)
 
 | Probe | Size | Start-to-exit |
@@ -174,7 +173,7 @@ when the resident is down.
 | AOT + Kestrel + MCP SDK, hook path only | 16.5 MB | 8.8 to 9.3 ms |
 | AOT publish of the small hook | - | 11.6 s |
 
-Linux and Windows are not measured yet; T4 does that.
+macOS and Linux with the full binary, the resident and both fallbacks: research.md F (T4). Windows: T52.
 
 ## Package map
 
@@ -184,7 +183,6 @@ Linux and Windows are not measured yet; T4 does that.
 | Regex | `[GeneratedRegex]`; `NonBacktracking` for user patterns | |
 | CLI parsing | ConsoleAppFramework 5.7.x (source generator, `PrivateAssets=all`) | N9 |
 | Console output, prompts, progress | Spectre.Console | N10 |
-| Logging | Serilog 4, Serilog.Sinks.Console, Serilog.Extensions.Logging; file sink over Pyrlyn.RotatingLog | N20; `rtok` only, never `rtok-hook` |
 | TUI | Terminal.Gui v2 | AOT publish is clean; interactive AOT behaviour unverified |
 | Store | Microsoft.EntityFrameworkCore.Sqlite 10 + SQLitePCLRaw (e_sqlite3 with FTS5) | N7 |
 | TOML | Tomlyn 2 (source-gen serializer; syntax tree for comment-preserving edits) | lossless round-trip to verify on a golden corpus |
@@ -225,7 +223,7 @@ Each one lives in `packages/<Name>/` and gets its own task (T12.x, T5, T33).
 | Pyrlyn.Trash | move to the OS trash on macOS, Linux and Windows |
 | Pyrlyn.OperationIcons | verb-to-icon table and icon gutter |
 | Pyrlyn.Config.Layered | TOML layers (defaults, user, project, `.env`, env, flags) with per-key provenance |
-| Pyrlyn.RotatingLog | `.N` rotating file log, lock-safe across processes; the file sink behind Serilog (N20) |
+| Pyrlyn.RotatingLog | small rotating file log usable from the hook path |
 | Pyrlyn.CommandLine.Docs | command model from ConsoleAppFramework `--help` output; roff man pages and static shell completions from it |
 
 ## Solution layout
@@ -265,7 +263,7 @@ conflict on rebase: keep both sides.
 | L1 | tests, plugin contract, core, cmd/inject/guard/memory plugins | T2, T5, T6, T17, T18, T22, T23, T20, T21, T22.1 |
 | L2 | store, archive, logs, proxy, measure, OTel | T8, T10, T9, T27, T29, T28, T30, T47, T50 |
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
-| L4 | hook latency, hooks, resident, MCP, agents, worktrees | T4, T13, T14, T15, T16, T37, T40, T46, T49, T44.1 |
+| L4 | hook latency, hooks, resident, MCP, agents, worktrees | T4, T13, T14, T15, T16, T37, T40, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |
 | L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
 | L7 | small packages | T12.10, T12.8, T12.11, T12.2, T12.7 |

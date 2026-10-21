@@ -6,20 +6,9 @@
   <!-- Add a version here with the task that first needs the package (plan/README.md package map). -->
   <ItemGroup>
     <PackageVersion Include="ConsoleAppFramework" Version="5.7.13" />
-    <PackageVersion Include="CsCheck" Version="4.9.1" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Tomlyn" Version="2.10.1" />
-    <PackageVersion Include="Wcwidth" Version="4.0.1" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
-    <PackageVersion Include="xunit.v3.aot.mtp-v2" Version="4.0.2" />
-    <PackageVersion Include="Verify.XunitV3" Version="33.3.4" />
-    <PackageVersion Include="WireMock.Net" Version="2.19.0" />
-    <PackageVersion Include="Porta.Pty" Version="2.2.3" />
-    <PackageVersion Include="CliWrap" Version="3.10.5" />
-    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-    <PackageVersion Include="SharpFuzz" Version="2.3.0" />
-    <PackageVersion Include="TestableIO.System.IO.Abstractions" Version="22.3.0" />
-    <PackageVersion Include="Testably.Abstractions.Testing" Version="7.1.1" />
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Roslynator.Analyzers" Version="5.0.1" />

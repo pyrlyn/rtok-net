@@ -1,4 +1,3 @@
-using System.Runtime.Versioning;
 using System.Text;
 
 namespace Pyrlyn.FsKit.Tests;
@@ -173,14 +172,11 @@ public sealed class AtomicFileTests : IDisposable
     }
 
     [Fact]
-    [SupportedOSPlatform("linux")]
-    [SupportedOSPlatform("macos")]
     public void KeepsTheOldMode()
     {
         if (OperatingSystem.IsWindows())
         {
             Assert.Skip("Unix modes");
-            return; // CA1416 does not see Assert.Skip as an exit.
         }
         var f = dir.Write("secret", "old");
         File.SetUnixFileMode(f, UnixFileMode.UserRead | UnixFileMode.UserWrite);
@@ -189,14 +185,11 @@ public sealed class AtomicFileTests : IDisposable
     }
 
     [Fact]
-    [SupportedOSPlatform("linux")]
-    [SupportedOSPlatform("macos")]
     public void ModeAppliesAtCreationAndYieldsToAnExistingFile()
     {
         if (OperatingSystem.IsWindows())
         {
             Assert.Skip("Unix modes");
-            return; // CA1416 does not see Assert.Skip as an exit.
         }
         const UnixFileMode Owner = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         const UnixFileMode Group = Owner | UnixFileMode.GroupRead;

@@ -1,8 +1,7 @@
 <Project>
   <!-- OutputType is known only here, after the project file: AOT for executables in Release
-       and DebugAot only, so Debug stays pure JIT with hot reload (plan/README.md N2).
-       RtokJitOnly tools (benchmarks, fuzzing, the latency harness) never publish with AOT. -->
-  <PropertyGroup Condition="'$(OutputType)' == 'Exe' and ('$(Configuration)' == 'Release' or '$(Configuration)' == 'DebugAot') and '$(IsTestProject)' != 'true' and '$(RtokJitOnly)' != 'true'">
+       and DebugAot only, so Debug stays pure JIT with hot reload (plan/README.md N2). -->
+  <PropertyGroup Condition="'$(OutputType)' == 'Exe' and ('$(Configuration)' == 'Release' or '$(Configuration)' == 'DebugAot') and '$(IsTestProject)' != 'true'">
     <PublishAot>true</PublishAot>
     <!-- The SDK infers SelfContained from PublishAot before this file is imported; set it here too. -->
     <SelfContained Condition="'$(RuntimeIdentifier)' != ''">true</SelfContained>

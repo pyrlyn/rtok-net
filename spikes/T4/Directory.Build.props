@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="../../Directory.Build.props" />
+  <!-- T4 probes: not in rtok.slnx. They publish AOT in Release like the real binaries. -->
+  <PropertyGroup>
+    <RtokSurface>true</RtokSurface>
+    <RtokProcessRunner>true</RtokProcessRunner>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EventSourceSupport>false</EventSourceSupport>
+    <!-- EF Core and the MCP SDK carry their own trim/AOT warnings (research.md C.4). -->
+    <WarningsAsErrors></WarningsAsErrors>
+    <!-- EF precompiled-query interceptors use ? outside a #nullable context (CS8669). -->
+    <NoWarn>$(NoWarn);CS8669</NoWarn>
+    <RunAnalyzers>false</RunAnalyzers>
+  </PropertyGroup>
+</Project>

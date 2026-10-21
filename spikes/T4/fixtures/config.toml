@@ -1,0 +1,21 @@
+[core]
+hook_max_input_bytes = 8388608
+log_level = "info"
+
+[hook]
+max_ms = 10
+
+[plugins.cmd]
+enabled = true
+budget = 4000
+
+[plugins.read]
+enabled = true
+budget = 8000
+
+[plugins.inject]
+enabled = true
+budget = 2000
+
+[plugins.guard]
+enabled = true

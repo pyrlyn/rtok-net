@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="src/Pyrlyn.OperationIcons.csproj" />
-  <Project Path="tests/Pyrlyn.OperationIcons.Tests.csproj" />
-</Solution>

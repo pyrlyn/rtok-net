@@ -1,9 +1,0 @@
-[*.cs]
-# Test names read as sentences: Dispose_removes_the_directory.
-dotnet_diagnostic.CA1707.severity = none
-
-# Verify writes snapshots as UTF-8 with BOM and no final newline.
-[*.{received,verified}.*]
-charset = utf-8-bom
-insert_final_newline = false
-trim_trailing_whitespace = false

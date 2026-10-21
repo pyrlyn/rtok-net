@@ -2,7 +2,7 @@
 
 **What.** rtok rewritten in C# on .NET 10: one tool that cuts tokens for coding agents; every method is a plugin. Surfaces: `rtok hook <event>` (and the tiny `rtok-hook` client), `rtok mcp`, `rtok proxy`. Release is NativeAOT, Debug is JIT.
 
-**Read first.** `plan/README.md` (decisions N1–N20, package map, solution layout), `research.md`, and the catalog sections your task links in `docs/port/catalog.md`. No unplanned work: only tasks in `plan/`.
+**Read first.** `plan/README.md` (decisions N1–N18, package map, solution layout), `research.md`, and the catalog sections your task links in `docs/port/catalog.md`. No unplanned work: only tasks in `plan/`.
 
 **Workflow.** Follow the project-plan skill. Claim a task in its `task.md` (`status: in progress`, your `<provider> / <model>` in `agent`, a short execution plan). Work only in your own git worktree (your session's, or `.worktrees/<id>`), never in the main checkout. One task, one branch `<id>-<slug>` cut from local `main`. Finish: `dotnet build rtok.slnx -c Release -warnaserror`, `dotnet test` and `dotnet csharpier check .` green, write `plan/<id>/done.md`, commit `<id>: <title>`, rebase on `main`, then `git -C <main checkout> merge --ff-only <branch>`; if `main` moved, rebase and retry. There is no remote: never push. Your lane and its order are in `plan/README.md` (Parallel lanes).
 

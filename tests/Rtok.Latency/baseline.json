@@ -1,7 +1,0 @@
-{
-  "osx-arm64": {
-    "post_tool_use": 4.8,
-    "pre_tool_use": 4.37,
-    "session_start": 4.58
-  }
-}

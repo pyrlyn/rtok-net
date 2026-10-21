@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="src/Pyrlyn.Jsonc.csproj" />
-  <Project Path="tests/Pyrlyn.Jsonc.Tests.csproj" />
-</Solution>

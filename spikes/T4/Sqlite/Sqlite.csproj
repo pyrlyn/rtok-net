@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Plain Microsoft.Data.Sqlite, the same work as ef-probe. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ProbeSqlite>true</ProbeSqlite>
+    <AssemblyName>sqlite-probe</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Condition="'$(StaticSqlite)' != 'v3'" />
+    <!-- v3: SQLitePCLRaw 3 brings its own batteries; the 2.x bundle must stay out. -->
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Condition="'$(StaticSqlite)' == 'v3'" />
+  </ItemGroup>
+</Project>

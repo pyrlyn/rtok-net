@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>0.1.0</Version>
-    <Description>Lossless JSONC editing: set or remove one entry by key path, keeping every other byte, comment and comma.</Description>
-    <PackageTags>json;jsonc;comments;config;lossless;editing</PackageTags>
-  </PropertyGroup>
-</Project>
