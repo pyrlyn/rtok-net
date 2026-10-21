@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The AOT lane: source-generated xUnit, run only as a published NativeAOT executable.
+       Rtok.Smoke publishes and runs it; dotnet test never runs it on the JIT. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <IsTestProject>false</IsTestProject>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.aot.mtp-v2" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

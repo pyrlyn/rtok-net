@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P0
 complexity: 3
-readiness: 0%
-agent:
+readiness: 10%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T2. Test infrastructure: xUnit v3, Verify, AOT lane, smoke and latency harness
@@ -23,3 +23,11 @@ Done when:
 Ports: rtok open T644 ([open work](../../docs/port/open-work.md)).
 
 Check: `dotnet test` runs one sample test in each lane (JIT, AOT, smoke) green on macOS, and the latency harness prints a p50/p95 table for the empty `rtok-hook`.
+
+Plan:
+1. `tests/Directory.Build.props|targets`: `*.Tests`, `Rtok.Smoke` and `Rtok.AotTests` are xUnit v3 (MTP v2) test executables; `RtokJitOnly` keeps Benchmarks, Fuzz and Latency off AOT.
+2. `tests/Rtok.Testing`: `TempDir` (deletes itself), `MemFs` (the VFS seam: System.IO.Abstractions `IFileSystem`, Testably mock with OS simulation), repo/fixture paths, `PublishedApps` (AOT publish into a separate artifacts root, or `RTOK_SMOKE_BIN`).
+3. Lanes: `tests/Rtok.Testing.Tests` (JIT: Verify, CsCheck, WireMock samples), `tests/Rtok.AotTests` (`xunit.v3.aot.mtp-v2`, published with AOT), `tests/Rtok.Smoke` (CliWrap and Porta.Pty against published `rtok`, `rtok-hook`; runs the published AOT tests).
+4. `tests/Rtok.Latency`: hyperfine over `tests/fixtures/hooks/*.json`, p50/p95 table, fails over 10 ms median or 20 % over `baseline.json`.
+5. `tests/Rtok.Benchmarks` (BenchmarkDotNet sample), `tests/Rtok.Fuzz` (SharpFuzz, rtok's nine targets, each naming the task that wires it).
+6. Verify: Release `-warnaserror`, `dotnet test`, csharpier, latency table.

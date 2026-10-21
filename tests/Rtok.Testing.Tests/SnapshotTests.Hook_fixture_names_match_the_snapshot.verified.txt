@@ -1,0 +1,5 @@
+﻿[
+  post_tool_use.json,
+  pre_tool_use.json,
+  session_start.json
+]

@@ -96,6 +96,8 @@ pipes.
 N11. **Tests: xUnit v3 on Microsoft.Testing.Platform**, with Verify for snapshots, CsCheck
 for property tests and WireMock.Net for upstream fakes. Most tests run on the JIT; a small
 AOT test project and smoke tests against the published binaries run on every OS in CI.
+Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
+`Directory.Build.props`), renewed yearly and valid only while rtok-net earns no revenue.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
 runtime, so a plugin is a project referenced at build time. A build includes or leaves out
