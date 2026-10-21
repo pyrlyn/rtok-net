@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Rtok.Config</RootNamespace>
+    <!-- Always on: the doc comments of the schema are the comments of config/default.toml. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Tomlyn" />
+    <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
+    <EmbeddedResource Include="config/default.toml" LogicalName="Rtok.Config.default.toml" />
+    <InternalsVisibleTo Include="Rtok.Config.Tests" />
+  </ItemGroup>
+</Project>

@@ -10,6 +10,7 @@ if (args is ["--version"] or ["-V"])
 }
 
 var app = ConsoleApp.Create();
+app.Add<ConfigCommands>("config");
 
 // The linked plugins: id, kind, enabled, surfaces. Until T7 loads the config, nothing
 // overrides a plugin's default.

@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P0
 complexity: 4
-readiness: 0%
-agent:
+readiness: 85%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T7. Config: layered TOML with provenance, show/get/set/validate/init
@@ -24,3 +24,15 @@ Spec: catalog A30, catalog B19 in [docs/port/catalog.md](../../docs/port/catalog
 Ports: rtok closed T0.2, T12.1, T12.2, T12.3, T12.4, T12.5, T12.6, T34.7, T36.7, T36.8, T36.9, T45.4, T184, T328, T362, T363, T364, T365, T379, T381, T594, T595, T630.
 
 Check: Golden tests pass for `config show --sources` and `config set` on a commented file. The file stays byte-identical outside the edited key, and the flag-to-key coverage test passes.
+
+Plan:
+1. `src/Rtok.Config`: the typed schema (one class per section, snake_case, Tomlyn source-generated context), home and git-root resolution, `~` expansion, legacy keys.
+2. Loader on Pyrlyn.Config.Layered: defaults, user file, `.rtok.toml`, `.env` (RTOK_* only), env, flags; then the validator (unknown keys, types, ranges, choices) with file:line.
+3. `config/default.toml` generated from the types and their doc comments, embedded; a drift test regenerates it.
+4. `rtok config show [--sources] | get | set | validate [path] | init` in `Rtok.Cli`, with secrets redacted; `set` through `TomlEditor`.
+5. `tests/Rtok.Config.Tests`: goldens for `show --sources` and `set` on a commented file, validator and layering cases.
+6. The flag-to-key coverage test once T12.11 (L7) has landed its command model.
+
+7. `--dry-run` with a unified diff on `init` and `set` once T12.2 (L7) has landed the diff package.
+
+Status: steps 1–5 are merged. Steps 6 and 7 wait for T12.11 and T12.2; the task closes with them.

@@ -1,0 +1,14 @@
+﻿[
+  {
+    "key": "agents.enabled",
+    "value": true,
+    "source": "default"
+  },
+  {
+    "key": "agents.idle",
+    "value": "30m",
+    "source": "default"
+  },
+  {
+    "key": "agents.junk.crash_dump_min_age_days",
+    "value": 7,

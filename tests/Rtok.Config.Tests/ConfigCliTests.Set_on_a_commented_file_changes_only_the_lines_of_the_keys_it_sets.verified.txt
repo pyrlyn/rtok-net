@@ -1,0 +1,21 @@
+﻿proxy.port = 9000
+plugins.read.allow_paths = [{root}/user/src]
+plugins.read.max_chars = 40000
+stats.prices.my-model.output = 2
+web.host = 0.0.0.0
+--- config.toml
+# my rtok settings
+[proxy]   # the proxy
+port = 9000      # keep in sync with the IDE
+mode = "passthrough"   # not compress yet
+
+[plugins.read]
+allow_paths = ["~/src"]
+max_chars = 40000 # big files
+
+[stats.prices."my-model"]
+input = 1.0
+output = 2
+
+[web]
+host = "0.0.0.0"
