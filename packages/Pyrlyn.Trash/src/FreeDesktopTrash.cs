@@ -174,7 +174,7 @@ internal static class FreeDesktopTrash
     }
 
     /// <summary>Percent-encodes each segment; the separators stay.</summary>
-    private static string Escape(string path) =>
+    internal static string Escape(string path) =>
         string.Join('/', path.Split('/').Select(Uri.EscapeDataString));
 
     /// <summary>The device of the path, or of its nearest existing parent.</summary>

@@ -31,4 +31,6 @@ Spec: catalog A7, catalog B16 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T2.4, T7.1, T188, T604, T606, T608.
 
+Fuzz: `prose-compress` in `tests/Rtok.Fuzz`: `compress_prose` over any Markdown keeps code fences byte-identical, is deterministic and never grows the text.
+
 Check: Repeated runs give byte-identical output, and the fence and glue cases from the catalog pass.

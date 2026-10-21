@@ -42,4 +42,6 @@ Spec: catalog A3, catalog B4 in [docs/port/catalog.md](../../docs/port/catalog.m
 
 Ports: rtok closed T4.1, T36.10, T59.4, T70.3, T75, T142, T172, T190, T191, T192, T194, T213, T263, T265, T269, T353, T401, T458, T528, T537; open T526, S1, S8 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `mcp-jsonrpc` in `tests/Rtok.Fuzz`: NDJSON and Content-Length streams into the stdio server with stub tools get a JSON-RPC reply or are dropped by the spec, and the wrap splitter forwards malformed frames unchanged.
+
 Check: MCP contract goldens (initialize, tools/list, errors, a tools/call per tool) pass byte-exact over stdio and HTTP on the AOT binary.

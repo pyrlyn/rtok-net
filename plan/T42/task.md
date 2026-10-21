@@ -32,4 +32,6 @@ Spec: catalog A23 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T455.
 
+Fuzz: `lockfiles` in `tests/Rtok.Fuzz`: each lockfile resolver and the `llms.txt` reader over any bytes give pinned versions or none.
+
 Check: Ingest and query fixtures pass, and an unchanged re-ingest keeps doc ids.

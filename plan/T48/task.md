@@ -37,4 +37,6 @@ Spec: catalog A32, catalog B24 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T55.1, T55.12, T83.1, T83.3, T83.8, T83.9, T429, T430, T504; open T55.12 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `win-quote` in `tests/Rtok.Fuzz`: any argument quoted for cmd.exe and PowerShell parses back to itself under `CommandLineToArgvW` rules.
+
 Check: The Windows CI runner passes every test, including the Windows-specific cases from the catalog.

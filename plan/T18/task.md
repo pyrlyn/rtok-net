@@ -35,4 +35,6 @@ Spec: catalog A4, catalog B12 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T3.3, T673, T674, T675, T676, T677, T678, T679, T680, T681, T682, T683, T684, T685, T905.
 
+Fuzz: `cmd-formatters` in `tests/Rtok.Fuzz`: every formatter over any bytes keeps the acceptance rules: never longer than the input, every hash, path and WARN/ERROR line kept.
+
 Check: Every formatter arm has a golden fixture with a `min_saving` floor, and all goldens pass.

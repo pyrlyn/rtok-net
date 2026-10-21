@@ -36,4 +36,6 @@ Spec: catalog A14, catalog A6 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T5.3, T5.4, T11.7, T11.8, T36.1, T36.2, T55.15, T59.5, T61.2, T127, T609; open T55.15 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `proxy-rewrite` in `tests/Rtok.Fuzz`: any request through each rewriter is valid JSON, deterministic, leaves the system prompt, tools and last two turns byte-identical, and every pointer expands back.
+
 Check: Replaying a recorded session twice gives byte-identical requests, every pointer expands back to its original, and the image/document test passes.

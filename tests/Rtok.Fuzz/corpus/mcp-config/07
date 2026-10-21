@@ -1,0 +1,2 @@
+[mcp_servers]
+rtok = { command = "rtok", args = ["mcp"] }

@@ -99,7 +99,9 @@ public static class HumanDuration
         {
             if (ticks >= size)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{ticks / size}{unit}");
+                // The last unit is one tick, which is 100 ns.
+                var n = size == 1 ? ticks * 100 : ticks / size;
+                sb.Append(CultureInfo.InvariantCulture, $"{n}{unit}");
                 ticks %= size;
             }
         }

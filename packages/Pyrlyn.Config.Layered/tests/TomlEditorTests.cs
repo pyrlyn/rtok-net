@@ -124,6 +124,26 @@ public sealed class TomlEditorTests
         Assert.Equal(1, e.Line);
     }
 
+    // Found by the toml-edit fuzz target: Tomlyn threw ArgumentOutOfRangeException.
+    [Fact]
+    public void AnEscapedSurrogateIsRefusedWithItsLine()
+    {
+        var e = Assert.Throws<ConfigFileException>(() =>
+            TomlEditor.Set("a = 1\nb = \"\\uD800\"\n", "a", 2L, "config.toml")
+        );
+        Assert.Equal(("config.toml", 2), (e.File, e.Line));
+    }
+
+    // Found by the toml-edit fuzz target: Tomlyn's offsets start after the BOM.
+    [Fact]
+    public void ABomStaysAndTheEditLandsInPlace()
+    {
+        Assert.Equal(
+            "\uFEFFkey = 202\r\n# c\r\n",
+            TomlEditor.Set("\uFEFFkey = 1\r\n# c\r\n", "key", 202L)
+        );
+    }
+
     [Fact]
     public void ValuesAreWrittenAsToml()
     {
@@ -133,5 +153,7 @@ public sealed class TomlEditorTests
         Assert.Equal(8080L, TomlText.ParseValueOrString("8080"));
         Assert.Equal("not toml", TomlText.ParseValueOrString("not toml"));
         Assert.Equal("quoted", TomlText.ParseValueOrString("\"quoted\""));
+        // Found by the toml-edit fuzz target: Tomlyn threw on the dangling escape.
+        Assert.Equal("\"a \\", TomlText.ParseValueOrString("\"a \\"));
     }
 }

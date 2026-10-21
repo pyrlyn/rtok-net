@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text.RegularExpressions;
 using Tomlyn;
 using Tomlyn.Helpers;
 using Tomlyn.Model;
@@ -8,7 +9,7 @@ using Tomlyn.Syntax;
 namespace Pyrlyn.Config.Layered;
 
 /// <summary>Reads TOML text into a value tree with the line of every leaf, and writes values.</summary>
-public static class TomlText
+public static partial class TomlText
 {
     /// <summary>Parses TOML text into tables, arrays and scalars.</summary>
     /// <param name="text">The TOML text.</param>
@@ -74,7 +75,18 @@ public static class TomlText
     internal static DocumentSyntax ParseSyntax(string text, string? file)
     {
         ArgumentNullException.ThrowIfNull(text);
-        var doc = SyntaxParser.Parse(text, file, validate: true);
+        DocumentSyntax doc;
+        try
+        {
+            doc = SyntaxParser.Parse(text, file, validate: true);
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            // Tomlyn throws instead of reporting an escape of a surrogate code point (\uD800).
+            var at = SurrogateEscape().Match(text);
+            var line = at.Success ? text.AsSpan(0, at.Index).Count('\n') + 1 : 1;
+            throw new ConfigFileException(file, line, 0, $"invalid escape: {e.Message}");
+        }
         if (doc.HasErrors)
         {
             var error = doc.Diagnostics.First(d => d.Kind == DiagnosticMessageKind.Error);
@@ -138,8 +150,16 @@ public static class TomlText
         {
             return raw;
         }
-        var doc = SyntaxParser.Parse($"v = {raw}", null, validate: true);
-        if (doc.HasErrors || doc.Tables.ChildrenCount != 0 || doc.KeyValues.ChildrenCount != 1)
+        DocumentSyntax doc;
+        try
+        {
+            doc = ParseSyntax($"v = {raw}", null);
+        }
+        catch (ConfigFileException)
+        {
+            return raw;
+        }
+        if (doc.Tables.ChildrenCount != 0 || doc.KeyValues.ChildrenCount != 1)
         {
             return raw;
         }
@@ -234,4 +254,7 @@ public static class TomlText
         }
         return table;
     }
+
+    [GeneratedRegex(@"\\(?:u|U0000)[dD][89a-fA-F][0-9a-fA-F]{2}", RegexOptions.None, 1000)]
+    private static partial Regex SurrogateEscape();
 }

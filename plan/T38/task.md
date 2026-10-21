@@ -34,4 +34,6 @@ Spec: catalog B8 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T358, T358.1, T358.2, T358.3, T358.4, T358.5, T358.6, T389; open T396 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `usage-logs` in `tests/Rtok.Fuzz`: each host log reader over any bytes never throws and gives non-negative totals.
+
 Check: Reader fixtures for each host give the expected totals, and DST bucket tests pass.

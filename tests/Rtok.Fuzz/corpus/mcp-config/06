@@ -1,0 +1,5 @@
+// header
+{
+  "a": [1, /* c */ 2],
+  "mcpServers": {"rtok": {"command": "rtok"}, }
+}

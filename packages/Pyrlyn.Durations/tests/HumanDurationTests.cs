@@ -31,6 +31,20 @@ public sealed class HumanDurationTests
         Assert.Equal(TimeSpan.FromTicks(5), HumanDuration.Parse("500ns"));
     }
 
+    // Found by the durations fuzz target: one tick was written as 1ns.
+    [Theory]
+    [InlineData(1, "100ns")]
+    [InlineData(long.MaxValue, null)]
+    public void FormatsTicksAsNanoseconds(long ticks, string? text)
+    {
+        var value = TimeSpan.FromTicks(ticks);
+        if (text is not null)
+        {
+            Assert.Equal(text, HumanDuration.Format(value));
+        }
+        Assert.Equal(value, HumanDuration.Parse(HumanDuration.Format(value)));
+    }
+
     [Theory]
     [InlineData("5x")]
     [InlineData("-1d")]

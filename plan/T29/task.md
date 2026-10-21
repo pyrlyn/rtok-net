@@ -39,4 +39,6 @@ Spec: catalog B9 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T28.0, T28.1, T28.2, T31.0, T31.1, T31.2, T205, T212, T259, T298, T303, T323, T385.1, T385.2, T385.4, T385.5, T385.6, T385.7, T385.8, T385.9.1, T385.9.2, T385.10, T385.11, T385.12.1, T385.12.2, T385.13, T432, T532, T533, T583, T584, T655, T657; open T385, T385.9 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `lane-classify` in `tests/Rtok.Fuzz`: any path and headers give one lane with the markers stripped, the agent lane is never routed, and cache keys are deterministic.
+
 Check: Lane and cache-key table tests pass, batch results never double-count, and the agent lane is never capped or routed.

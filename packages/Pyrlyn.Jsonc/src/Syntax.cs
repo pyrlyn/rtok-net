@@ -18,6 +18,10 @@ internal static class Syntax
     {
         if (Bytes.Skip(text, bom) == text.Length)
         {
+            // Only comments: the reader still decides they are valid (no U+2028 in a line
+            // comment, a block comment closed), so check them ahead of a value.
+            var check = new Utf8JsonReader([.. text[bom..], .. "\nnull"u8], Options);
+            check.Read();
             return null;
         }
         var reader = new Utf8JsonReader(text[bom..], Options);
@@ -41,8 +45,8 @@ internal static class Syntax
         {
             while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
             {
-                var key = reader.GetString()!;
                 var keyStart = bom + (int)reader.TokenStartIndex;
+                var key = Key(ref reader, text, keyStart);
                 reader.Read();
                 Add(node, new Entry(key, keyStart, Value(ref reader, text, bom)), text);
             }
@@ -57,6 +61,26 @@ internal static class Syntax
         }
         node.End = bom + (int)reader.BytesConsumed;
         return node;
+    }
+
+    /// <summary>The key's text; the reader checks a key's UTF-8 and escapes only when it is read.</summary>
+    private static string Key(ref Utf8JsonReader reader, ReadOnlySpan<byte> text, int at)
+    {
+        try
+        {
+            return reader.GetString()!;
+        }
+        catch (InvalidOperationException e)
+        {
+            var line = text[..at].Count((byte)'\n');
+            throw new JsonException(
+                "a key is not valid UTF-8 or has a lone surrogate escape",
+                null,
+                line,
+                at - Bytes.LineStart(text, at),
+                e
+            );
+        }
     }
 
     private static void Add(Node parent, Entry entry, ReadOnlySpan<byte> text)

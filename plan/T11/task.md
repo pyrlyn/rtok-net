@@ -48,6 +48,8 @@ Spec: catalog A31, catalog B21 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T20.2, T53.2, T60.1, T60.2, T83.7, T83.16, T107, T276, T276.1, T276.2, T276.3, T276.4, T276.5, T276.6, T315, T316, T317, T318, T319, T345, T348, T408, T409, T436, T436.2, T651, T903; open T436.4 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `cli-argv` in `tests/Rtok.Fuzz`: NUL-split argv through the generated command tree with no-op command bodies; bad input exits 2, nothing else escapes.
+
 Check: Golden tests pass for every subcommand's `--help` and for each shell's completion script, and the banned-API analyzer reports no `Process.Start` outside ProgressRunner, and the exit-code tests show 2 for a parse error and an unknown command.
 
 Plan:

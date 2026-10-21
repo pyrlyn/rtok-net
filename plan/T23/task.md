@@ -37,4 +37,6 @@ Spec: catalog A10, catalog B14 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T2.5, T58.2, T59.6, T62.2, T71.2, T306, T375; open T131 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `checkpoint` in `tests/Rtok.Fuzz`: any transcript JSONL gives a checkpoint within `checkpoint_tokens` with bounded state.
+
 Check: Transcript fixtures give the expected checkpoint, handoff and brief texts, and the hook stays inside the T13 matrix and latency gate.

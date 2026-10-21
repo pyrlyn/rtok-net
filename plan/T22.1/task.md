@@ -24,4 +24,6 @@ Tests:
 - `Rtok.Plugins.Memory.Tests` WireMock: a provider error, timeout or malformed reply leaves the notes unchanged and never fails the hook.
 - `Rtok.Plugins.Memory.Tests` unit: the API key comes from the chosen key storage and never appears in logs, the store or exported notes.
 
+Fuzz: `extractor-reply` in `tests/Rtok.Fuzz`: any provider reply gives zero or more bounded notes and never throws.
+
 Check: A fake-server test shows extraction within the cost cap and no call when the extractor is off.

@@ -40,4 +40,6 @@ Spec: catalog A2, catalog B1 in [docs/port/catalog.md](../../docs/port/catalog.m
 
 Ports: rtok closed T0.6, T2.1, T2.2, T10.11, T46.3, T83.15, T87, T93, T98, T101, T118.1, T129, T130.1, T130.2, T130.3, T170, T178, T200, T201, T204, T237, T245, T262.1, T262.3, T262.4, T262.5, T291, T295, T309, T390, T390.1, T459, T461, T645; open T428, T525 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `hook-io` in `tests/Rtok.Fuzz`: stdin bytes for each host adapter and event; the reply is the host's no-op or valid JSON, and no exception escapes.
+
 Check: The fail-open matrix passes on the AOT binary: 5 hosts × 8 events × {empty, garbage, truncated, non-UTF-8, 1 MiB} stdin, every case exits 0 with the host's no-op reply.

@@ -38,6 +38,8 @@ Spec: catalog A2, catalog B1, catalog B2 in [docs/port/catalog.md](../../docs/po
 
 Ports: rtok open S7 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `hook-frame` in `tests/Rtok.Fuzz`: the client-resident frame decoder over any bytes decodes or refuses, and never reads past its cap.
+
 Check: With the resident up, the latency gate shows `rtok-hook` p95 ≤ 10 ms on the PreToolUse fixture on every OS. With it down, the client answers within 50 ms plus process start.
 
 Plan:

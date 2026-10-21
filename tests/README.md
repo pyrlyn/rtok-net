@@ -43,9 +43,16 @@ dotnet run --project tests/Rtok.Fuzz -c Release -- --list
 - `Rtok.Latency`: hyperfine on every `tests/fixtures/hooks/*.json`; prints p50/p95 and fails
   over a 10 ms median or 20 % over `baseline.json` (its README).
 - `Rtok.Benchmarks`: BenchmarkDotNet; results land in `artifacts/benchmarks/`.
-- `Rtok.Fuzz` (`rtok-fuzz <target>`): SharpFuzz targets for libFuzzer, the ones rtok fuzzed.
-  Each is wired by the task that ports its code (`--list` names it). To fuzz one, instrument
-  the assembly under test with `sharpfuzz` and run it under
-  [libfuzzer-dotnet](https://github.com/Metalnem/libfuzzer-dotnet).
+- `Rtok.Fuzz` (`rtok-fuzz <target>`): SharpFuzz targets for libFuzzer, one per parser of
+  outside input (plan/README.md N11). A target lives in `Targets/`, catches only the failure
+  type its code documents, checks that code's invariants through `FuzzInput.Check`, and keeps
+  seeds in `corpus/<target>/`. Unwired targets name the task that wires them (`--list`).
+  `eng/fuzz.sh <target> [libFuzzer flags]` publishes it, instruments the assemblies with
+  `sharpfuzz` and runs it under [libfuzzer-dotnet](https://github.com/Metalnem/libfuzzer-dotnet),
+  built from source with a clang that ships libFuzzer (`CLANG=/opt/homebrew/opt/llvm/bin/clang`
+  on macOS). Add a crash input to the target's corpus once it is fixed.
+- `Rtok.Fuzz.Tests` (a normal test project): every wired target over its corpus, random bytes
+  and mutated seeds on each `dotnet test`. It also fails when a closed task left its target
+  unwired, or a `Fuzz:` line names a target `FuzzTargets` lacks.
 
 These tools set `RtokJitOnly`: they never publish with AOT.

@@ -24,7 +24,10 @@ internal static class Bytes
         return i;
     }
 
-    /// <summary>The end of the comment starting at <paramref name="i"/> (a line comment ends before its newline), or 0.</summary>
+    /// <summary>
+    /// The end of the comment starting at <paramref name="i"/>, or 0. A line comment ends before
+    /// its <c>\r</c> or <c>\n</c>, as <see cref="System.Text.Json.Utf8JsonReader"/> ends it.
+    /// </summary>
     private static int Comment(ReadOnlySpan<byte> s, int i)
     {
         if (i + 1 >= s.Length || s[i] != (byte)'/')
@@ -33,7 +36,7 @@ internal static class Bytes
         }
         if (s[i + 1] == (byte)'/')
         {
-            var nl = s[i..].IndexOf((byte)'\n');
+            var nl = s[i..].IndexOfAny((byte)'\r', (byte)'\n');
             return nl < 0 ? s.Length : i + nl;
         }
         if (s[i + 1] == (byte)'*')
@@ -92,8 +95,7 @@ internal static class Bytes
         }
         if (s[i] == (byte)'\n')
         {
-            // A line comment swallows the \r of its \r\n.
-            return i > 0 && s[i - 1] == (byte)'\r' ? i - 1 : i;
+            return i;
         }
         return s[i] == (byte)'\r' && i + 1 < s.Length && s[i + 1] == (byte)'\n' ? i : -1;
     }

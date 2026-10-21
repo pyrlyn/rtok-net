@@ -31,6 +31,8 @@ Spec: catalog B17 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: no rtok task; new for .NET.
 
+Fuzz: `trash-info` in `tests/Rtok.Fuzz`: the `.trashinfo` `Path=` encoding round-trips any file name.
+
 Check: Tests on each OS show a trashed file is gone from its path and present in the trash.
 
 Plan:

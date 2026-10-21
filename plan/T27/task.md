@@ -42,4 +42,6 @@ Spec: catalog A13 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T5.1, T5.2, T5.5, T11.1, T11.2, T11.3, T11.4, T11.6, T34.6, T36.18, T45.2, T51.1, T51.2, T51.3, T51.4, T55.14, T326, T686; open S5, S6 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `proxy-wire` in `tests/Rtok.Fuzz`: request and SSE bodies for each wire give usage or none, plain passthrough bytes stay unchanged, and the Host header check never throws.
+
 Check: WireMock upstream tests cover passthrough byte-identity, SSE usage for each wire, and loop detection, and the proxy fixture bench is recorded.

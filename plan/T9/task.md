@@ -33,4 +33,6 @@ Spec: catalog A6, catalog B10 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T3.5, T36.20, T45.3, T55.11, T67.1, T67.2, T189, T475; open T522, I-S3 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `expand-range` in `tests/Rtok.Fuzz`: line-range and id-prefix strings never throw, the 25 logged spellings parse, and an archived body expands back byte-identical.
+
 Check: A CsCheck property test shows that every shortening path expands back byte-identical (CRLF, non-UTF-8, empty bodies), and all 25 range strings parse.

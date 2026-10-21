@@ -21,4 +21,6 @@ Tests:
 - `Rtok.Agents.Tests` integration: if an installer is built, Trae joins the T35 install matrix on fake Linux, macOS and Windows homes with one rtok entry in its user-level MCP file.
 - `Rtok.Agents.Tests` unit: if an installer is built, install and uninstall keep every foreign server in Trae's MCP file byte for byte.
 
+Fuzz: an installer, if built, joins T35's `agents-install` target.
+
 Check: The host table has a dated Trae row with sources, and an installer test passes if one was built.

@@ -38,4 +38,6 @@ Spec: catalog A11 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T8.1, T8.2, T8.3, T8.4, T8.5, T8.6, T8.7, T8.13, T8.15, T8.16, T8.17, T21.2, T35.1, T35.2, T35.3, T35.4, T35.5, T36.16, T36.17, T39.0, T41.1, T52.1, T52.2, T52.3, T52.4, T52.5, T59.3, T68.1, T68.2, T68.3, T68.4, T68.5, T68.6, T68.7, T68.9, T68.10, T181, T327, T368, T371, T376, T377, T387, T474, T620, T621, T646, T654, T663, T664, T665.
 
+Fuzz: `outline` in `tests/Rtok.Fuzz`: any source bytes through each grammar's tags query give ranges inside the file and no native crash.
+
 Check: The labelled truth test reaches recall ≥ 0.92, and the warm re-index of an unchanged 3000-file fixture takes under 0.1 s.

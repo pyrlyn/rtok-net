@@ -37,4 +37,6 @@ Spec: catalog A29 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T16.1, T16.2, T16.3, T16.4, T16.5, T16.6, T16.7, T16.9, T36.12, T45.1, T53.4, T143, T592, T624, T653; open T395 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `otlp-encode` in `tests/Rtok.Fuzz`: any strings in ledger rows encode to valid OTLP JSON.
+
 Check: A WireMock collector test shows that each row is exported once, that an unreachable collector marks nothing, and that concurrent flushes never double-export.

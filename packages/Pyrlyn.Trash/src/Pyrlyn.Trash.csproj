@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="../../Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
     <InternalsVisibleTo Include="Pyrlyn.Trash.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
   </ItemGroup>
 </Project>

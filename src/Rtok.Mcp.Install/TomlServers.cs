@@ -30,6 +30,11 @@ internal static class TomlServers
     /// <summary>The text with rtok's table in place of whatever spelled the entry before, or appended.</summary>
     public static string With(McpSpec spec, string text, JsonObject entry)
     {
+        if (text.StartsWith('\uFEFF'))
+        {
+            // Tomlyn's offsets start after a BOM.
+            return "\uFEFF" + With(spec, text[1..], entry);
+        }
         var nl = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
         var block = Block(spec, entry, nl);
         var cuts = Cuts(spec, text);
@@ -55,6 +60,10 @@ internal static class TomlServers
 
     public static string Without(McpSpec spec, string text)
     {
+        if (text.StartsWith('\uFEFF'))
+        {
+            return "\uFEFF" + Without(spec, text[1..]);
+        }
         var edited = Splice(text, Cuts(spec, text));
         Check(spec, edited, want: false);
         return edited;
@@ -187,7 +196,16 @@ internal static class TomlServers
 
     private static DocumentSyntax Syntax(McpSpec spec, string text)
     {
-        var doc = SyntaxParser.Parse(text, spec.Path, validate: true);
+        DocumentSyntax doc;
+        try
+        {
+            doc = SyntaxParser.Parse(text, spec.Path, validate: true);
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            // Tomlyn throws on a \u escape that names a surrogate.
+            throw new InvalidDataException($"{spec.Path}: invalid escape: {e.Message}", e);
+        }
         if (doc.HasErrors)
         {
             var error = doc.Diagnostics.First(d => d.Kind == DiagnosticMessageKind.Error);

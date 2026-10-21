@@ -37,4 +37,6 @@ Spec: catalog A22, catalog B7 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T405, T441, T441.1, T441.2, T441.3, T441.4, T441.5, T441.6, T441.7, T441.8, T441.10, T441.11, T441.12, T441.13.1, T441.13.2, T441.13.3, T441.13.4, T441.13.5, T441.13.6, T441.13.7, T442, T541, T586, T601, T615, T904.
 
+Fuzz: `task-file` in `tests/Rtok.Fuzz`: any front-matter task file and TaskId string parses or refuses, and a parsed file serializes back byte-identical.
+
 Check: Adapter tests run against a temp dir and WireMock fakes of GitHub and GitLab.

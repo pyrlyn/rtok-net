@@ -124,6 +124,11 @@ no mocks, and smoke tests against the published binaries run AOT, on every OS in
 Every task lists the tests that prove it under `Tests:` (project, kind, case); it closes
 only when they exist and pass. Verify runs under its OpenSource sponsorship exemption (`Verify_SponsorshipExemption` in
 `Directory.Build.props`), renewed yearly and valid only while rtok-net earns no revenue.
+Every parser of outside input (host configs, stdin, wire bodies, transcripts, logs, argv)
+gets a SharpFuzz target in `tests/Rtok.Fuzz` from the task that lands it, named in that
+task's `Fuzz:` line (T53). A target catches only the documented failure type and checks the
+code's own invariants; `Rtok.Fuzz.Tests` replays its corpus and generated inputs on every
+`dotnet test`, and `eng/fuzz.sh` runs it under libFuzzer.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
 runtime, so a plugin is a project referenced at build time. A build includes or leaves out
@@ -289,7 +294,7 @@ conflict on rebase: keep both sides.
 
 | Lane | Area | Order |
 | --- | --- | --- |
-| L1 | tests, plugin contract, core, cmd/memory plugins | T2, T5, T6, T17, T18, T22, T23, T22.1 |
+| L1 | tests, plugin contract, core, cmd/memory plugins | T2, T5, T6, T53, T17, T18, T22, T23, T22.1 |
 | L2 | store, archive, logs, proxy | T8, T10, T9, T27, T29, T28, T54, T50 |
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
 | L4 | hook latency, hooks, resident, MCP, agents | T4, T13, T14, T15, T16, T37, T46, T49, T44.1, T52 |

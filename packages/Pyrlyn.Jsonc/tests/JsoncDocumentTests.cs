@@ -50,6 +50,65 @@ public sealed class JsoncDocumentTests
         Assert.StartsWith("settings.json:2:", e.Message, StringComparison.Ordinal);
     }
 
+    // Found by the jsonc-edit fuzz target: such a key escaped as InvalidOperationException.
+    [Theory]
+    [InlineData(
+        new byte[]
+        {
+            (byte)'{',
+            (byte)'\n',
+            (byte)'"',
+            (byte)'m',
+            0x95,
+            (byte)'"',
+            (byte)':',
+            (byte)'1',
+            (byte)'}',
+        }
+    )]
+    [InlineData(
+        new byte[]
+        {
+            (byte)'{',
+            (byte)'\n',
+            (byte)'"',
+            (byte)'\\',
+            (byte)'u',
+            (byte)'d',
+            (byte)'8',
+            (byte)'0',
+            (byte)'0',
+            (byte)'"',
+            (byte)':',
+            (byte)'1',
+            (byte)'}',
+        }
+    )]
+    public void AKeyOfInvalidUtf8OrALoneSurrogateIsAParseError(byte[] raw)
+    {
+        var e = Assert.Throws<JsoncException>(() => JsoncDocument.Parse(raw, "settings.json"));
+
+        Assert.Equal(2L, e.Line);
+    }
+
+    // Found by the jsonc-edit fuzz target: the document was taken for only comments, and the
+    // first edit failed.
+    [Theory]
+    [InlineData("// a\r>- b\n")]
+    [InlineData("// a\u2028\n")]
+    [InlineData("/* a")]
+    public void CommentsTheReaderRefusesAreAParseError(string raw) =>
+        Assert.Throws<JsoncException>(() => JsoncDocument.Parse(raw));
+
+    [Fact]
+    public void ALineCommentEndsAtACarriageReturn()
+    {
+        var doc = JsoncDocument.Parse("// a\r{\"b\": 1}\r\n");
+
+        Assert.Equal(1, doc.Get(["b"])?.GetInt32());
+        Assert.Equal("// a\r{\"b\": 2}\r\n", doc.Set(["b"], 2).Text);
+    }
+
     [Fact]
     public void LoadReadsTheBytesAndNamesTheFileInErrors()
     {

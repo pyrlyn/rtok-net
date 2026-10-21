@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../Rtok.Fuzz/Rtok.Fuzz.csproj" />
+  </ItemGroup>
+</Project>

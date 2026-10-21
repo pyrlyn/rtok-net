@@ -35,4 +35,6 @@ Tests:
 
 Ports: rtok open S1, S2, S3, S4, S5, S6, S7, S8, I-S5 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `docs/security.md` names the fuzz target behind each surface's input checks (S1, S4, S6 among them).
+
 Check: `docs/security.md` exists and each of S1-S8 maps to a named passing test.

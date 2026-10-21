@@ -36,4 +36,6 @@ Spec: catalog A8, catalog B13 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T2.6, T50.4, T55.8, T55.9, T55.16, T57.1, T62.1, T299, T322, T350, T369, T445, T450, T555, T556, T557, T558, T559.
 
+Fuzz: `guard-key` in `tests/Rtok.Fuzz`: key normalization over any command or Read argument is deterministic and idempotent.
+
 Check: Table tests cover the key normalization and every read-only and writer class from rtok, plus non-ASCII input.

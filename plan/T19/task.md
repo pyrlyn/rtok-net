@@ -38,4 +38,6 @@ Spec: catalog A5, catalog B11 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T4.2, T4.3, T4.4, T4.5, T4.6, T36.5, T36.6, T50.3, T55.13, T58.1, T59.2, T68.8, T122, T135, T136, T300, T351, T378, T383, T384, T435, T454, T529, T535, T590, T670; open S4 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `text-ops` and `read-roots` in `tests/Rtok.Fuzz`: each read mode over any file bytes and range string stays under the cap and `lines a-b` is a slice of the input; no path string escapes the allowed roots or the deny list.
+
 Check: Tests cover every mode, dedup and delta, the root and deny-list refusals over stdio and HTTP, and the native Read gate on each host shape.

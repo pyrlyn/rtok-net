@@ -40,4 +40,6 @@ Spec: catalog A27 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T24.0, T24.1, T24.2, T24.3, T24.4, T24.5, T225, T225.1, T270, T589.
 
+Fuzz: `log-tail` in `tests/Rtok.Fuzz`: `logs` and `watch` over truncated, non-UTF-8 and half-written files print only whole lines and never throw.
+
 Check: Rotation, retention and follow tests pass, including truncation and an empty replacement file. A test logs through Serilog from several processes and finds every line in the `.N` files.

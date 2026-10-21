@@ -30,4 +30,6 @@ Spec: catalog A28, catalog B23 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T20.1, T40, T43, T73, T80, T597.
 
+Fuzz: `demon-state` in `tests/Rtok.Fuzz`: a corrupt state file reads as stopped and never throws.
+
 Check: Tests start, kill and restart a fake service and check the ownership rules.

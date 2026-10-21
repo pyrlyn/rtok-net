@@ -1,0 +1,7 @@
+Usage: [-h|--help] [--version]
+
+Options:
+  --a <string>    Quoted. [Default: @"say ""hi"""]
+  --b <string>    [Default: @""]
+  --c <int>       Over
+                  two lines. [Required]

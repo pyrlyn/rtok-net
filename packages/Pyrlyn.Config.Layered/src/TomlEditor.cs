@@ -32,6 +32,11 @@ public static class TomlEditor
     {
         ArgumentNullException.ThrowIfNull(text);
         ArgumentNullException.ThrowIfNull(value);
+        if (text.StartsWith('\uFEFF'))
+        {
+            // Tomlyn's offsets start after a BOM.
+            return "\uFEFF" + Set(text[1..], key, value, file);
+        }
         var path = KeyPath.Split(key);
         var literal = TomlText.Format(value);
         var doc = TomlText.ParseSyntax(text, file);

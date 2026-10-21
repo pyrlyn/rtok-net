@@ -94,9 +94,10 @@ public static class HostFile
         {
             return new JsonObject();
         }
+        JsonNode node;
         try
         {
-            return JsonNode.Parse(raw) ?? new JsonObject();
+            node = JsonNode.Parse(raw) ?? new JsonObject();
         }
         catch (JsonException e)
         {
@@ -110,6 +111,19 @@ public static class HostFile
                 e
             );
         }
+        try
+        {
+            // The parser keeps string escapes as written; a lone surrogate (\ud800) fails only on write.
+            _ = ToJson(node);
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new InvalidDataException(
+                $"{path}: a string holds a lone surrogate escape; rtok refuses to rewrite this file",
+                e
+            );
+        }
+        return node;
     }
 
     /// <summary>

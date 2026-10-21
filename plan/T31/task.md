@@ -37,4 +37,6 @@ Spec: catalog A17, catalog B22 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T22.0, T22.1, T22.2, T22.3, T22.4, T22.5, T22.6, T34.4, T36.13.
 
+Fuzz: `report-html` in `tests/Rtok.Fuzz`: any strings in store rows render escaped in html and md.
+
 Check: Golden md, html and `--ai` outputs match on a fixture store, the `--ai` output never exceeds its budget, the AOT binary writes a PDF that opens, and the architecture test shows only `Rtok.Report.Pdf` references QuestPDF.

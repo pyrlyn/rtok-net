@@ -40,4 +40,6 @@ Spec: catalog A9, catalog B14 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T6.1, T6.2, T6.3, T66.1, T66.2, T69.1, T69.2, T69.3, T69.4, T69.5, T69.6, T202, T203, T292, T293, T294, T304, T308, T361, T373, T374, T417, T419, T452, T460, T472, T501, T538, T539, T548, T549, T550, T551, T552, T553, T562, T563, T564, T565, T566, T617, T618, T666.1, T667, T668, T669, T671.
 
+Fuzz: `mem-text` in `tests/Rtok.Fuzz`: any note or query text never surfaces an FTS5 syntax error, `<private>` text never survives, and the `memory sync` block parser refuses or round-trips.
+
 Check: The memory recall bench (planted, drifted and superseded facts) passes at rtok's level, and the sync guard test refuses a hand-edited block.

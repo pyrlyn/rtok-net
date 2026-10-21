@@ -22,6 +22,8 @@ Spec: catalog A31 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T416.1, T416.2, T416.3, T416.4; open T416 ([open work](../../docs/port/open-work.md)).
 
+Fuzz: `change-preview` in `tests/Rtok.Fuzz`: two texts (split at the first NUL) give a diff whose hunks turn the old text into the new one, and totals that match the line counts.
+
 Check: Verify snapshots match for edit, stat, removal and totals output, with and without colour.
 
 Plan:

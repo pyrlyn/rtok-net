@@ -27,4 +27,6 @@ Tests:
 - `Rtok.Agents.Tests` unit: the generated support-matrix table has a row per new host and matches the committed docs table.
 - `Rtok.Mcp.Install.Tests` unit: each new host's `McpSpec` rows pass the `McpHostsTests` cycle (install, again, update, status, remove).
 
+Fuzz: each new host joins T35's `agents-install` target.
+
 Check: Each added host passes the T35 install-matrix test.

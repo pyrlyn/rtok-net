@@ -211,11 +211,33 @@ public sealed class McpInstallerTests
         Assert.Equal(raw, disk.Read(Specs.File));
     }
 
+    // Found by the mcp-config fuzz target: Tomlyn's offsets start after the BOM, so the splice
+    // landed one character early.
+    [Fact]
+    public void Toml_with_a_bom_keeps_it_and_edits_in_place()
+    {
+        var spec = Specs.Of(McpFormat.Toml, "mcp_servers");
+        const string Raw =
+            "﻿model = \"o3\"\r\n\r\n[mcp_servers.rtok]\r\ncommand = \"old\"\r\n\r\n[ui]\r\nx = 1\r\n";
+
+        var with = McpConfig.With(spec, Raw, spec.Entry());
+
+        Assert.StartsWith(
+            "﻿model = \"o3\"\r\n\r\n[mcp_servers.rtok]\r\n",
+            with,
+            StringComparison.Ordinal
+        );
+        Assert.EndsWith("\r\n\r\n[ui]\r\nx = 1\r\n", with, StringComparison.Ordinal);
+        Assert.Equal(with, McpConfig.With(spec, with, spec.Entry()));
+        Assert.Equal("﻿model = \"o3\"\r\n\r\n\r\n[ui]\r\nx = 1\r\n", McpConfig.Without(spec, with));
+    }
+
     [Theory]
     [InlineData(McpFormat.Json, "{\n  // a comment\n}\n")]
     [InlineData(McpFormat.Jsonc, "{ \"mcpServers\": [] }")]
     [InlineData(McpFormat.Toml, "mcp_servers = 3\n")]
     [InlineData(McpFormat.Toml, "not toml [\n")]
+    [InlineData(McpFormat.Toml, "a = \"\\uD800\"\n")]
     public void A_file_rtok_cannot_edit_is_refused_and_kept(McpFormat format, string raw)
     {
         var spec = Specs.Of(format, format == McpFormat.Toml ? "mcp_servers" : "mcpServers");

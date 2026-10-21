@@ -79,6 +79,16 @@ public sealed class HostFileTests : IDisposable
         Assert.Equal(Body, dir.Read("settings.json"));
     }
 
+    // Found by the host-json fuzz target: the write threw InvalidOperationException.
+    [Fact]
+    public void ALoneSurrogateEscapeIsRefused()
+    {
+        var err = Assert.Throws<InvalidDataException>(() =>
+            HostFile.ParseStrictJson("settings.json", """{"a": "\ud8e0"}""")
+        );
+        Assert.StartsWith("settings.json:", err.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void JsonIsWrittenWithTwoSpacesAndATrailingNewline()
     {

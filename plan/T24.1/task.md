@@ -32,4 +32,6 @@ Spec: catalog A11, catalog B15 in [docs/port/catalog.md](../../docs/port/catalog
 
 Ports: rtok closed T30.0, T30.1, T30.2.
 
+Fuzz: `lsp-frame` in `tests/Rtok.Fuzz`: LSP frames from a server over any bytes decode or refuse, and the `text` backend never throws on any source.
+
 Check: Tests with a fake LSP server cover answers, the timeout fallback header and shutdown at EOF.

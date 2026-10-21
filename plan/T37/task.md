@@ -37,4 +37,6 @@ Spec: catalog B6, catalog A26 in [docs/port/catalog.md](../../docs/port/catalog.
 
 Ports: rtok closed T25.0, T25.1, T25.2, T25.3, T282, T283, T283.1, T283.2, T283.3, T284, T287, T288, T290, T473, T613.
 
+Fuzz: `agent-message` in `tests/Rtok.Fuzz`: any message body is framed within `push_bytes` with its framing markers escaped, and any id prefix resolves or refuses.
+
 Check: Tests cover re-parenting, prefix resolution, message framing and push caps.

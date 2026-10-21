@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Cli.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
     <!-- The command model (Shell/CommandDocs.cs), kept in step by a drift test. -->
     <EmbeddedResource Include="../../docs/cli/commands.json" LogicalName="commands.json" />
   </ItemGroup>

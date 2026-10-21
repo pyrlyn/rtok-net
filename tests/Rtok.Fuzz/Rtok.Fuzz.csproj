@@ -9,4 +9,22 @@
   <ItemGroup>
     <PackageReference Include="SharpFuzz" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Pyrlyn.ChangePreview/src/Pyrlyn.ChangePreview.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Ignore/src/Pyrlyn.Ignore.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Jsonc/src/Pyrlyn.Jsonc.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Trash/src/Pyrlyn.Trash.csproj" />
+    <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
+    <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
+    <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
+    <ProjectReference Include="../../src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Fuzz.Tests" />
+  </ItemGroup>
 </Project>
