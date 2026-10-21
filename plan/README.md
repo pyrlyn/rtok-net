@@ -289,13 +289,13 @@ conflict on rebase: keep both sides.
 
 | Lane | Area | Order |
 | --- | --- | --- |
-| L1 | tests, plugin contract, core, cmd/inject/guard/memory plugins | T2, T5, T6, T17, T18, T22, T23, T20, T21, T22.1 |
-| L2 | store, archive, logs, proxy, measure, OTel | T8, T10, T9, T27, T29, T28, T30, T47, T54, T50 |
+| L1 | tests, plugin contract, core, cmd/memory plugins | T2, T5, T6, T17, T18, T22, T23, T22.1 |
+| L2 | store, archive, logs, proxy | T8, T10, T9, T27, T29, T28, T54, T50 |
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
-| L4 | hook latency, hooks, resident, MCP, agents, worktrees | T4, T13, T14, T15, T16, T37, T40, T46, T49, T44.1, T52 |
+| L4 | hook latency, hooks, resident, MCP, agents | T4, T13, T14, T15, T16, T37, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |
 | L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
-| L7 | small packages | T12.10, T12.8, T12.11, T12.2, T12.7 |
+| L7 | small packages, then inject, measure, worktrees, guard, OTel | T12.10, T12.8, T12.11, T12.2, T12.7, T21, T30, T40, T20, T47 |
 | L8 | agent SDK, ignore, usage, junk, docs plugin | T33, T12.4, T38, T39, T42 |
 | L9 | experiments, CI, tasks, host trees, report | T51, T3, T41, T36, T31 |
 
