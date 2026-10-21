@@ -1,0 +1,26 @@
+# rtok as a ketch package (plan/T3).
+#
+# This file is what `ketch push` sends to the registry and what `ketch info` shows. It is
+# pushed by hand after a release is published. Schema: pyrlyn/ketch docs/MANIFESTS.md.
+
+name = "rtok"
+source = "github:pyrlyn/rtok-net"
+description = "Reduce the context AI coding agents must carry"
+homepage = "https://github.com/pyrlyn/rtok-net"
+
+# Only the CLI and its fast hook client. The archives also ship `plugins/` for
+# `rtok agents install`; without an explicit `bin`, Windows auto-discovery treats host
+# scripts there (`*.cmd`, `*.sh`) as binaries. Two entries, because host hook commands try
+# `rtok-hook` before `rtok hook`. NTFS lists `rtok-hook.exe` before `rtok.exe`, so a glob
+# that took the first match once linked the hook as `rtok`; ketch now links the candidate
+# whose stem equals `name`, so `rtok*` links `rtok`, never `rtok-hook`.
+bin = [
+  { path = "rtok*", name = "rtok" },
+  { path = "rtok-hook*", name = "rtok-hook" },
+]
+
+# One archive per RID (rtok-<rid>.tar.gz, rtok-win-x64.zip). Linux installs take the glibc
+# build; the musl archive is for Alpine and is installed by hand.
+[asset]
+include = ["rtok-osx-*.tar.gz", "rtok-linux-*.tar.gz", "rtok-win-*.zip"]
+exclude = ["*-musl-*", "*.sha256"]

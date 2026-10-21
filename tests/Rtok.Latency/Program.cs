@@ -9,10 +9,12 @@ using Rtok.Testing;
 const double BudgetMs = 10;
 const double AllowedRegression = 1.2;
 
+// CI runners are not the machine the baseline was measured on: --budget-only keeps the 10 ms rule.
 var update = args is ["--update-baseline"];
-if (args.Length > 0 && !update)
+var budgetOnly = args is ["--budget-only"];
+if (args.Length > 0 && !update && !budgetOnly)
 {
-    await Console.Error.WriteLineAsync("usage: rtok-latency [--update-baseline]");
+    await Console.Error.WriteLineAsync("usage: rtok-latency [--update-baseline | --budget-only]");
     return 2;
 }
 
@@ -31,7 +33,7 @@ catch (System.ComponentModel.Win32Exception)
 var hook = await PublishedApps.PathAsync("rtok-hook");
 var baselineFile = Path.Join(RepoPaths.Root, "tests", "Rtok.Latency", "baseline.json");
 var baseline = JsonNode.Parse(await File.ReadAllTextAsync(baselineFile))!.AsObject();
-var ridBaseline = baseline[PublishedApps.Rid]?.AsObject();
+var ridBaseline = budgetOnly ? null : baseline[PublishedApps.Rid]?.AsObject();
 var measured = new JsonObject();
 var failed = false;
 

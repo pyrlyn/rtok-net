@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -8,10 +9,14 @@ namespace Rtok.AotTests;
 public sealed class RuntimeTests
 {
     // A NativeAOT image has no assembly files; on the JIT Location is the dll's path.
-#pragma warning disable IL3000 // the empty Location is the point of this test
+    // The attribute, unlike a pragma, also reaches ILC, which repeats IL3000 at publish.
     [Fact]
+    [UnconditionalSuppressMessage(
+        "SingleFile",
+        "IL3000",
+        Justification = "the empty Location is the point of this test"
+    )]
     public void Runs_as_native_code() => Assert.Empty(typeof(RuntimeTests).Assembly.Location);
-#pragma warning restore IL3000
 
     [Fact]
     public void Runs_without_dynamic_code() => Assert.False(RuntimeFeature.IsDynamicCodeSupported);

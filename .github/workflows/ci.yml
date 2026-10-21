@@ -1,0 +1,140 @@
+# CI per OS (plan/T3). NativeAOT does not cross OSes, so every OS runner builds, tests and
+# publishes its own RIDs. Lint runs once, on Ubuntu. Actions are pinned to commit SHAs.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: NuGet cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('global.json', 'Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-${{ runner.arch }}-
+      - name: CSharpier
+        run: |
+          dotnet tool restore
+          dotnet csharpier check .
+      - name: Vulnerable packages
+        run: |
+          dotnet restore rtok.slnx
+          dotnet package list --project rtok.slnx --vulnerable --include-transitive --format json > vulnerable.json
+          jq -e '.problems == null' vulnerable.json > /dev/null || { jq '.problems' vulnerable.json; exit 1; }
+          found=$(jq '[.projects[].frameworks[]? | (.topLevelPackages[]?, .transitivePackages[]?) | select(.vulnerabilities)] | length' vulnerable.json)
+          if [ "$found" != 0 ]; then
+            dotnet package list --project rtok.slnx --vulnerable --include-transitive
+            exit 1
+          fi
+      - name: Duplication
+        run: npx --yes jscpd@5.4.2 --config .jscpd.json .
+      - name: Scripts
+        run: shellcheck eng/*.sh
+      - name: Workflows
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
+      - name: Marketplace catalogs
+        run: eng/check-marketplace.sh
+
+  build:
+    name: build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macos-arm64
+            os: macos-15
+            rids: osx-arm64 osx-x64
+          - name: ubuntu-x64
+            os: ubuntu-24.04
+            rids: linux-x64 linux-musl-x64
+          - name: ubuntu-arm64
+            os: ubuntu-24.04-arm
+            rids: linux-arm64
+          - name: windows-x64
+            os: windows-2025
+            rids: win-x64
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      RIDS: ${{ matrix.rids }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the affected-tests diff needs the base branch
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: NuGet cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('global.json', 'Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-${{ runner.arch }}-
+      - name: Tools
+        run: |
+          case "$RUNNER_OS" in
+            macOS) brew install hyperfine ;;
+            Linux) sudo apt-get update -qq && sudo apt-get install -y -qq clang zlib1g-dev hyperfine ;;
+            Windows) choco install hyperfine --no-progress -y ;;
+          esac
+      - name: Build
+        run: dotnet build rtok.slnx -c Release -warnaserror
+      - name: Affected tests
+        id: affected
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            git diff --name-only "origin/$BASE_REF...HEAD" | eng/affected-tests.sh artifacts/affected.slnf
+          else
+            eng/affected-tests.sh artifacts/affected.slnf --all
+          fi
+      - name: JIT tests
+        if: steps.affected.outputs.count != '0'
+        run: dotnet test --solution artifacts/affected.slnf -c Release --no-build
+      - name: Publish (AOT)
+        run: |
+          native=${RIDS%% *}
+          eng/publish.sh "$native" --aot-tests
+          for rid in ${RIDS#"$native"}; do eng/publish.sh "$rid"; done
+          bin=$PWD/artifacts/dist/$native
+          # .NET on Windows reads the variable, so it needs a Windows path, not /d/a/...
+          if [ "$RUNNER_OS" = Windows ]; then bin=$(cygpath -m "$bin"); fi
+          echo "RTOK_SMOKE_BIN=$bin" >> "$GITHUB_ENV"
+      - name: AOT and smoke tests
+        run: dotnet test --project tests/Rtok.Smoke -c Release --no-build
+      - name: Smoke every RID
+        run: for rid in $RIDS; do eng/smoke.sh "$rid" "artifacts/dist/$rid"; done
+      - name: Hook latency gate
+        # Windows numbers are not measured yet (T52); until then the gate reports only there.
+        continue-on-error: ${{ runner.os == 'Windows' }}
+        run: dotnet run --project tests/Rtok.Latency -c Release --no-build -- --budget-only
+      - name: Release archives (dry run)
+        run: for rid in $RIDS; do eng/package-release.sh "$rid" "$RTOK_SMOKE_BIN/rtok" --allow-missing; done

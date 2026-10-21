@@ -1,0 +1,9 @@
+{
+  "pattern": "{src,packages,tests}/**/*.cs",
+  "ignore": ["**/obj/**", "**/bin/**", "**/*.g.cs", "**/*.verified.*"],
+  "format": ["csharp"],
+  "minTokens": 50,
+  "threshold": 2,
+  "reporters": ["console"],
+  "gitignore": true
+}
