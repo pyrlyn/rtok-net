@@ -4,9 +4,17 @@
     <Project Path="packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
     <Project Path="packages/Pyrlyn.Config.Layered/tests/Pyrlyn.Config.Layered.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.Durations/">
+    <Project Path="packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
+    <Project Path="packages/Pyrlyn.Durations/tests/Pyrlyn.Durations.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.FsKit/">
     <Project Path="packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
     <Project Path="packages/Pyrlyn.FsKit/tests/Pyrlyn.FsKit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/Pyrlyn.Shlex/">
+    <Project Path="packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
+    <Project Path="packages/Pyrlyn.Shlex/tests/Pyrlyn.Shlex.Tests.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Rtok.Cli/Rtok.Cli.csproj" />

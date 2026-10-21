@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Parses and formats human durations such as 30m, 24h and 7d (humantime grammar) and day or hour windows such as 7d or 12h.</Description>
+    <PackageTags>duration;humantime;timespan;parse;format</PackageTags>
+  </PropertyGroup>
+</Project>

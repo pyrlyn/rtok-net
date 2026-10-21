@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>POSIX shell word splitting and quoting: quotes, backslashes, line continuations and comments, with unterminated quotes reported.</Description>
+    <PackageTags>shell;shlex;posix;split;quote</PackageTags>
+  </PropertyGroup>
+</Project>
