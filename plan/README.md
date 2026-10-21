@@ -229,7 +229,7 @@ An architecture test keeps the layers from rtok: surfaces → app → core → f
 
 ## Parallel lanes
 
-Six agents work the plan at once, one lane each, in this order: blockers and the most complex
+Nine agents work the plan at once, one lane each, in this order: blockers and the most complex
 tasks first. T1 is done. A task whose dependency (another lane's task) has no `done.md` on
 `main` yet waits: take the next task in your lane whose dependencies are met, and come back.
 Never take a task from another lane. Shared files (`Directory.Packages.props`, `rtok.slnx`)
@@ -237,12 +237,15 @@ conflict on rebase: keep both sides.
 
 | Lane | Area | Order |
 | --- | --- | --- |
-| L1 | tests, CI, plugin contract, core, cmd/inject/guard/memory plugins | T2, T5, T6, T3, T17, T18, T22, T23, T20, T21, T22.1 |
-| L2 | store, archive, logs, proxy, measure, report, OTel | T8, T12.10, T10, T9, T27, T29, T28, T30, T31, T47, T50 |
-| L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T12.8, T12.11, T11, T12.2, T43, T44, T45 |
-| L4 | hook latency, hooks, resident, MCP, agents, worktrees, tasks | T4, T13, T14, T15, T16, T37, T40, T41, T46, T49, T44.1 |
-| L5 | tree-sitter, ignore, read, graph, usage, Windows | T12.5, T12.4, T24, T19, T25, T26, T24.1, T38, T48, T42, T51 |
-| L6 | file kit, JSONC, agent SDK, MCP install, hosts, doctor, junk | T12.1, T12.3, T33, T34, T35, T36, T32, T12.7, T39, T35.2, T35.1 |
+| L1 | tests, core, cmd/inject/guard/memory plugins | T2, T6, T17, T18, T22, T23, T20, T21, T22.1 |
+| L2 | store, archive, logs, proxy, measure, OTel | T8, T10, T9, T27, T29, T28, T30, T47, T50 |
+| L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
+| L4 | hook latency, hooks, resident, MCP, agents, worktrees | T4, T13, T14, T15, T16, T37, T40, T46, T49, T44.1 |
+| L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48, T42 |
+| L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
+| L7 | small packages | T12.10, T12.8, T12.11, T12.2, T12.7 |
+| L8 | plugin and agent SDKs, ignore, usage, junk | T5, T33, T12.4, T38, T39 |
+| L9 | experiments, CI, tasks, host trees, report | T51, T3, T41, T36, T31 |
 
 Main cross-lane dependencies: every package (T12.x) follows T12's layout; T6 needs T5;
 plugins, T13 and T15 need T6; T7 needs T12.9; T9, T10 and T13 need T8; T11 needs T12.8 and
