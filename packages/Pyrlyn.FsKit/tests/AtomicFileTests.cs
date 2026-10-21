@@ -177,6 +177,7 @@ public sealed class AtomicFileTests : IDisposable
         if (OperatingSystem.IsWindows())
         {
             Assert.Skip("Unix modes");
+            return; // CA1416 does not see Assert.Skip as an exit.
         }
         var f = dir.Write("secret", "old");
         File.SetUnixFileMode(f, UnixFileMode.UserRead | UnixFileMode.UserWrite);
@@ -190,6 +191,7 @@ public sealed class AtomicFileTests : IDisposable
         if (OperatingSystem.IsWindows())
         {
             Assert.Skip("Unix modes");
+            return; // CA1416 does not see Assert.Skip as an exit.
         }
         const UnixFileMode Owner = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         const UnixFileMode Group = Owner | UnixFileMode.GroupRead;
