@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
+    <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
+  </ItemGroup>
+</Project>

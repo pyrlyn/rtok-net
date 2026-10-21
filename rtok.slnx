@@ -59,6 +59,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
     <Project Path="tests/Rtok.Benchmarks/Rtok.Benchmarks.csproj" />
+    <Project Path="tests/Rtok.Cli.Tests/Rtok.Cli.Tests.csproj" />
     <Project Path="tests/Rtok.Config.Tests/Rtok.Config.Tests.csproj" />
     <Project Path="tests/Rtok.Core.Tests/Rtok.Core.Tests.csproj" />
     <Project Path="tests/Rtok.Fuzz/Rtok.Fuzz.csproj" />

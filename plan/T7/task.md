@@ -2,7 +2,7 @@
 status: in progress
 priority: P0
 complexity: 4
-readiness: 85%
+readiness: 92%
 agent: Claude Code / claude-opus-5-5
 ---
 
@@ -31,8 +31,7 @@ Plan:
 3. `config/default.toml` generated from the types and their doc comments, embedded; a drift test regenerates it.
 4. `rtok config show [--sources] | get | set | validate [path] | init` in `Rtok.Cli`, with secrets redacted; `set` through `TomlEditor`.
 5. `tests/Rtok.Config.Tests`: goldens for `show --sources` and `set` on a commented file, validator and layering cases.
-6. The flag-to-key coverage test once T12.11 (L7) has landed its command model.
-
+6. The flag-to-key coverage test (`tests/Rtok.Cli.Tests`), reading the command model from the built binary's `--help`.
 7. `--dry-run` with a unified diff on `init` and `set` once T12.2 (L7) has landed the diff package.
 
-Status: steps 1–5 are merged. Steps 6 and 7 wait for T12.11 and T12.2; the task closes with them.
+Status: steps 1–6 are merged. Step 7 waits for T12.2; the task closes with it.
