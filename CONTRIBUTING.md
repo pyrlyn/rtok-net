@@ -37,3 +37,5 @@ Output lands in `artifacts/publish/<Project>/<config>_<rid>/`. Trim and AOT warn
 ## Packages
 
 Add a package version to `Directory.Packages.props` together with the task that first needs it. Libraries are `IsAotCompatible` automatically.
+
+Own NuGet packages live in `packages/<Name>/`; create one with `eng/new-package.sh` and publish with a `<Name>/v<version>` tag. Layout, versioning and publishing: [packages/README.md](packages/README.md).

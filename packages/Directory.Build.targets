@@ -1,0 +1,50 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+
+  <ItemGroup Condition="'$(RtokIsPackageTests)' != 'true'">
+    <None Include="$(RtokPackageDir)/README.md" Pack="true" PackagePath="/" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RtokIsPackageTests)' == 'true'">
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <!-- A package stands alone: it may reference only other packages/ projects, never src/. -->
+  <Target
+    Name="RtokCheckPackageReferences"
+    BeforeTargets="ResolveProjectReferences"
+    Condition="'@(ProjectReference)' != ''"
+  >
+    <ItemGroup>
+      <_RtokOutsideReference
+        Include="@(ProjectReference)"
+        Condition="!$([System.String]::Copy('%(FullPath)').StartsWith('$(RtokPackagesRoot)'))"
+      />
+    </ItemGroup>
+    <Error
+      Condition="'@(_RtokOutsideReference)' != ''"
+      Text="$(MSBuildProjectName) references @(_RtokOutsideReference->'%(Identity)'); a package may reference only packages/ projects (packages/README.md)."
+    />
+  </Target>
+
+  <!-- Every package folder holds README, CHANGELOG and LICENSE, and the package says what it is. -->
+  <Target
+    Name="RtokCheckPackageLayout"
+    BeforeTargets="Build;GenerateNuspec"
+    Condition="'$(RtokIsPackageTests)' != 'true'"
+  >
+    <Error
+      Condition="!Exists('$(RtokPackageDir)/%(RtokPackageFile.Identity)')"
+      Text="$(MSBuildProjectName): packages/$(MSBuildProjectName)/%(RtokPackageFile.Identity) is missing (packages/README.md)."
+    />
+    <Error
+      Condition="'$(Description)' == '' or '$(Description)' == 'Package Description'"
+      Text="$(MSBuildProjectName): set Description in the project file."
+    />
+  </Target>
+
+  <ItemGroup>
+    <RtokPackageFile Include="README.md;CHANGELOG.md;LICENSE" />
+  </ItemGroup>
+</Project>

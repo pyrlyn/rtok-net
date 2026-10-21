@@ -1,0 +1,35 @@
+<Project>
+  <!-- Own NuGet packages (plan/README.md N5, N17; layout in packages/README.md). -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <RtokPackagesRoot>$(MSBuildThisFileDirectory)</RtokPackagesRoot>
+    <RtokIsPackageTests>$(MSBuildProjectName.EndsWith('.Tests'))</RtokIsPackageTests>
+  </PropertyGroup>
+
+  <!-- The library: packages/<Name>/src/<Name>.csproj. -->
+  <PropertyGroup Condition="'$(RtokIsPackageTests)' != 'true'">
+    <IsPackable>true</IsPackable>
+    <RtokPackageDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/..'))</RtokPackageDir>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/pyrlyn/rtok-net/tree/main/packages/$(MSBuildProjectName)</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/pyrlyn/rtok-net/blob/main/packages/$(MSBuildProjectName)/CHANGELOG.md</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/pyrlyn/rtok-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <!-- SourceLink ships with the SDK; these make the package debuggable from source. -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <GenerateDocumentationFile Condition="'$(Configuration)' != 'Debug'"
+      >true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- The tests: packages/<Name>/tests/<Name>.Tests.csproj, xUnit v3 on MTP (N11). -->
+  <PropertyGroup Condition="'$(RtokIsPackageTests)' == 'true'">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+</Project>

@@ -28,11 +28,12 @@
     />
   </ItemGroup>
 
-  <!-- The version option prints the short commit: SourceRevisionId lands in the informational version. -->
+  <!-- The version option prints the short commit: SourceRevisionId lands in the informational version.
+       Packages keep the full commit SourceLink sets, which their nuspec repository element needs. -->
   <Target
     Name="RtokSourceRevision"
     BeforeTargets="AddSourceRevisionToInformationalVersion;GetAssemblyVersion"
-    Condition="'$(SourceRevisionId)' == ''"
+    Condition="'$(SourceRevisionId)' == '' and '$(IsPackable)' != 'true'"
   >
     <Exec
       Command="git rev-parse --short=9 HEAD"
