@@ -27,6 +27,8 @@ accept. Verify runs under its OpenSource sponsorship exemption (`Directory.Build
 - `PublishedApps`: the NativeAOT `rtok`, `rtok-hook` and `Rtok.AotTests`. They are published
   once per test run into `artifacts/smoke/` (its own artifacts root, so the RID restore never
   touches the JIT build), or taken from `RTOK_SMOKE_BIN` when CI has published them.
+  `rtok+sample` is `rtok` with `tests/Rtok.SamplePlugin` linked in (N12), always published
+  into `artifacts/smoke-plugins/`.
 
 ## Tools
 

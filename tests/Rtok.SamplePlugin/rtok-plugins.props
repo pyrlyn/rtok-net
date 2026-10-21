@@ -1,0 +1,10 @@
+<Project>
+  <!-- Build rtok with this plugin linked in:
+       dotnet publish src/Rtok.Cli -c Release -p:RtokPluginsFile=tests/Rtok.SamplePlugin/rtok-plugins.props -->
+  <ItemGroup>
+    <RtokPlugin
+      Include="$(MSBuildThisFileDirectory)Rtok.SamplePlugin.csproj"
+      Type="Rtok.SamplePlugin.Shrink"
+    />
+  </ItemGroup>
+</Project>

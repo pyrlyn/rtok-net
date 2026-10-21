@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>The rtok plugin contract: the plugin interface, its events, and what a plugin may ask of the host.</Description>
+    <PackageTags>rtok;plugin;sdk;tokens;coding-agent</PackageTags>
+  </PropertyGroup>
+</Project>

@@ -12,4 +12,8 @@
       IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"
     />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+  </ItemGroup>
+  <Import Project="../../eng/RtokPlugins.targets" />
 </Project>

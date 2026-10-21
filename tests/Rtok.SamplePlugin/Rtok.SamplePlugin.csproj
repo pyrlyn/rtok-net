@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- An out-of-tree plugin: it knows only the SDK. rtok links it when built with
+       -p:RtokPluginsFile=<this folder>/rtok-plugins.props. -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+  </ItemGroup>
+</Project>

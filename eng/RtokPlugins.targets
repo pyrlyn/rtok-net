@@ -1,0 +1,45 @@
+<Project>
+  <!-- Static plugin registration (plan/README.md N12): no assembly is loaded at run time.
+       Each plugin is an RtokPlugin item, a project path plus the plugin's Type:
+         <RtokPlugin Include="$(MSBuildThisFileDirectory)Shrink/Shrink.csproj" Type="Acme.Shrink" />
+       An out-of-tree plugin keeps such items in its own props file and builds rtok with
+       -p:RtokPluginsFile=<that file>. Paths in that file are relative to rtok's project, so use
+       $(MSBuildThisFileDirectory). Each item becomes a project reference, and the generated
+       LinkedPlugins.Create() returns one instance of every Type, in item order. -->
+  <Import Project="$(RtokPluginsFile)" Condition="'$(RtokPluginsFile)' != ''" />
+
+  <ItemGroup>
+    <ProjectReference Include="@(RtokPlugin)" />
+  </ItemGroup>
+
+  <Target Name="RtokLinkedPlugins" BeforeTargets="BeforeCompile">
+    <Error
+      Condition="'%(RtokPlugin.Type)' == '' and '@(RtokPlugin)' != ''"
+      Text="RtokPlugin '%(RtokPlugin.Identity)' has no Type metadata."
+    />
+    <PropertyGroup>
+      <RtokLinkedPluginsFile>$(IntermediateOutputPath)LinkedPlugins.g.cs</RtokLinkedPluginsFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <RtokLinkedPluginsLine Include="// &lt;auto-generated/&gt; from the RtokPlugin items (eng/RtokPlugins.targets)." />
+      <RtokLinkedPluginsLine Include="namespace Rtok.Cli%3B" />
+      <RtokLinkedPluginsLine Include="internal static class LinkedPlugins" />
+      <RtokLinkedPluginsLine Include="{" />
+      <RtokLinkedPluginsLine Include="public static global::System.Collections.Generic.IReadOnlyList&lt;global::Rtok.Plugin.Sdk.IPlugin&gt; Create() =>" />
+      <RtokLinkedPluginsLine Include="[" />
+      <RtokLinkedPluginsLine Include="@(RtokPlugin->'new global::%(Type)(),')" />
+      <RtokLinkedPluginsLine Include="]%3B" />
+      <RtokLinkedPluginsLine Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(RtokLinkedPluginsFile)"
+      Lines="@(RtokLinkedPluginsLine)"
+      Overwrite="true"
+      WriteOnlyWhenDifferent="true"
+    />
+    <ItemGroup>
+      <Compile Include="$(RtokLinkedPluginsFile)" />
+      <FileWrites Include="$(RtokLinkedPluginsFile)" />
+    </ItemGroup>
+  </Target>
+</Project>
