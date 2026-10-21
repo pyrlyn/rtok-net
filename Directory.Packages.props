@@ -6,6 +6,7 @@
   <!-- Add a version here with the task that first needs the package (plan/README.md package map). -->
   <ItemGroup>
     <PackageVersion Include="ConsoleAppFramework" Version="5.7.13" />
+    <PackageVersion Include="CsCheck" Version="4.9.1" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Tomlyn" Version="2.10.1" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
