@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The inject plugin: prompt modes offered at session start, and prose compression (plan T21). -->
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <EmbeddedResource Include="modes/*.md" LogicalName="Rtok.Plugins.Inject.modes.%(Filename).md" />
+    <InternalsVisibleTo Include="Rtok.Plugins.Inject.Tests" />
+  </ItemGroup>
+</Project>
