@@ -71,6 +71,32 @@ public sealed class ArchitectureTests
                 )
         );
 
+    // rtok-hook stays tiny and does not log (T10): nothing it builds on brings Serilog.
+    [Fact]
+    public void Rtok_hook_references_no_Serilog_assembly()
+    {
+        var projects = Projects();
+        var packages = Packages();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var queue = new Queue<string>(["Rtok.Hook"]);
+        while (queue.TryDequeue(out var project))
+        {
+            if (!seen.Add(project) || !projects.TryGetValue(project, out var references))
+            {
+                continue;
+            }
+            Assert.DoesNotContain(
+                packages[project],
+                p => p.StartsWith("Serilog", StringComparison.Ordinal)
+            );
+            foreach (var reference in references)
+            {
+                queue.Enqueue(reference);
+            }
+        }
+        Assert.Contains("Rtok.Hook", seen);
+    }
+
     [Theory]
     [InlineData("Rtok.Core", "Rtok.Cli", true)]
     [InlineData("Rtok.Plugin.Sdk", "Rtok.Core", true)]
@@ -103,7 +129,12 @@ public sealed class ArchitectureTests
             : string.Equals(pattern, project, StringComparison.Ordinal);
 
     // Every production project (src/, packages/*/src) and the projects it references.
-    private static Dictionary<string, string[]> Projects()
+    private static Dictionary<string, string[]> Projects() => Items("ProjectReference");
+
+    // Every production project and the NuGet packages it references.
+    private static Dictionary<string, string[]> Packages() => Items("PackageReference");
+
+    private static Dictionary<string, string[]> Items(string item)
     {
         var root = RepoPaths.Root;
         var files = Directory
@@ -120,9 +151,13 @@ public sealed class ArchitectureTests
             file =>
                 XDocument
                     .Load(file)
-                    .Descendants("ProjectReference")
+                    .Descendants(item)
                     .Select(r =>
-                        Path.GetFileNameWithoutExtension((string?)r.Attribute("Include") ?? "")
+                        string.Equals(item, "ProjectReference", StringComparison.Ordinal)
+                            ? Path.GetFileNameWithoutExtension(
+                                (string?)r.Attribute("Include") ?? ""
+                            )
+                            : (string?)r.Attribute("Include") ?? ""
                     )
                     .ToArray(),
             StringComparer.Ordinal

@@ -3,9 +3,10 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents completions config hook man plugins' ;;
+        '') echo 'agents completions config hook logs man plugins' ;;
         'agents') echo 'usage' ;;
         'config') echo 'get init path set show validate' ;;
+        'logs') echo 'export watch' ;;
     esac
 }
 
@@ -21,6 +22,9 @@ _rtok_options() {
         'config show') echo '--sources --json --config -h --help --version' ;;
         'config validate') echo '--config -h --help --version' ;;
         'hook') echo '--host --serve -h --help --version' ;;
+        'logs') echo '--lines --json --config -h --help --version' ;;
+        'logs export') echo '--lines --json --config -h --help --version' ;;
+        'logs watch') echo '--lines --config -h --help --version' ;;
         'man') echo '--dir -h --help --version' ;;
         'plugins') echo '--json -h --help --version' ;;
     esac
@@ -36,6 +40,9 @@ _rtok_values() {
         'config show') echo '--config' ;;
         'config validate') echo '--config' ;;
         'hook') echo '--host' ;;
+        'logs') echo '--lines --config' ;;
+        'logs export') echo '--lines --config' ;;
+        'logs watch') echo '--lines --config' ;;
         'man') echo '--dir' ;;
     esac
 }

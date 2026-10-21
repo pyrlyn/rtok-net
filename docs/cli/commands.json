@@ -353,6 +353,102 @@
       ]
     },
     {
+      "path": "logs",
+      "aliases": [],
+      "description": "Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--lines"
+          ],
+          "type": "uint?",
+          "description": "How many lines; [log] lines when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the lines as a JSON array, newest first.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "logs export",
+      "aliases": [],
+      "description": "Print the same lines as rtok logs without numbers or colour.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--lines"
+          ],
+          "type": "uint?",
+          "description": "How many lines; [log] lines when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the lines as a JSON array, newest first.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "logs watch",
+      "aliases": [],
+      "description": "Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--lines"
+          ],
+          "type": "uint?",
+          "description": "How many lines the screen keeps; [log] lines when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "man",
       "aliases": [],
       "description": "Print the man page (roff), or write every page with --dir.",

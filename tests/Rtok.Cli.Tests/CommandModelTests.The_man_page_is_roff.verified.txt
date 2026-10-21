@@ -48,6 +48,18 @@ See \fBrtok\-config\-validate\fR(1).
 Run one hook event from stdin, or serve hooks as this home's resident.
 See \fBrtok\-hook\fR(1).
 .TP
+\fBlogs\fR
+Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
+See \fBrtok\-logs\fR(1).
+.TP
+\fBlogs export\fR
+Print the same lines as rtok logs without numbers or colour.
+See \fBrtok\-logs\-export\fR(1).
+.TP
+\fBlogs watch\fR
+Show rtok logs, then follow the log until Ctrl\-C: repainted on a terminal, appended when piped.
+See \fBrtok\-logs\-watch\fR(1).
+.TP
 \fBman\fR
 Print the man page (roff), or write every page with \-\-dir.
 See \fBrtok\-man\fR(1).

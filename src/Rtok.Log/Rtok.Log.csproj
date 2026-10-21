@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Rtok.Log</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.RotatingLog/src/Pyrlyn.RotatingLog.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+</Project>

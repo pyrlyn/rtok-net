@@ -14,6 +14,8 @@ public sealed class JsonTests
         ["config show"] = [],
         ["config get"] = ["proxy.port"],
         ["plugins"] = [],
+        ["logs"] = [],
+        ["logs export"] = [],
     };
 
     private static readonly Dictionary<string, string> Other = new(StringComparer.Ordinal)
@@ -25,6 +27,7 @@ public sealed class JsonTests
         ["hook"] = "speaks the host's hook protocol",
         ["completions"] = "prints or installs a shell script",
         ["man"] = "prints or writes roff pages",
+        ["logs watch"] = "streams the log until Ctrl-C",
     };
 
     [Fact]

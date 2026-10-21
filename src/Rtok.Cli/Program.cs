@@ -3,7 +3,10 @@ using ConsoleAppFramework;
 using Rtok.Cli;
 using Rtok.Cli.Shell;
 using Rtok.Cli.Ui;
+using Rtok.Config;
+using Rtok.Log;
 using Rtok.Process;
+using Rtok.Store;
 
 if (args is ["--version"] or ["-V"])
 {
@@ -11,8 +14,11 @@ if (args is ["--version"] or ["-V"])
     return;
 }
 
-// The hook stays on its budget: no command model and no display.
+// The hook stays on its budget: no command model, no display and no config load for the log.
 var hook = args is ["hook", ..];
+
+using var log = hook ? null : Logger(args);
+log?.ForSource("cli").Named("argv").Debug("argv {Argv}", args);
 
 // ConsoleAppFramework answers an unknown command with the root help and exit 0.
 if (!hook && CommandPath.Check(CommandDocs.Model, args) is var (message, help))
@@ -34,6 +40,9 @@ app.Add<AgentsCommands>("agents");
 app.Add<ConfigCommands>("config");
 app.Add<PluginsCommands>();
 app.Add<ShellCommands>();
+app.Add("logs", LogsCommands.Show);
+app.Add("logs export", LogsCommands.Export);
+app.Add("logs watch", LogsCommands.Watch);
 app.Add("hook", HookCommand.Run);
 app.Run(args);
 
@@ -47,4 +56,23 @@ static string VersionText()
         ?? "0.0.0";
     var plus = info.IndexOf('+', StringComparison.Ordinal);
     return plus < 0 ? $"rtok {info}" : $"rtok {info[..plus]} ({info[(plus + 1)..]})";
+}
+
+// rtok's log, from the config the command will load (`--config` included). The store opens on
+// the first row, so a command that logs nothing never touches it.
+static Serilog.Core.Logger Logger(string[] args)
+{
+    var at = Array.IndexOf(args, "--config");
+    var file = at >= 0 && at + 1 < args.Length ? args[at + 1] : null;
+    var config = ConfigLoader.Load(new ConfigLoadOptions { ConfigFile = file }).Config;
+    return RtokLog.Create(
+        config.Log,
+        new RtokLogOptions
+        {
+            OpenStore = () =>
+                RtokStore.Open(
+                    new StoreOptions(config.Core.DbPath) { ArchiveDir = config.Core.ArchiveDir }
+                ),
+        }
+    );
 }

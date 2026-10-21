@@ -1,0 +1,5 @@
+﻿$ rtok logs
+no logs yet
+$ rtok logs export
+2026-10-22 10:00:01 error cli/y: b
+2026-10-22 10:00:00 info cli/x: a

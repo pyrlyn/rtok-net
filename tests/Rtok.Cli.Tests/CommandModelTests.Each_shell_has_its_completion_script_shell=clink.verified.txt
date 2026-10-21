@@ -4,21 +4,62 @@
 local value = clink.argmatcher():addarg(clink.filematches)
 
 -- rtok plugins
-local node_13 = clink.argmatcher()
-node_13:addflags({ "--json", "-h", "--help", "--version" })
-node_13:adddescriptions({
+local node_16 = clink.argmatcher()
+node_16:addflags({ "--json", "-h", "--help", "--version" })
+node_16:adddescriptions({
     ["--json"] = "Print JSON.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_16:nofiles()
+
+-- rtok man
+local node_15 = clink.argmatcher()
+node_15:addflags({ "--dir" .. value, "-h", "--help", "--version" })
+node_15:adddescriptions({
+    ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_15:nofiles()
+
+-- rtok logs watch
+local node_14 = clink.argmatcher()
+node_14:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_14:adddescriptions({
+    ["--lines"] = "How many lines the screen keeps; [log] lines when omitted.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_14:nofiles()
+
+-- rtok logs export
+local node_13 = clink.argmatcher()
+node_13:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_13:adddescriptions({
+    ["--lines"] = "How many lines; [log] lines when omitted.",
+    ["--json"] = "Print the lines as a JSON array, newest first.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
 node_13:nofiles()
 
--- rtok man
+-- rtok logs
 local node_12 = clink.argmatcher()
-node_12:addflags({ "--dir" .. value, "-h", "--help", "--version" })
+node_12:addarg({ "export" .. node_13, "watch" .. node_14 })
+node_12:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
 node_12:adddescriptions({
-    ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
+    ["export"] = "Print the same lines as rtok logs without numbers or colour.",
+    ["watch"] = "Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.",
+    ["--lines"] = "How many lines; [log] lines when omitted.",
+    ["--json"] = "Print the lines as a JSON array, newest first.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
@@ -160,11 +201,12 @@ node_1:nofiles()
 
 -- rtok
 local node_0 = clink.argmatcher("rtok")
-node_0:addarg({ "agents" .. node_1, "completions" .. node_3, "config" .. node_4, "hook" .. node_11, "man" .. node_12, "plugins" .. node_13 })
+node_0:addarg({ "agents" .. node_1, "completions" .. node_3, "config" .. node_4, "hook" .. node_11, "logs" .. node_12, "man" .. node_15, "plugins" .. node_16 })
 node_0:addflags({ "-h", "--help", "--version" })
 node_0:adddescriptions({
     ["completions"] = "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",
     ["hook"] = "Run one hook event from stdin, or serve hooks as this home's resident.",
+    ["logs"] = "Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.",
     ["man"] = "Print the man page (roff), or write every page with --dir.",
     ["plugins"] = "List plugins: id, kind, enabled, surfaces.",
     ["-h"] = "Show help.",

@@ -10,6 +10,22 @@ public sealed class FsPathTests : IDisposable
     private static string P(string unix) => unix.Replace('/', S);
 
     [Fact]
+    public void AFileKeepsItsIdAcrossARenameAndANewFileGetsAnother()
+    {
+        var log = dir.Write("app.log", "a");
+        Assert.True(FsPath.TryGetFileId(log, out var first));
+
+        File.Move(log, log + ".1");
+        dir.Write("app.log", "b");
+
+        Assert.True(FsPath.TryGetFileId(log + ".1", out var moved));
+        Assert.True(FsPath.TryGetFileId(log, out var fresh));
+        Assert.Equal(first, moved);
+        Assert.NotEqual(first, fresh);
+        Assert.False(FsPath.TryGetFileId(dir["missing"], out _));
+    }
+
+    [Fact]
     public void VerbatimPrefixIsDroppedWhereThePlainPathMeansTheSame()
     {
         Assert.Equal(@"C:\Users\a\b.txt", FsPath.StripVerbatim(@"\\?\C:\Users\a\b.txt"));

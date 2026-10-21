@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- JIT lane for the log (T10): the pipeline and its sinks, tail, follow, watch, writer processes. -->
+  <PropertyGroup>
+    <!-- The bridge tests call ILogger the way a library does, not through LoggerMessage. -->
+    <NoWarn>$(NoWarn);IL2026;IL3050;CA1848;CA1873</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Log/Rtok.Log.csproj" />
+    <ProjectReference Include="../../src/Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

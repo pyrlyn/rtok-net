@@ -53,9 +53,12 @@ public sealed partial class RtokStore : IDisposable
         {
             connection.Open();
             Pragmas.BusyTimeout(connection, options.Busy);
-            db = new RtokDbContext(
-                new DbContextOptionsBuilder<RtokDbContext>().UseSqlite(connection).Options
-            );
+            var builder = new DbContextOptionsBuilder<RtokDbContext>().UseSqlite(connection);
+            if (options.LoggerFactory is { } loggers)
+            {
+                builder.UseLoggerFactory(loggers);
+            }
+            db = new RtokDbContext(builder.Options);
             if (fresh)
             {
                 Pragmas.IncrementalAutoVacuum(connection);

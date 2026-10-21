@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 2
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T10. Logging: rotating log and `rtok logs`
@@ -43,3 +43,18 @@ Ports: rtok closed T24.0, T24.1, T24.2, T24.3, T24.4, T24.5, T225, T225.1, T270,
 Fuzz: `log-tail` in `tests/Rtok.Fuzz`: `logs` and `watch` over truncated, non-UTF-8 and half-written files print only whole lines and never throw.
 
 Check: Rotation, retention and follow tests pass, including truncation and an empty replacement file. A test logs through Serilog from several processes and finds every line in the `.N` files.
+
+Plan:
+1. `src/Rtok.Log` (foundation layer): `RtokLog.Create(LogSection, options)` builds the Serilog logger in code. The minimum level is the lower of `[log] level` and `RTOK_LOG`. The file and db sinks are restricted to `[log] level`, the console sink to `RTOK_LOG`. Library categories (EF Core, ASP.NET Core, MCP SDK) stay at warn unless the floor is debug.
+   - `RotatingFileSink` over Pyrlyn.RotatingLog. Source and name come from the `Source`/`Name` properties, else from `SourceContext` and the MEL `EventId`.
+   - `StoreLogSink` opens the store lazily, writes the logs row and disables itself on the first failure.
+   - `SerilogLoggerFactory` for `ILogger` users; `StoreOptions.LoggerFactory` hands it to EF.
+2. Reading: tail (newest first across `.N`, half-written lines dropped), the numbered and coloured screen, and `Follow`.
+   - `Follow` keeps the open handle of the file it reads and finds rotation by device and inode, through a new public `FsPath.TryFileId` in Pyrlyn.FsKit. It restarts after truncation in place.
+   - One watch loop: repaint on a TTY, append when piped.
+3. `rtok logs [--lines N]`, `logs export` and `logs watch` in Rtok.Cli, which imports StoreHost.targets because `to_db` opens the store. Program.cs builds the logger from the loaded config (defaults when the load fails), logs argv at debug, and flushes at exit.
+4. Tests:
+   - `tests/Rtok.Log.Tests`: pipeline, sinks, fail open, MEL and EF bridges, tail, follow (rotation, several rotations between polls, truncation, empty replacement), and the watch loop. The multi-process test relaunches the test assembly as Serilog writers.
+   - Rtok.Cli.Tests: the commands against the binary, and `RTOK_LOG` off and on.
+5. Gates, plus an AOT publish of `rtok` with no Serilog AOT or trim warnings.
+

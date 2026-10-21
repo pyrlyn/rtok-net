@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
   </ItemGroup>
 </Project>

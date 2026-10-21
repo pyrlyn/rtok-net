@@ -20,7 +20,7 @@ internal static class FuzzTargets
         new("shell-words", "T53", ShellWordsText.Run),
         new("toml-edit", "T53", TomlEdit.Run),
         new("expand-range", "T9", null),
-        new("log-tail", "T10", null),
+        new("log-tail", "T10", LogTailText.Run),
         new("cli-argv", "T11", CliArgv.Run),
         new("change-preview", "T12.2", ChangePreviewText.Run),
         new("trash-info", "T12.7", TrashInfo.Run),

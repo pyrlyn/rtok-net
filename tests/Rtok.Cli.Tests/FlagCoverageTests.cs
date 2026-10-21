@@ -85,6 +85,7 @@ public sealed class FlagCoverageTests
     [InlineData("filter", "cmd", "filter.cmd")]
     [InlineData("run", "trailer", "plugins.cmd.trailer")]
     [InlineData("config set", "dry-run", "config.set.dry_run")]
+    [InlineData("logs export", "lines", "log.lines")]
     public void A_flag_maps_by_the_naming_rules(string command, string flag, string key) =>
         Assert.Equal(key, KeyOf(command, flag));
 
@@ -126,6 +127,8 @@ public sealed class FlagCoverageTests
             // `agents install|remove` keep the `[setup]` table they had as `setup`.
             ["agents", ..] => $"setup.{name}",
             ["task", "init"] => $"tasks.{name}",
+            // `logs` reads the `[log]` table it prints.
+            ["logs", ..] => $"log.{name}",
             // `dashboard` is the hidden old spelling of `web`.
             ["dashboard", ..] => $"web.{name}",
             // `mcp --host` overlays `[hook] host`, as `hook --host` does.

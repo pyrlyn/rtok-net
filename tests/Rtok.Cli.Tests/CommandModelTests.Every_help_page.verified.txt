@@ -13,6 +13,9 @@ Commands:
   config show        Print every effective key and value; secrets are redacted.
   config validate    Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
   hook               Run one hook event from stdin, or serve hooks as this home's resident.
+  logs               Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
+  logs export        Print the same lines as rtok logs without numbers or colour.
+  logs watch         Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
   man                Print the man page (roff), or write every page with --dir.
   plugins            List plugins: id, kind, enabled, surfaces.
 
@@ -123,6 +126,35 @@ Arguments:
 Options:
   --host <string>    The host id, when the host is not inferred from the payload. [Default: @""]
   --serve            Run the resident hook server that rtok-hook talks to.
+
+$ rtok logs --help
+Usage: logs [options...] [-h|--help] [--version]
+
+Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
+
+Options:
+  --lines <uint?>       How many lines; [log] lines when omitted. [Default: null]
+  --json                Print the lines as a JSON array, newest first.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok logs export --help
+Usage: logs export [options...] [-h|--help] [--version]
+
+Print the same lines as rtok logs without numbers or colour.
+
+Options:
+  --lines <uint?>       How many lines; [log] lines when omitted. [Default: null]
+  --json                Print the lines as a JSON array, newest first.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok logs watch --help
+Usage: logs watch [options...] [-h|--help] [--version]
+
+Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
+
+Options:
+  --lines <uint?>       How many lines the screen keeps; [log] lines when omitted. [Default: null]
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok man --help
 Usage: man [options...] [-h|--help] [--version]

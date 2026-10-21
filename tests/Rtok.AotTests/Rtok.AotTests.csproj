@@ -27,6 +27,10 @@
       CopyToPublishDirectory="PreserveNewest"
     />
   </ItemGroup>
+  <!-- The log pipeline on NativeAOT (T10): Serilog's rotating file and the to_db row. -->
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Log/Rtok.Log.csproj" />
+  </ItemGroup>
   <Import Project="../../packages/Pyrlyn.TreeSitter/src/build/Pyrlyn.TreeSitter.targets" />
   <Import Project="../../src/Rtok.Store/StoreHost.targets" />
 </Project>

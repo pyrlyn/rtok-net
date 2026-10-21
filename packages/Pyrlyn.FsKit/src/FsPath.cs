@@ -195,6 +195,23 @@ public static class FsPath
         throw new UnauthorizedAccessException($"{path} resolves to {landed}, outside {root}");
     }
 
+    /// <summary>
+    /// Which file is at <paramref name="path"/> now, a symlink itself rather than its target: a
+    /// reader that keeps a file open can tell it was renamed away when the path's id changes.
+    /// </summary>
+    /// <returns>False when nothing is there, it cannot be read, or the OS has no stat layout here.</returns>
+    public static bool TryGetFileId(string path, out FileId id)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        if (Fs.TryLStat(path, out var stat, out _))
+        {
+            id = new FileId(stat.Device, stat.FileId);
+            return true;
+        }
+        id = default;
+        return false;
+    }
+
     /// <summary>Whether two paths name one existing entry (<c>/var</c> and <c>/private/var</c>, <c>RUNNER~1</c>).</summary>
     /// <remarks>A path that does not resolve matches only its own spelling.</remarks>
     public static bool SameFile(string a, string b) =>

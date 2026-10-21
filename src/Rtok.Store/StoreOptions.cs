@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace Rtok.Store;
 
 /// <summary>How <see cref="RtokStore.Open"/> opens the database file.</summary>
@@ -22,6 +24,9 @@ public sealed record StoreOptions(string DbPath)
 
     /// <summary>How many times opening retries a locked file before it gives up.</summary>
     public int ConnectAttempts { get; init; } = 10;
+
+    /// <summary>Where EF Core logs; null logs nothing.</summary>
+    public ILoggerFactory? LoggerFactory { get; init; }
 
     /// <summary>The clock behind every <c>ts</c> column.</summary>
     public TimeProvider Time { get; init; } = TimeProvider.System;
