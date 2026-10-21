@@ -1,3 +1,5 @@
+using Rtok.Hook.Contracts;
+
 namespace Rtok.Config.Tests;
 
 public sealed class RtokHomeTests

@@ -1,8 +1,9 @@
-namespace Rtok.Config;
+namespace Rtok.Hook.Contracts;
 
 /// <summary>
 /// Where rtok keeps its files: <c>$RTOK_HOME</c>, else <c>&lt;user home&gt;/.rtok</c>, and how
-/// <c>~</c> in a path key expands.
+/// <c>~</c> in a path key expands. It lives beside the hook wire so that the config, the
+/// <c>rtok-hook</c> client and the resident resolve one home, and with it one endpoint.
 /// </summary>
 public static class RtokHome
 {

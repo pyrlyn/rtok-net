@@ -8,6 +8,7 @@
     <PackageReference Include="Tomlyn" />
     <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
     <EmbeddedResource Include="config/default.toml" LogicalName="Rtok.Config.default.toml" />
     <InternalsVisibleTo Include="Rtok.Config.Tests" />

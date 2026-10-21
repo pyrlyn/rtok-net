@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The hook runtime: the resident server, the rtok-hook PATH link and the hook command line.
+       T13 adds the dispatch behind HookHandler. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Hooks</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Pyrlyn.Config.Layered;
+using Rtok.Hook.Contracts;
 using Tomlyn.Parsing;
 using Tomlyn.Syntax;
 

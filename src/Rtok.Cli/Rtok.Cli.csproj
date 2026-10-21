@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Hooks/Rtok.Hooks.csproj" />
   </ItemGroup>
   <Import Project="../../eng/RtokPlugins.targets" />
 </Project>

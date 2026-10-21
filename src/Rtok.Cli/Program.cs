@@ -22,6 +22,7 @@ app.Add(
         Console.Out.Write(json ? PluginsTable.RenderJson(registry) : PluginsTable.Render(registry));
     }
 );
+app.Add("hook", HookCommand.Run);
 app.Run(args);
 
 // "rtok 0.1.0 (3ebd2f7a1)": the informational version is "<version>+<sha9>" (Directory.Build.targets).

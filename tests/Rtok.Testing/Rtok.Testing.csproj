@@ -6,4 +6,7 @@
     <PackageReference Include="Testably.Abstractions.Testing" />
     <PackageReference Include="TestableIO.System.IO.Abstractions" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
+  </ItemGroup>
 </Project>

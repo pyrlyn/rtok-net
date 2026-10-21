@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The hook wire shared by rtok-hook and rtok (N6): no dependencies, so the client stays tiny. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Hook.Contracts</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Config.Tests" />
+  </ItemGroup>
+</Project>

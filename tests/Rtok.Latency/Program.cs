@@ -5,7 +5,8 @@ using CliWrap;
 using CliWrap.Buffered;
 using Rtok.Testing;
 
-// Hook latency gate (README.md): p50/p95 per fixture, fails over 10 ms median or 20 % over baseline.
+// Hook latency gate (README.md): p50/p95 per fixture with the resident up, fails over 10 ms p95
+// or a median 20 % over baseline.
 const double BudgetMs = 10;
 const double AllowedRegression = 1.2;
 
@@ -30,14 +31,27 @@ catch (System.ComponentModel.Win32Exception)
     return 2;
 }
 
-var hook = await PublishedApps.PathAsync("rtok-hook");
+using var box = await HookSandbox.CreateAsync();
+using var serve = new CancellationTokenSource();
+var resident = Cli.Wrap(box.Rtok)
+    .WithArguments(["hook", "--serve"])
+    .WithEnvironmentVariables(box.Environment)
+    .WithValidation(CommandResultValidation.None)
+    .ExecuteAsync(serve.Token);
+if (
+    !await HookSandbox.UntilAsync(() => File.Exists(box.Endpoint.Address), TimeSpan.FromSeconds(10))
+)
+{
+    await Console.Error.WriteLineAsync("the resident did not start");
+    return 1;
+}
 var baselineFile = Path.Join(RepoPaths.Root, "tests", "Rtok.Latency", "baseline.json");
 var baseline = JsonNode.Parse(await File.ReadAllTextAsync(baselineFile))!.AsObject();
 var ridBaseline = budgetOnly ? null : baseline[PublishedApps.Rid]?.AsObject();
 var measured = new JsonObject();
 var failed = false;
 
-Console.WriteLine($"rtok-hook on {PublishedApps.Rid}: {hook}");
+Console.WriteLine($"rtok-hook on {PublishedApps.Rid}, resident up: {box.Hook}");
 Console.WriteLine($"{"fixture", -20} {"p50 ms", 8} {"p95 ms", 8} {"base ms", 8}  status");
 foreach (
     var fixture in Directory
@@ -46,12 +60,12 @@ foreach (
 )
 {
     var name = Path.GetFileNameWithoutExtension(fixture);
-    var times = await MeasureAsync(hook, fixture);
+    var times = await MeasureAsync(box, fixture);
     var p50 = Percentile(times, 0.50);
     var p95 = Percentile(times, 0.95);
     var base50 = ridBaseline?[name]?.GetValue<double>();
     var failure =
-        p50 > BudgetMs ? $"FAIL median over {BudgetMs} ms"
+        p95 > BudgetMs ? $"FAIL p95 over {BudgetMs} ms"
         : base50 is { } b && p50 > b * AllowedRegression ? "FAIL over 120 % of baseline"
         : null;
     failed |= failure is not null;
@@ -63,6 +77,13 @@ foreach (
         )
     );
 }
+
+await serve.CancelAsync();
+try
+{
+    await resident;
+}
+catch (OperationCanceledException) { }
 
 if (update)
 {
@@ -78,12 +99,13 @@ if (update)
 return failed ? 1 : 0;
 
 // Run times in milliseconds of 200 spawns with the fixture on stdin.
-static async Task<double[]> MeasureAsync(string hook, string fixture)
+static async Task<double[]> MeasureAsync(HookSandbox box, string fixture)
 {
     var export = Path.Join(Path.GetTempPath(), $"rtok-latency-{Guid.NewGuid():N}.json");
     try
     {
         await Cli.Wrap("hyperfine")
+            .WithEnvironmentVariables(box.Environment)
             .WithArguments([
                 "-N",
                 "--warmup",
@@ -96,7 +118,7 @@ static async Task<double[]> MeasureAsync(string hook, string fixture)
                 fixture,
                 "--export-json",
                 export,
-                $"'{hook}'",
+                $"'{box.Hook}'",
             ])
             .ExecuteBufferedAsync();
         var result = JsonNode.Parse(await File.ReadAllTextAsync(export))!["results"]![0]!;

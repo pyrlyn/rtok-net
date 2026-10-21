@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- JIT lane: the hook wire, the resident and the rtok-hook PATH link (T14). -->
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Hooks/Rtok.Hooks.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

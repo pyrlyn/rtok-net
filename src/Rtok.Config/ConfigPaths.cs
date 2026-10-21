@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using Pyrlyn.Config.Layered;
+using Rtok.Hook.Contracts;
 using Tomlyn.Model;
 
 namespace Rtok.Config;

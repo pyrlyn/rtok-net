@@ -18,7 +18,10 @@ public sealed class FlagCoverageTests
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>
-    private static readonly HashSet<string> ActionKeys = new(StringComparer.Ordinal);
+    private static readonly HashSet<string> ActionKeys = new(StringComparer.Ordinal)
+    {
+        "hook.serve", // runs the resident instead of answering one call
+    };
 
     [Fact]
     public void Every_flag_maps_to_a_config_key()

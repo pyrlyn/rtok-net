@@ -5,5 +5,10 @@
     <RootNamespace>Rtok.Hook</RootNamespace>
     <RtokSurface>true</RtokSurface>
     <EventSourceSupport>false</EventSourceSupport>
+    <!-- posix_spawn's file actions and attributes live on the stack (Spawn.cs). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
+  </ItemGroup>
 </Project>
