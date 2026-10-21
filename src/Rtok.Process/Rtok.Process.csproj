@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ProgressRunner: the one way rtok starts a process (eng/BannedSymbols.Process.txt). -->
+  <PropertyGroup>
+    <RtokProcessRunner>true</RtokProcessRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Process.Tests" />
+  </ItemGroup>
+</Project>

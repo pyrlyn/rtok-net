@@ -1,6 +1,7 @@
 using CliWrap;
 using CliWrap.Buffered;
 using Pyrlyn.CommandLine.Docs;
+using Rtok.Testing;
 
 namespace Rtok.Cli.Tests;
 
@@ -22,13 +23,37 @@ internal static class RtokBinary
     internal static CommandModel Model => LazyModel.Value;
 
     /// <summary>Runs rtok with these arguments and returns what it printed.</summary>
-    internal static string Run(IReadOnlyList<string> args) =>
-        CliWrap
+    internal static string Run(IReadOnlyList<string> args) => Exec(args).Stdout;
+
+    /// <summary>
+    /// Runs rtok with these arguments, its home and the user home in an empty directory so no
+    /// real config is read, and returns its exit code and both streams.
+    /// </summary>
+    internal static (int Code, string Stdout, string Stderr) Exec(
+        IReadOnlyList<string> args,
+        IReadOnlyDictionary<string, string?>? environment = null
+    )
+    {
+        var result = CliWrap
             .Cli.Wrap(Path)
             .WithArguments(args)
+            .WithEnvironmentVariables(env =>
+            {
+                env.Set("HOME", Home.Path).Set("USERPROFILE", Home.Path).Set("RTOK_HOME", null);
+                foreach (
+                    var (name, value) in environment
+                        ?? new Dictionary<string, string?>(StringComparer.Ordinal)
+                )
+                {
+                    env.Set(name, value);
+                }
+            })
             .WithValidation(CommandResultValidation.None)
             .ExecuteBufferedAsync()
             .Task.GetAwaiter()
-            .GetResult()
-            .StandardOutput;
+            .GetResult();
+        return (result.ExitCode, result.StandardOutput, result.StandardError);
+    }
+
+    private static TempDir Home { get; } = new("rtok-cli-home-");
 }

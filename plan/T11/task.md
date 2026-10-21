@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 4
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T11. CLI shell and UX: ConsoleAppFramework, Spectre.Console, ProgressRunner
@@ -49,3 +49,13 @@ Spec: catalog A31, catalog B21 in [docs/port/catalog.md](../../docs/port/catalog
 Ports: rtok closed T20.2, T53.2, T60.1, T60.2, T83.7, T83.16, T107, T276, T276.1, T276.2, T276.3, T276.4, T276.5, T276.6, T315, T316, T317, T318, T319, T345, T348, T408, T409, T436, T436.2, T651, T903; open T436.4 ([open work](../../docs/port/open-work.md)).
 
 Check: Golden tests pass for every subcommand's `--help` and for each shell's completion script, and the banned-API analyzer reports no `Process.Start` outside ProgressRunner, and the exit-code tests show 2 for a parse error and an unknown command.
+
+Plan:
+1. `src/Rtok.Process` (the one project with `RtokProcessRunner`): ProgressRunner on CliWrap with modes Capture, Stream, Inherit and Detached, cwd, env, stdin, timeouts (the child is killed), a byte cap, `128 + signal` exit codes, the Windows `cmd /D /C` shim, the progress parsers (percent, git, cargo, JSON lines, callback), `Batch` and `Wait`. Indicators are hidden unless a surface installs a terminal display, so hooks and MCP never draw. Tests in `tests/Rtok.Process.Tests`.
+2. `Rtok.Cli` output style on Spectre.Console: success, status, warning and error lines with icons from Pyrlyn.OperationIcons plus rtok's own, `[ui] emoji` and `[ui] color`, and the colour rule per stream (NO_COLOR, CLICOLOR, CLICOLOR_FORCE, FORCE_COLOR, TERM=dumb, a terminal). The terminal display for ProgressRunner (spinners, bars, the batch bar, suspended around prompts) lives here too.
+3. Exit codes: a ConsoleAppFramework filter turns parse and validation errors into exit 2; a command's own exception prints one error line and exits 1. An unknown command or option before the command path exits 2, checked against the embedded command model.
+4. `docs/cli/commands.json`: the command model read from the built binary, embedded in `rtok`, with a drift test. `rtok completions bash|zsh|fish|powershell|clink [--install|--uninstall]` and `rtok man [--dir]` render from it (Pyrlyn.CommandLine.Docs). `plugins` becomes a documented method.
+5. Tests in `tests/Rtok.Cli.Tests`: a golden for every command's `--help` and for each shell's script, exit codes 2 for a parse error and an unknown command, `--json` on every reading command, and only `Rtok.Process` allowed to start processes.
+
+`rtok run -- <cmd>` belongs to the cmd plugin (T17): ConsoleAppFramework hands it the raw arguments after `--` (`ConsoleAppContext.EscapedArguments`, N9); this task adds no `run` command of its own.
+

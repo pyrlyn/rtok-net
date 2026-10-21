@@ -70,6 +70,7 @@
     <Project Path="src/Rtok.Store/Rtok.Store.csproj" />
     <Project Path="src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <Project Path="src/Rtok.Hooks/Rtok.Hooks.csproj" />
+    <Project Path="src/Rtok.Process/Rtok.Process.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
@@ -81,6 +82,7 @@
     <Project Path="tests/Rtok.Hooks.Tests/Rtok.Hooks.Tests.csproj" />
     <Project Path="tests/Rtok.Latency/Rtok.Latency.csproj" />
     <Project Path="tests/Rtok.Mcp.Install.Tests/Rtok.Mcp.Install.Tests.csproj" />
+    <Project Path="tests/Rtok.Process.Tests/Rtok.Process.Tests.csproj" />
     <Project Path="tests/Rtok.SamplePlugin/Rtok.SamplePlugin.csproj" />
     <Project Path="tests/Rtok.Smoke/Rtok.Smoke.csproj" />
     <Project Path="tests/Rtok.Store.Tests/Rtok.Store.Tests.csproj" />

@@ -15,6 +15,9 @@ public sealed class FlagCoverageTests
         "json", // how one call prints
         "force", // overwrite on one call
         "sources", // annotates `config show`
+        "install", // `completions`: write the script once
+        "uninstall", // `completions`: remove it
+        "dir", // `man`: where to write the pages
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

@@ -1,7 +1,9 @@
 using System.Reflection;
 using ConsoleAppFramework;
 using Rtok.Cli;
-using Rtok.Core;
+using Rtok.Cli.Shell;
+using Rtok.Cli.Ui;
+using Rtok.Process;
 
 if (args is ["--version"] or ["-V"])
 {
@@ -9,19 +11,28 @@ if (args is ["--version"] or ["-V"])
     return;
 }
 
-var app = ConsoleApp.Create();
-app.Add<ConfigCommands>("config");
+// The hook stays on its budget: no command model and no display.
+var hook = args is ["hook", ..];
 
-// The linked plugins: id, kind, enabled, surfaces. Until T7 loads the config, nothing
-// overrides a plugin's default.
-app.Add(
-    "plugins",
-    (bool json = false) =>
-    {
-        var registry = new PluginRegistry(LinkedPlugins.Create(), _ => null);
-        Console.Out.Write(json ? PluginsTable.RenderJson(registry) : PluginsTable.Render(registry));
-    }
-);
+// ConsoleAppFramework answers an unknown command with the root help and exit 0.
+if (!hook && CommandPath.Check(CommandDocs.Model, args) is var (message, help))
+{
+    ExitCodeFilter.BadArguments(message, help);
+    return;
+}
+
+// Spinners and bars on a terminal stderr; hooks and MCP turn them off for themselves.
+using var display = hook ? null : TerminalDisplay.ForStderr();
+if (display is not null)
+{
+    ProgressDisplay.Install(display);
+}
+
+var app = ConsoleApp.Create();
+app.UseFilter<ExitCodeFilter>();
+app.Add<ConfigCommands>("config");
+app.Add<PluginsCommands>();
+app.Add<ShellCommands>();
 app.Add("hook", HookCommand.Run);
 app.Run(args);
 

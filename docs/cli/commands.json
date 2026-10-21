@@ -1,0 +1,265 @@
+{
+  "name": "rtok",
+  "commands": [
+    {
+      "path": "",
+      "aliases": [],
+      "description": "",
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": "completions",
+      "aliases": [],
+      "description": "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",
+      "arguments": [
+        {
+          "type": "string?",
+          "description": "The shell: bash, zsh, fish, powershell or clink (with --install or --uninstall: default $SHELL)."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--install"
+          ],
+          "type": null,
+          "description": "Write the script to the shell's per-user completions directory.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--uninstall"
+          ],
+          "type": null,
+          "description": "Remove what --install wrote.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config get",
+      "aliases": [],
+      "description": "Print the effective value of one key or table.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The dotted key, for example proxy.port."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config init",
+      "aliases": [],
+      "description": "Write the reference config file (every key commented out at its default) and print its path.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--force"
+          ],
+          "type": null,
+          "description": "Overwrite an existing file.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config path",
+      "aliases": [],
+      "description": "Print the path of the user config file.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config set",
+      "aliases": [],
+      "description": "Set a key in the user config file, keeping its comments; the result is checked first.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The dotted key, for example proxy.port."
+        },
+        {
+          "type": "string",
+          "description": "The value: TOML (8080, true, [\"a\"]) or plain text."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config show",
+      "aliases": [],
+      "description": "Print every effective key and value; secrets are redacted.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--sources"
+          ],
+          "type": null,
+          "description": "Show where each value came from: default, a file and line, env or flag.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "config validate",
+      "aliases": [],
+      "description": "Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.",
+      "arguments": [
+        {
+          "type": "string?",
+          "description": "The file to check; the user config file when omitted (created when missing)."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "hook",
+      "aliases": [],
+      "description": "Run one hook event from stdin, or serve hooks as this home's resident.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The host's event name, such as PreToolUse."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--host"
+          ],
+          "type": "string",
+          "description": "The host id, when the host is not inferred from the payload.",
+          "default": "",
+          "required": false
+        },
+        {
+          "names": [
+            "--serve"
+          ],
+          "type": null,
+          "description": "Run the resident hook server that rtok-hook talks to.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "man",
+      "aliases": [],
+      "description": "Print the man page (roff), or write every page with --dir.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--dir"
+          ],
+          "type": "string?",
+          "description": "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "plugins",
+      "aliases": [],
+      "description": "List plugins: id, kind, enabled, surfaces.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        }
+      ]
+    }
+  ]
+}

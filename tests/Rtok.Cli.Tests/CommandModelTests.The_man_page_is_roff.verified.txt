@@ -1,0 +1,53 @@
+﻿.TH RTOK 1
+.SH NAME
+rtok
+.SH SYNOPSIS
+\fBrtok\fR [\fIoptions\fR]
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show help.
+.TP
+\fB\-\-version\fR
+Show version.
+.SH COMMANDS
+.TP
+\fBcompletions\fR
+Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
+See \fBrtok\-completions\fR(1).
+.TP
+\fBconfig get\fR
+Print the effective value of one key or table.
+See \fBrtok\-config\-get\fR(1).
+.TP
+\fBconfig init\fR
+Write the reference config file (every key commented out at its default) and print its path.
+See \fBrtok\-config\-init\fR(1).
+.TP
+\fBconfig path\fR
+Print the path of the user config file.
+See \fBrtok\-config\-path\fR(1).
+.TP
+\fBconfig set\fR
+Set a key in the user config file, keeping its comments; the result is checked first.
+See \fBrtok\-config\-set\fR(1).
+.TP
+\fBconfig show\fR
+Print every effective key and value; secrets are redacted.
+See \fBrtok\-config\-show\fR(1).
+.TP
+\fBconfig validate\fR
+Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
+See \fBrtok\-config\-validate\fR(1).
+.TP
+\fBhook\fR
+Run one hook event from stdin, or serve hooks as this home's resident.
+See \fBrtok\-hook\fR(1).
+.TP
+\fBman\fR
+Print the man page (roff), or write every page with \-\-dir.
+See \fBrtok\-man\fR(1).
+.TP
+\fBplugins\fR
+List plugins: id, kind, enabled, surfaces.
+See \fBrtok\-plugins\fR(1).

@@ -263,7 +263,7 @@ src/
   Rtok.Hook.Contracts/    hook wire DTOs + JsonSerializerContext, shared by both binaries
   Rtok.Cli/               rtok exe: ConsoleAppFramework commands, surfaces wired here
   Rtok.Core/              runtime, registry, dispatcher, estimator, foundation helpers
-  Rtok.Config/  Rtok.Store/  Rtok.Store.Model/ (EF entities, context, migrations)  Rtok.Archive/  Rtok.Log/
+  Rtok.Config/  Rtok.Store/  Rtok.Store.Model/ (EF entities, context, migrations)  Rtok.Archive/  Rtok.Log/  Rtok.Process/
   Rtok.Hooks/  Rtok.Mcp/  Rtok.Proxy/  Rtok.Web/  Rtok.Tui/  Rtok.Demon/  Rtok.Otel/
   Rtok.Plugins.<Id>/      one project per plugin (measure, cmd, read, archive, inject, guard,
                           memory, graph, toon, json_tree, compress, checkpoint, docs)
