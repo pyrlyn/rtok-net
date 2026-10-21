@@ -89,4 +89,6 @@ Registration is static: rtok loads no assembly at run time. List the plugin in a
 </Project>
 ```
 
-and build rtok from source with `-p:RtokPluginsFile=<that file>`. `rtok plugins` lists it.
+and build rtok from source with `-p:RtokPluginsFile=<that file>`. `rtok plugins` lists it as
+`external`. rtok's built-in plugins are linked too unless `-p:RtokPlugins=<ids>` picks them
+(`measure`, `"measure,cmd"`, or `none`).

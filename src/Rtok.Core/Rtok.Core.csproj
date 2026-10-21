@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The runtime between plugins and surfaces: registry, dispatcher, estimator (plan T6). -->
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+  </ItemGroup>
+</Project>

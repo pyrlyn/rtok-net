@@ -5,7 +5,24 @@
        An out-of-tree plugin keeps such items in its own props file and builds rtok with
        -p:RtokPluginsFile=<that file>. Paths in that file are relative to rtok's project, so use
        $(MSBuildThisFileDirectory). Each item becomes a project reference, and the generated
-       LinkedPlugins.Create() returns one instance of every Type, in item order. -->
+       LinkedPlugins.Create() returns one instance of every Type, in item order.
+       The built-in plugins below are picked by id with RtokPlugins: all of them by default,
+       -p:RtokPlugins=measure for a measure-only build, -p:RtokPlugins=none for none. MSBuild
+       splits -p on ',' and ';', so quote a list: '-p:RtokPlugins="measure,cmd"'. -->
+  <PropertyGroup>
+    <_RtokAllPlugins Condition="'$(RtokPlugins)' == '' or '$(RtokPlugins)' == 'all'"
+      >true</_RtokAllPlugins>
+    <_RtokPluginIds>,$(RtokPlugins.Replace(' ', '').Replace(';', ',')),</_RtokPluginIds>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RtokPlugin
+      Include="$(MSBuildThisFileDirectory)../src/Rtok.Plugins.Measure/Rtok.Plugins.Measure.csproj"
+      Type="Rtok.Plugins.Measure.MeasurePlugin"
+      Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',measure,'))"
+    />
+  </ItemGroup>
+
   <Import Project="$(RtokPluginsFile)" Condition="'$(RtokPluginsFile)' != ''" />
 
   <ItemGroup>

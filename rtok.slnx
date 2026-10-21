@@ -46,11 +46,14 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Rtok.Cli/Rtok.Cli.csproj" />
+    <Project Path="src/Rtok.Core/Rtok.Core.csproj" />
     <Project Path="src/Rtok.Hook/Rtok.Hook.csproj" />
+    <Project Path="src/Rtok.Plugins.Measure/Rtok.Plugins.Measure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
     <Project Path="tests/Rtok.Benchmarks/Rtok.Benchmarks.csproj" />
+    <Project Path="tests/Rtok.Core.Tests/Rtok.Core.Tests.csproj" />
     <Project Path="tests/Rtok.Fuzz/Rtok.Fuzz.csproj" />
     <Project Path="tests/Rtok.Latency/Rtok.Latency.csproj" />
     <Project Path="tests/Rtok.SamplePlugin/Rtok.SamplePlugin.csproj" />

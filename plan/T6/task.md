@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P0
 complexity: 4
-readiness: 0%
-agent:
+readiness: 80%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T6. Core runtime: registry, dispatcher, estimator, measurements
@@ -28,3 +28,11 @@ Spec: catalog A1 in [docs/port/catalog.md](../../docs/port/catalog.md).
 Ports: rtok closed T0.1, T0.8, T23.4.
 
 Check: Dispatcher tests cover every merge rule and a throwing plugin, the architecture test passes, and the measure-only build publishes with AOT.
+
+Plan:
+1. `src/Rtok.Core`: `Catalogue` (id, default-on), `PluginRegistry` (catalogue order, then external plugins; enabled from `plugins.<id>.enabled` read through `IHost.ConfigJson`, else the manifest default), `TokenEstimator` (rates from `[estimator]`), `Dispatcher` (rtok's pre_tool, post_tool with `cap_budget`, injections with `inject::apply`, each plugin call in its own try/catch).
+2. `src/Rtok.Plugins.Measure`: the measure plugin's manifest and page; linked by `eng/RtokPlugins.targets`, which picks built-in plugins with `-p:RtokPlugins=<ids>` (default `all`).
+3. `rtok plugins`: id, kind (`builtin` for a catalogue id, `external` otherwise), enabled, surfaces; `--json`. Until T7 the CLI passes no config, so every plugin shows its default.
+4. `tests/Rtok.Core.Tests`: registry, estimator and dispatcher tests, plus the architecture test over every `ProjectReference`.
+5. Smoke: an AOT publish with `-p:RtokPlugins=measure` lists only measure; the sample-plugin build adds `-p:RtokPlugins=none` and lists only the sample.
+
