@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Runtime.Versioning;
 using CliWrap;
 using CliWrap.Buffered;
+using Rtok.Hook.Contracts;
 using Rtok.Testing;
 
 namespace Rtok.Smoke;
@@ -79,12 +80,157 @@ public sealed class HookTests
                 ct
             )
         );
-        Assert.Equal("{}", await RunAsync(box, ct));
+        var served = await RunAsync(box, ct);
         Assert.Empty(Directory.EnumerateFiles(box.Endpoint.QueueDir));
         Assert.Equal(
             UnixFileMode.UserRead | UnixFileMode.UserWrite,
             File.GetUnixFileMode(box.Endpoint.Address)
         );
+        var direct = await Cli.Wrap(box.Rtok)
+            .WithArguments(["hook", "PreToolUse"])
+            .WithEnvironmentVariables(box.Environment)
+            .WithStandardInputPipe(PipeSource.FromFile(PreToolUse))
+            .ExecuteBufferedAsync(ct);
+        Assert.Equal(direct.StandardOutput, served);
+    }
+
+    // A second resident on the same home finds the lock taken and exits without binding.
+    [Fact]
+    public async Task A_second_resident_leaves_the_first_serving()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("the Windows fallback is measured in T52");
+        }
+        var ct = TestContext.Current.CancellationToken;
+        using var box = await HookSandbox.CreateAsync(ct);
+        await RunAsync(box, ct);
+        Assert.True(
+            await HookSandbox.UntilAsync(
+                () => File.Exists(box.Endpoint.Address),
+                TimeSpan.FromSeconds(10),
+                ct
+            )
+        );
+        var bound = new FileInfo(box.Endpoint.Address).CreationTimeUtc;
+
+        var second = await Cli.Wrap(box.Rtok)
+            .WithArguments(["hook", "--serve"])
+            .WithEnvironmentVariables(box.Environment)
+            .ExecuteBufferedAsync(ct)
+            .Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
+
+        Assert.Contains("already serves", second.StandardError, StringComparison.Ordinal);
+        Assert.Equal(bound, new FileInfo(box.Endpoint.Address).CreationTimeUtc);
+        Assert.Empty(Directory.EnumerateFiles(box.Endpoint.RunDir, ".s*"));
+        Assert.Equal("{}", await RunAsync(box, ct));
+        Assert.Empty(Directory.EnumerateFiles(box.Endpoint.QueueDir));
+    }
+
+    // Parallel clients with no resident: the spawn lock lets one of them start it.
+    [Fact]
+    public async Task Parallel_clients_start_one_resident()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("the Windows fallback is measured in T52");
+        }
+        var ct = TestContext.Current.CancellationToken;
+        using var box = await HookSandbox.CreateAsync(ct);
+
+        var replies = await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => RunAsync(box, ct)));
+
+        // Counted at once: a second resident would still be waiting for the lock.
+        var started = Residents(box);
+        Assert.All(replies, r => Assert.Equal("{}", r));
+        Assert.Equal(1, started);
+        Assert.True(
+            await HookSandbox.UntilAsync(
+                () => File.Exists(box.Endpoint.Address),
+                TimeSpan.FromSeconds(10),
+                ct
+            )
+        );
+        Assert.True(
+            await HookSandbox.UntilAsync(
+                () => !Directory.EnumerateFiles(box.Endpoint.QueueDir).Any(),
+                TimeSpan.FromSeconds(10),
+                ct
+            )
+        );
+    }
+
+    // The client sends its stdin as it came and prints the resident's reply as it came.
+    [Fact]
+    public async Task The_client_forwards_stdin_and_the_reply_unchanged()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("Unix socket");
+        }
+        var ct = TestContext.Current.CancellationToken;
+        using var home = new TempDir("rh-");
+        var reply = """{"hookSpecificOutput":{"additionalContext":"é \n ✓"}}"""u8.ToArray();
+        using var fake = FakeResident.Start(
+            home.Path,
+            _ => HookWire.EncodeReply(HookReplyStatus.Served, reply)
+        );
+
+        var result = await RunAsync(home.Path, PipeSource.FromFile(PreToolUse), ct);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(reply, System.Text.Encoding.UTF8.GetBytes(result.StandardOutput));
+        var request = await fake.Request.WaitAsync(TimeSpan.FromSeconds(10), ct);
+        Assert.NotNull(request);
+        Assert.Equal("PreToolUse", request.Event);
+        Assert.Equal(await File.ReadAllBytesAsync(PreToolUse, ct), request.Stdin.ToArray());
+    }
+
+    // A resident that dies with the request read: the client still answers the no-op reply.
+    [Fact]
+    public async Task A_resident_gone_mid_request_still_gets_the_no_op_reply()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("Unix socket");
+        }
+        var ct = TestContext.Current.CancellationToken;
+        using var home = new TempDir("rh-");
+        using var fake = FakeResident.Start(home.Path, _ => null);
+
+        var result = await RunAsync(home.Path, PipeSource.FromFile(PreToolUse), ct);
+
+        Assert.NotNull(await fake.Request.WaitAsync(TimeSpan.FromSeconds(10), ct));
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal("{}", result.StandardOutput);
+    }
+
+    // Stdin over the cap never reaches the resident: the no-op reply and a line on stderr.
+    [Fact]
+    public async Task Stdin_over_the_cap_bypasses_the_resident()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("Unix socket");
+        }
+        var ct = TestContext.Current.CancellationToken;
+        using var home = new TempDir("rh-");
+        using var fake = FakeResident.Start(home.Path, _ => null);
+
+        var result = await RunAsync(
+            home.Path,
+            PipeSource.FromBytes(new byte[HookWire.MaxInput + 1]),
+            ct
+        );
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal("{}", result.StandardOutput);
+        Assert.Contains(
+            $"stdin over {HookWire.MaxInput} bytes",
+            result.StandardError,
+            StringComparison.Ordinal
+        );
+        Assert.False(fake.Request.IsCompleted);
     }
 
     // A client whose config differs from the resident's is refused; it still answers at once and
@@ -154,14 +300,60 @@ public sealed class HookTests
         );
     }
 
+    private static string PreToolUse => RepoPaths.Fixture("hooks", "pre_tool_use.json");
+
+    // The sandbox's rtok processes, matched by the sandbox directory their binary sits in.
+    private static int Residents(HookSandbox box)
+    {
+        var sandbox = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(box.Rtok)));
+        return Process
+            .GetProcessesByName("rtok")
+            .Count(p =>
+            {
+                using (p)
+                {
+                    try
+                    {
+                        return p.MainModule?.FileName is { } file
+                            && string.Equals(
+                                Path.GetFileName(
+                                    Path.GetDirectoryName(Path.GetDirectoryName(file))
+                                ),
+                                sandbox,
+                                StringComparison.Ordinal
+                            );
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return false; // exited meanwhile
+                    }
+                    catch (System.ComponentModel.Win32Exception)
+                    {
+                        return false;
+                    }
+                }
+            });
+    }
+
+    // The published client, which has no rtok beside it: nothing is started.
+    private static async Task<BufferedCommandResult> RunAsync(
+        string home,
+        PipeSource stdin,
+        CancellationToken ct
+    ) =>
+        await Cli.Wrap(await PublishedApps.PathAsync("rtok-hook", ct))
+            .WithArguments("PreToolUse")
+            .WithEnvironmentVariables(e => e.Set("RTOK_HOME", home))
+            .WithStandardInputPipe(stdin)
+            .WithValidation(CommandResultValidation.None)
+            .ExecuteBufferedAsync(ct);
+
     private static async Task<string> RunAsync(HookSandbox box, CancellationToken ct)
     {
         var result = await Cli.Wrap(box.Hook)
             .WithArguments("PreToolUse")
             .WithEnvironmentVariables(box.Environment)
-            .WithStandardInputPipe(
-                PipeSource.FromFile(RepoPaths.Fixture("hooks", "pre_tool_use.json"))
-            )
+            .WithStandardInputPipe(PipeSource.FromFile(PreToolUse))
             .ExecuteBufferedAsync(ct);
         Assert.Equal(0, result.ExitCode);
         return result.StandardOutput;

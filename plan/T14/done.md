@@ -24,6 +24,21 @@ What was done:
   - `tests/Rtok.Smoke/HookTests.cs` on the AOT binaries (through `Rtok.Testing.HookSandbox`): autostart, then served with an empty queue and the socket at 0600; a different fingerprint still answered; a hung resident costs the budget and no more;
   - `tests/Rtok.Latency` now starts the resident and gates p95 ≤ 10 ms, plus the median against the baseline.
 
+Tests section of `task.md` (added to `plan/` after the first merge, covered in a follow-up commit). There is no `Rtok.Hook.Tests` project: the client is an exe, so its cases run on the AOT binary in `tests/Rtok.Smoke/HookTests.cs`, against a `FakeResident` where one is needed.
+- A second `--serve` on the same home exits without binding: `One_resident_per_home` and `A_second_resident_leaves_the_first_serving`.
+- Another version or fingerprint is refused and takes the fallback: `It_refuses_another_version_and_exits`, `It_refuses_another_fingerprint_and_stays` and `A_client_with_another_fingerprint_still_answers`.
+- Stdin forwarded byte for byte, the reply printed unchanged: `The_client_forwards_stdin_and_the_reply_unchanged`.
+- A resident that never answers costs 50 ms: `A_hung_resident_costs_the_client_its_budget_and_no_more`.
+- Parallel clients start one resident: `Parallel_clients_start_one_resident`. With the spawn gate turned off, 8 residents start, so the test catches it. The gate is now an flock on `spawn.lock` that holds the last start's ticks; the first merge only checked its mtime, and parallel clients could race that check.
+- Stdin over the cap bypasses the resident: `Stdin_over_the_cap_bypasses_the_resident`.
+- The 0700 directory and the 0600 socket: `The_socket_is_owner_only_inside_a_0700_directory` and the autostart smoke test.
+- The PATH link: `HookClientLinkTests`.
+- Served byte-identical to `rtok hook PreToolUse`: `The_client_starts_the_resident_which_then_serves_it`.
+- A resident killed mid-request: `A_resident_gone_mid_request_still_gets_the_no_op_reply`.
+- Open:
+  - the Windows pipe ACL is T52's (Windows is not run here);
+  - Verify on the generated manifests is T13's (it generates them); `HookCommandLineTests` pins the command line they will take.
+
 Measurements (osx-arm64, hyperfine `-N`, 200 runs, resident up):
 
 | fixture | p50 ms | p95 ms |
@@ -39,4 +54,4 @@ Notes for later tasks:
 - T52: the Windows paths are built but not run: the named pipe, CreateProcessW, and the one-shot fallback (it does not hand stdin over yet). Neither are the latency numbers on Windows.
 - Linux: the resident-up gate was run only on osx-arm64; `baseline.json` has no Linux entry, and CI does not run the gate.
 
-Check: `dotnet build rtok.slnx -c Release -warnaserror`, `dotnet test` (1055 passed) and `dotnet csharpier check .` are green. The latency gate passes with exit 0. By hand on the AOT binaries: autostart, then served; deleting `hook.lock` stops the resident.
+Check: `dotnet build rtok.slnx -c Release -warnaserror`, `dotnet test` (1073 passed) and `dotnet csharpier check .` are green. The latency gate passes with exit 0. By hand on the AOT binaries: autostart, then served; deleting `hook.lock` stops the resident.

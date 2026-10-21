@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using Rtok.Hook.Contracts;
 
 namespace Rtok.Hook;
@@ -16,13 +17,47 @@ internal static class Fallback
             return;
         }
         HookBacklog.Enqueue(endpoint, body);
-        var touched = File.GetLastWriteTimeUtc(endpoint.SpawnLockPath);
-        if (DateTime.UtcNow - touched < SpawnInterval)
+        if (TakeSpawnTurn(endpoint))
         {
-            return;
+            Spawn.Detached([rtok, "hook", "--serve"], stdinFile: null);
         }
-        File.WriteAllBytes(endpoint.SpawnLockPath, []);
-        Spawn.Detached([rtok, "hook", "--serve"], stdinFile: null);
+    }
+
+    // Whether this client starts the resident: the last start (UTC ticks in spawn.lock) is over
+    // SpawnInterval ago. FileShare.None is an flock on Unix, so of parallel clients one decides
+    // and the others, failing to open it, leave the start to it.
+    private static bool TakeSpawnTurn(HookEndpoint endpoint)
+    {
+        try
+        {
+            using var gate = new FileStream(
+                endpoint.SpawnLockPath,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                FileShare.None
+            );
+            Span<byte> last = stackalloc byte[sizeof(long)];
+            if (
+                gate.ReadAtLeast(last, last.Length, throwOnEndOfStream: false) == last.Length
+                && DateTime.UtcNow.Ticks - BinaryPrimitives.ReadInt64LittleEndian(last)
+                    < SpawnInterval.Ticks
+            )
+            {
+                return false;
+            }
+            BinaryPrimitives.WriteInt64LittleEndian(last, DateTime.UtcNow.Ticks);
+            gate.Position = 0;
+            gate.Write(last);
+            return true;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 
     /// <summary>
