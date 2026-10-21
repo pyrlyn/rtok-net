@@ -302,7 +302,7 @@ Notation:
 | printpdf | **QuestPDF** 2026.9.1 (declared AOT; native Skia/HarfBuzz/qpdf; own community/commercial license) or **PDFsharp** 6.5.0 (**AGPL-3.0-only** in 6.x; check before mixing with GPL-3.0-or-later) | | | Keep it in a separate optional command or plugin, because of the native libs and size. |
 | tokio | **BCL** async/await, `Task`, `Channel<T>`, `PeriodicTimer` | | yes | .NET 11 runtime-async (`<Features>runtime-async=on</Features>`) is a preview opt-in [doc] |
 | axum (+ ws) | **ASP.NET Core** `WebApplication.CreateSlimBuilder` / `CreateEmptyBuilder` + Minimal APIs + `UseWebSockets` | 10.0 | partial (Minimal APIs partial, WebSockets full; MVC/Blazor Server unsupported) | [doc] https://learn.microsoft.com/en-us/aspnet/core/fundamentals/native-aot . Adds about 1.5 ms of startup **when linked**, so keep it out of the hook. |
-| rust-embed (React SPA) | **BCL** `EmbeddedResource` + Microsoft.Extensions.FileProviders.Embedded `ManifestEmbeddedFileProvider` + `UseStaticFiles` | 10.0.13 | declared | Build the SPA with npm in an MSBuild target before compile. Keep React; don't port it to Blazor. |
+| rust-embed (React SPA) | **BCL** `EmbeddedResource` + Microsoft.Extensions.FileProviders.Embedded `ManifestEmbeddedFileProvider` + `UseStaticFiles` | 10.0.13 | declared | Embeds the published Blazor WebAssembly client (`Rtok.Web.Client`, N13) through an MSBuild target before compile. Only standalone WebAssembly works with the AOT host: Blazor Server and interactive SSR don't. |
 | mime_guess | **BCL** `FileExtensionContentTypeProvider` (ASP.NET Core) | | yes | |
 | percent-encoding | **BCL** `Uri.EscapeDataString`, `WebUtility.UrlEncode` | | yes | |
 | futures-util | **BCL** `IAsyncEnumerable`, `System.Linq.AsyncEnumerable` (in the BCL since .NET 10) | | yes | |
@@ -452,7 +452,8 @@ rtok-net/
     Rtok.Proxy/          # YARP/HttpClient forwarder, SSE rewrite
     Rtok.Graph/          # code graph over Rtok.TreeSitter
     Rtok.Daemon/         # unix-socket server
-    Rtok.Web/            # dashboard endpoints + embedded SPA (web/ built by npm)
+    Rtok.Web/            # dashboard endpoints + embedded Blazor WebAssembly client
+    Rtok.Web.Client/     # Blazor WebAssembly dashboard (N13)
   packages/              # reusable, separately versioned, IsAotCompatible=true
     Rtok.TreeSitter/     # LibraryImport bindings + static grammars per RID
     Rtok.Ignore/         # gitignore semantics + walker
@@ -463,7 +464,7 @@ rtok-net/
     Rtok.AotTests/       # xunit.v3.aot, published + run in CI
     Rtok.Smoke/          # CliWrap against published binaries
     Rtok.Benchmarks/     # BenchmarkDotNet
-  web/                   # React/TS dashboard source
+  web/                   # dashboard screenshots
 ```
 
 ### E.2 Directory.Build.props

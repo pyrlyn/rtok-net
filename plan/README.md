@@ -137,9 +137,15 @@ runtime, so a plugin is a project referenced at build time. A build includes or 
 a plugin through an MSBuild property; config turns it on or off at runtime. Out-of-tree
 plugins build their own `rtok` against `Rtok.Plugin.Sdk`.
 
-N13. **The web dashboard SPA is reused.** The React/TypeScript app from rtok's `web/` moves
-over as it is. Kestrel serves it, and the `/ws` protocol types come from
-`JsonSchemaExporter`, so the TypeScript types are still generated.
+N13. **The web dashboard is Blazor WebAssembly.** rtok's React app is not reused; its
+pages and UX contracts (catalog A24) are rebuilt as a standalone Blazor WebAssembly app,
+`Rtok.Web.Client`. Blazor Server and interactive SSR are not NativeAOT-compatible, so the
+host stays Kestrel minimal API + `/ws` in the AOT `rtok`, and serves the client's published
+static files (fingerprinted, precompressed) as embedded resources. The `/ws` messages live
+once, in C#, in `Rtok.Web.Contracts` with its STJ context, shared by host and client: no
+JSON Schema or TypeScript codegen. ECharts and Three.js stay, vendored and called through
+JS interop; no npm. The costs: a bigger first download than the React bundle, and
+`'wasm-unsafe-eval'` in the CSP.
 
 N14. **rtok's design rules still apply**, unless a task here says otherwise:
 - Hooks fail open: exit 0, unmodified, within 10 ms.
@@ -276,10 +282,12 @@ src/
                           memory, graph, toon, json_tree, compress, checkpoint, docs)
   Rtok.Agents/  Rtok.Mcp.Install/  Rtok.Worktree/  Rtok.Tasks/  Rtok.Measure/  Rtok.Report/  Rtok.Report.Pdf/
   Rtok.Doctor/  Rtok.Model/ (operator model shared by web and TUI)
+  Rtok.Web.Contracts/     /ws DTOs + JsonSerializerContext, shared by Rtok.Web and the client
+  Rtok.Web.Client/        Blazor WebAssembly dashboard (N13), references only Rtok.Web.Contracts
 packages/                 own NuGet packages (above)
 eng/                      build-time tools (Rtok.Store.Scripts: one SQL script per migration)
 tests/                    *.Tests (JIT), Rtok.AotTests, Rtok.Smoke, Rtok.Benchmarks, Rtok.Fuzz
-web/                      React SPA from rtok
+web/                      dashboard screenshots
 plugins/  skills/  rules/  modes/   host plugin trees and data files from rtok
 ```
 
@@ -298,7 +306,7 @@ conflict on rebase: keep both sides.
 | --- | --- | --- |
 | L1 | tests, plugin contract, core, cmd/memory plugins | T2, T5, T6, T53, T17, T18, T22, T23, T22.1 |
 | L2 | store, archive, logs, proxy | T8, T10, T9, T27, T29, T28, T54, T50 |
-| L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
+| L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T44.2, T45 |
 | L4 | hook latency, hooks, resident, MCP, agents | T4, T13, T14, T15, T16, T37, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |
 | L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
@@ -310,7 +318,7 @@ Main cross-lane dependencies: every package (T12.x) follows T12's layout; T6 nee
 plugins, T13 and T15 need T6; T7 needs T12.9; T9, T10 and T13 need T8; T11 needs T12.8 and
 T12.11; T17 needs T12.6; T19 and T24 need T12.4 (T24 also T12.5); T33 needs T12.1; T34, T35
 and T32 need T12.3; T28 needs T9; T14 takes its fallback from T4; T46 needs T14 and T27;
-T44 and T45 need T43; T39 needs T12.7; T50 runs last.
+T44 and T45 need T43; T44.2 needs T44; T44.1 needs T44.2; T39 needs T12.7; T50 runs last.
 
 
 

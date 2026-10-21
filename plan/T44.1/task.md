@@ -8,7 +8,7 @@ agent:
 
 # T44.1. Re-shoot dashboard screenshots
 
-The screenshots and the brand pack's web-admin entry must show the .NET-served dashboard.
+The screenshots and the brand pack's web-admin entry must show the Blazor dashboard (T44.2).
 
 Done when `web/screenshots/` is regenerated and the brand README records the adoption.
 
