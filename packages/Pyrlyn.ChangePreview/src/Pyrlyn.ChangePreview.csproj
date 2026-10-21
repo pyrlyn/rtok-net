@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Dry-run previews of what a command would change: git-style unified diffs, stat lines, removal lines with sizes, totals, human byte sizes and optional colour.</Description>
+    <PackageTags>diff;dry-run;preview;unified-diff;cli</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DiffPlex" />
+    <InternalsVisibleTo Include="Pyrlyn.ChangePreview.Tests" />
+  </ItemGroup>
+</Project>

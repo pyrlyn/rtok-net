@@ -1,0 +1,23 @@
+﻿␛[1m--- a/rtok.toml␛[0m
+␛[1m+++ b/rtok.toml␛[0m
+␛[36m@@ -1,6 +1,7 @@␛[39m
+ [hook]
+␛[31m-budget = 10␛[39m
+␛[32m+budget = 20␛[39m
+ log = true
+ 
+ [mcp]
+ port = 0
+␛[32m+tools = ["read"]␛[39m
+␛[1m--- a/notes.md␛[0m
+␛[1m+++ b/notes.md␛[0m
+␛[36m@@ -1,2 +1,3 @@␛[39m
+ one
+␛[31m-two␛[39m
+\ No newline at end of file
+␛[32m+two␛[39m
+␛[32m+three␛[39m
+␛[31m- .worktrees/T1/bin  45.8 MB  1 204 files␛[39m
+␛[31m- .worktrees/T2/obj    900 B  3 files␛[39m
+2 files changed, 4 insertions(+), 2 deletions(-)
+2 paths, 1 207 files, -45.8 MB

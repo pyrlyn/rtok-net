@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/packages/" />
+  <Folder Name="/packages/Pyrlyn.ChangePreview/">
+    <Project Path="packages/Pyrlyn.ChangePreview/src/Pyrlyn.ChangePreview.csproj" />
+    <Project Path="packages/Pyrlyn.ChangePreview/tests/Pyrlyn.ChangePreview.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.CommandLine.Docs/">
     <Project Path="packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
     <Project Path="packages/Pyrlyn.CommandLine.Docs/tests/Pyrlyn.CommandLine.Docs.Tests.csproj" />

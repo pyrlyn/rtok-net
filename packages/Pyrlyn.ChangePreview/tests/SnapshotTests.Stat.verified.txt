@@ -1,0 +1,6 @@
+﻿ rtok.toml | 3 ++-
+ notes.md  | 3 ++-
+- .worktrees/T1/bin  45.8 MB  1 204 files
+- .worktrees/T2/obj    900 B  3 files
+2 files changed, 4 insertions(+), 2 deletions(-)
+2 paths, 1 207 files, -45.8 MB

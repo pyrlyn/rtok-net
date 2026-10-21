@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageVersion Include="ConsoleAppFramework" Version="5.7.13" />
     <PackageVersion Include="CsCheck" Version="4.9.1" />
+    <PackageVersion Include="DiffPlex" Version="1.9.0" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Tomlyn" Version="2.10.1" />
     <PackageVersion Include="Wcwidth" Version="4.0.1" />
