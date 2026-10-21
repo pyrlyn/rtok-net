@@ -12,6 +12,10 @@
     <Project Path="packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
     <Project Path="packages/Pyrlyn.FsKit/tests/Pyrlyn.FsKit.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.RotatingLog/">
+    <Project Path="packages/Pyrlyn.RotatingLog/src/Pyrlyn.RotatingLog.csproj" />
+    <Project Path="packages/Pyrlyn.RotatingLog/tests/Pyrlyn.RotatingLog.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.Shlex/">
     <Project Path="packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
     <Project Path="packages/Pyrlyn.Shlex/tests/Pyrlyn.Shlex.Tests.csproj" />

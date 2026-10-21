@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- The concurrency tests start writer processes; ProgressRunner lives in src/, which a
+         package may not reference. -->
+    <RtokProcessRunner>true</RtokProcessRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/Pyrlyn.RotatingLog.csproj" />
+  </ItemGroup>
+</Project>

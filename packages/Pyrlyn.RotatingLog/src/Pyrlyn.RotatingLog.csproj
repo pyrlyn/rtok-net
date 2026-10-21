@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>A size-bounded rotating text log for short processes: a level floor before any IO, .N rotation under a cross-process lock and an errors.log copy, with no host or DI.</Description>
+    <PackageTags>logging;log-rotation;file-log;multi-process;aot</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pyrlyn.RotatingLog.Tests" />
+  </ItemGroup>
+</Project>
