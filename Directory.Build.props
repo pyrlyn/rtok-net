@@ -1,8 +1,10 @@
 <Project>
+  <!-- Shared analyzer settings: the files Pyrlyn.CodeStyle packs (packages/Pyrlyn.CodeStyle). -->
+  <Import Project="$(MSBuildThisFileDirectory)packages/Pyrlyn.CodeStyle/src/build/Pyrlyn.CodeStyle.props" />
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
     <UseArtifactsOutput>true</UseArtifactsOutput>
@@ -13,10 +15,7 @@
     <!-- Only packages/ projects pack (packages/Directory.Build.props). -->
     <IsPackable>false</IsPackable>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <TreatWarningsAsErrors Condition="'$(CI)' == 'true'">true</TreatWarningsAsErrors>
-    <WarningsAsErrors>$(WarningsAsErrors);nullable;IL2026;IL2104;IL3050;IL3053;IL3058;RS0030</WarningsAsErrors>
+    <WarningsAsErrors>$(WarningsAsErrors);RS0030</WarningsAsErrors>
     <!-- Verify's OpenSource exemption (plan/README.md N11): renew yearly; valid only while rtok-net earns no revenue. -->
     <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
     <Verify_SponsorshipExemptionUntil>2027-10</Verify_SponsorshipExemptionUntil>

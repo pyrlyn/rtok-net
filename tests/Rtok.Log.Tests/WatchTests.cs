@@ -66,12 +66,12 @@ public sealed class WatchTests : IDisposable
             TestContext.Current.CancellationToken
         );
 
-        await output.WaitFor("1 b\n2 a\n");
+        await output.WaitForAsync("1 b\n2 a\n");
         File.AppendAllText(LogPath, "c\n");
-        await output.WaitFor("1 b\n2 a\n3 c\n");
+        await output.WaitForAsync("1 b\n2 a\n3 c\n");
         File.Move(LogPath, LogPath + ".1");
         File.WriteAllText(LogPath, "d\n");
-        await output.WaitFor("1 b\n2 a\n3 c\n4 d\n");
+        await output.WaitForAsync("1 b\n2 a\n3 c\n4 d\n");
         await stop.CancelAsync();
         await watch;
 
@@ -122,7 +122,7 @@ public sealed class WatchTests : IDisposable
             }
         }
 
-        public async Task WaitFor(string text)
+        public async Task WaitForAsync(string text)
         {
             for (var i = 0; i < 100 && !string.Equals(Text, text, StringComparison.Ordinal); i++)
             {

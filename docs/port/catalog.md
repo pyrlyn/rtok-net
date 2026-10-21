@@ -14,7 +14,6 @@ Library choices for each area live in `research.md` and `plan/README.md`, not he
 
 ## A. First half of rtok's done log
 
-
 Every T-id that appears as a heading (`##`/`###`) or a bold `**Txx` entry in done.md lines 1-7800 appears exactly once in an `IDs:` line below (684 ids). A heading such as `T454` that occurs more than once, or `T127` (two headings), is listed once, and all of its parts are covered under that area.
 
 ---
@@ -114,7 +113,7 @@ IDs: T2.5 T58.2 T59.6 T62.2 T71.2 T306 T375
 ### A11. graph plugin: code index, symbol/callers/impact/explore
 IDs: T8.1 T8.2 T8.3 T8.4 T8.5 T8.6 T8.7 T8.13 T8.15 T8.16 T8.17 T21.2 T30.0 T30.1 T30.2 T35.1 T35.2 T35.3 T35.4 T35.5 T36.16 T36.17 T39.0 T41.1 T52.1 T52.2 T52.3 T52.4 T52.5 T59.3 T68.1 T68.2 T68.3 T68.4 T68.5 T68.6 T68.7 T68.9 T68.10 T181 T327 T368 T371 T376 T377 T387 T474 T620 T621 T646 T654 T663 T664 T665
 - SQLite `symbols(root, path, name, kind, line, end_line, start_byte, end_byte, is_def, scope, file_sha, mtime, size, content_hash)` is built from tree-sitter tags (definitions and references, including type-position and scoped-call refs) while walking the repo with .gitignore respected. It is scoped per canonical root. Freshness is stat-gated (mtime+size; sha256 only when the stat differs). An unreadable file gets stat (0,0). A removed directory purges its rows. An extractor fingerprint (queries, grammar versions, INDEX_VERSION) triggers a rebuild. Storage is SQLite only (the LadybugDB experiment was removed).
-- MCP tools: `symbol(name)` returns definitions plus source bodies (`body_lines` 40, whole definitions first), callees, and "+N other definitions of <name>". `callers(name)` returns reference sites grouped by file. `outline(path)`. `impact(name|path, depth=2 max 4, to?)` is a BFS over scope edges (one recursive CTE ordered by depth, path, scope), grouped as `path (N refs, depth d)` within `impact_tokens` 1500, with call paths A→B when `to` is given. `explore(query)` does identifier tokenization (first 8), exact then prefix best-5, `= name` + bodies, `paths:` caller chains ≤3 hops, and `impact:` lines. Descriptions are ≤25-60 tokens.
+- MCP tools: `symbol(name)` returns definitions plus source bodies (`body_lines` 40, whole definitions first), callees, and "+N other definitions of `<name>`". `callers(name)` returns reference sites grouped by file. `outline(path)`. `impact(name|path, depth=2 max 4, to?)` is a BFS over scope edges (one recursive CTE ordered by depth, path, scope), grouped as `path (N refs, depth d)` within `impact_tokens` 1500, with call paths A→B when `to` is given. `explore(query)` does identifier tokenization (first 8), exact then prefix best-5, `= name` + bodies, `paths:` caller chains ≤3 hops, and `impact:` lines. Descriptions are ≤25-60 tokens.
 - Every answer is capped and gets an archive id. A staleness line `index <old> head <new>` is added when HEAD has moved. Ambiguous refs are marked. Ranking order is imported > same dir > IDF. Co-change data comes from `git log -n300`: `changes with: a (7)`, top 5.
 - `rtok graph affected [--since <ref>|--staged] [--json]` maps changed files to tests via impact BFS depth 3 and is_test_path. It prints `file ← via symbol` plus a per-language test command, or `{"tests":[{file,symbol,command}]}`. When nothing matches it prints "no indexed test reaches the change; run the suite". There is also `graph review` (risk scores 0.30/0.05/+0.20/≤0.10), a dead-code report (skipping macros, main and tests), and a ranked repo map at SessionStart.
 - Indexing: `plugins.graph.auto_index=true`, `watch = off|notify|watchman` (watcher indexes only changed paths; full walk on overflow). Cold index uses batched transactions (about 27 s for 3000 files cold, 0.05 s warm). Parsing runs on worker threads with a single writer, and queries are compiled once. A progress bar is shown on TTY only (hidden for MCP and the watcher).
@@ -253,7 +252,7 @@ IDs: T16.1 T16.2 T16.3 T16.4 T16.5 T16.6 T16.7 T16.9 T36.12 T45.1 T53.4 T143 T59
 
 ### A30. Config
 IDs: T0.2 T12.1 T12.2 T12.3 T12.4 T12.5 T12.6 T34.7 T36.7 T36.8 T36.9 T45.4 T363 T364 T365 T379
-- `~/.rtok/config.toml` (`RTOK_HOME`). The typed schema denies unknown fields, with sections core, hook, mcp, proxy, stats, bench, doctor, setup, expand, filter, log, otel, web, tui, demon, report and plugins.<id>. `config/default.toml` is the reference.
+- `~/.rtok/config.toml` (`RTOK_HOME`). The typed schema denies unknown fields, with sections core, hook, mcp, proxy, stats, bench, doctor, setup, expand, filter, log, otel, web, tui, demon, report and `plugins.<id>`. `config/default.toml` is the reference.
 - Layering: defaults → user file (`--config`/`RTOK_CONFIG`) → `<git root>/.rtok.toml` → `.env` (RTOK_* lines only, nearest .env walking up, then `~/.env`) → `RTOK_*` env → flags. Legacy keys are folded before env and flags. `~` is expanded in every path key.
 - `config show [--sources]`, `config get/set` (toml_edit, comments preserved), `config validate [path]`. Unknown key, type or range errors report file:line and exit 1. Floats, enums (`embed_backend`), `stats.since` and `report.since` are range-checked, and env overrides are validated. Elsewhere invalid config gives a warning and falls back to defaults.
 - Every write command supports `--dry-run`, which prints a coloured git-style unified diff. A flag↔key coverage test exists.
@@ -291,7 +290,6 @@ Notes to keep from these: the version string format `rtok X (<sha9>)` and a self
 IDs: T9.2 T9.4 T9.5 T14.0 T14.1 T14.2 T14.3 T14.4 T14.5 T14.6 T14.7 T14.8 T14.9 T14.10 T16.8 T38.6 T41.2 T44.6 T48.4 T64.3 T126 T217 T262.2 T264 T359 T404 T530 T540 T547 T554 T561 T568 T572 T575 T578 T582 T585 T588 T591 T593 T596 T598 T600 T602 T603 T605 T607 T610 T612 T614 T616
 
 ## B. Second half of rtok's done log
-
 
 Source: /Users/listepo/GitHub/pyrlyn/rtok/done.md from line 7796 to the end. There are 480 unique ids; one id appears twice as a heading in the source (config, area 19). Each id is listed exactly once, either on an area's `T-ids:` line or in the drop list at the end. The bullets are the contracts the C# port must reproduce.
 
@@ -349,7 +347,7 @@ T-ids: T79, T86, T94, T96, T117, T118.2, T164, T169, T185, T186, T196, T242.1, T
   - codewhale: `text`→prompt.
   - Copilot: `toolArgs` arriving as a JSON string is decoded to an object; an existing `tool_input` wins.
 - Install states and refresh:
-  - `present()` requires the app binary or bundle. When every requested host is absent the command fails with "error: <host> is not installed".
+  - `present()` requires the app binary or bundle. When every requested host is absent the command fails with `error: <host> is not installed`.
   - Linked plugins are up-to-date, stale (relinked) or foreign (never touched).
   - A foreign plugin dir counts as a declined plugin.
   - A stale rtok hook or MCP entry is rewritten (`~ <event> <cmd>`); a pair no longer listed is dropped (`- <event>`); a current entry produces byte-identical output (NO_CHANGES).
@@ -387,7 +385,7 @@ T-ids: T172, T190, T192, T194, T213, T353, T401, T528, T537
   - Line ranges accept `a-b`, `"a-b"`, `a,b` and `a, b`.
   - `search` accepts `query` as an alias for `pattern`.
   - File errors name the path without the "(os error N)" tail.
-- The `[mcp] tools` allow-list filters the listed tools; `expand` is always listed; an unknown tool answers "unknown tool: <name>". 28 read-only tools carry `readOnlyHint=true`, and the codex install writes `default_tools_approval_mode="writes"`.
+- The `[mcp] tools` allow-list filters the listed tools; `expand` is always listed; an unknown tool answers `unknown tool: <name>`. 28 read-only tools carry `readOnlyHint=true`, and the codex install writes `default_tools_approval_mode="writes"`.
 - `rtok mcp --wrap` proxy framing:
   - A malformed frame is forwarded raw and the stream resyncs.
   - Only response-shaped frames (no `method`) drain a pending `tools/call`.
@@ -612,7 +610,7 @@ T-ids: T202, T203, T373, T374, T417, T419, T452, T454, T472, T538, T539, T548, T
   - `note_files(note_id, path)` links notes to the files they name.
   - Prompt recall fuses FTS with file-linked notes through RRF; ties are broken by id; up to 2 notes come from prompt-named files.
   - Hybrid RRF over FTS and vectors applies when `[plugins.memory.embed]` is enabled. `provider="http"` POSTs to `<url>/embeddings` (OpenAI-compatible); the default is local hash vectors.
-- `note_versions`: an upsert that changes the body stores the previous title and body (version = max+1) in the same transaction; checkpoint:* and session:* kinds are exempt. `rtok memory history <id>` prints oldest first.
+- `note_versions`: an upsert that changes the body stores the previous title and body (version = max+1) in the same transaction; `checkpoint:*` and `session:*` kinds are exempt. `rtok memory history <id>` prints oldest first.
   - A revise keeps the exact scope (a global note stays global).
   - Import reserves a body hash only after its topic is accepted.
 - Privacy: `<private>…</private>` text is stripped from checkpoints before store and restore, and from each whole observation field before the 200-char cut.

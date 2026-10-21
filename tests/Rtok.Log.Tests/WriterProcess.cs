@@ -46,7 +46,7 @@ internal static class WriterProcess
     }
 
     /// <summary>Runs a writer to its exit.</summary>
-    internal static Task<CommandResult> Run(
+    internal static Task<CommandResult> RunAsync(
         string path,
         long maxBytes,
         int files,

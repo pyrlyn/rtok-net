@@ -30,9 +30,15 @@
     <PackageVersion Include="TestableIO.System.IO.Abstractions" Version="22.3.0" />
     <PackageVersion Include="Testably.Abstractions.Testing" Version="7.1.1" />
   </ItemGroup>
+  <!-- PyrlynCodeStyle marks the analyzers packages/Pyrlyn.CodeStyle depends on. -->
   <ItemGroup>
-    <GlobalPackageReference Include="Roslynator.Analyzers" Version="5.0.1" />
-    <GlobalPackageReference Include="Meziantou.Analyzer" Version="3.0.315" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="5.0.1" PyrlynCodeStyle="true" />
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="3.0.315" PyrlynCodeStyle="true" />
+    <GlobalPackageReference
+      Include="Microsoft.VisualStudio.Threading.Analyzers"
+      Version="18.7.23"
+      PyrlynCodeStyle="true"
+    />
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" />
   </ItemGroup>
 </Project>

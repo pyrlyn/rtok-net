@@ -5,7 +5,7 @@ Code with no NuGet answer becomes its own NuGet package here (plan/README.md N5,
 
 ## Layout
 
-```
+```text
 packages/<Name>/
   <Name>.slnx                 the package and its tests; dotnet pack|test packages/<Name>
   README.md                   packed as the NuGet readme

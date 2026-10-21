@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Shared analyzers, analyzer severities and build settings for pyrlyn .NET repositories, with editorconfig, CSharpier and markdownlint templates.</Description>
+    <PackageTags>analyzers;codestyle;globalconfig;editorconfig;csharpier;markdownlint;msbuild</PackageTags>
+    <!-- Build settings only: no assembly, no symbols, and a dependency that never flows on. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <!-- The templates are dotfiles, which NuGet leaves out by default (NU5119). -->
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <!-- The analyzers below become this package's dependencies, so the global references step aside. -->
+    <RestoreEnableGlobalPackageReference>false</RestoreEnableGlobalPackageReference>
+  </PropertyGroup>
+
+  <!-- Versions live once, in Directory.Packages.props; PyrlynCodeStyle marks the shared analyzers. -->
+  <ItemGroup>
+    <PackageVersion Include="@(GlobalPackageReference)" Version="%(Version)" />
+    <PackageReference
+      Include="@(GlobalPackageReference->WithMetadataValue('PyrlynCodeStyle', 'true'))"
+      Version=""
+      PrivateAssets="none"
+    />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/Pyrlyn.CodeStyle.props" Pack="true" PackagePath="build/" />
+    <None Include="build/Pyrlyn.CodeStyle.globalconfig" Pack="true" PackagePath="build/" />
+    <None Include="templates/.editorconfig" Pack="true" PackagePath="templates/" />
+    <None Include="templates/.csharpierrc.json" Pack="true" PackagePath="templates/" />
+    <None Include="templates/.markdownlint.jsonc" Pack="true" PackagePath="templates/" />
+    <!-- Marks the framework as supported, so the dependency group has a matching lib folder (NU5128). -->
+    <None Include="build/_._" Pack="true" PackagePath="lib/$(TargetFramework)/" />
+  </ItemGroup>
+</Project>

@@ -19,9 +19,12 @@ Run the apphost in `artifacts/bin/<Project>/debug/` directly; `dotnet run` adds 
 dotnet build rtok.slnx -c Release -warnaserror
 dotnet test
 dotnet csharpier check .
+npx --yes markdownlint-cli2@0.23.3
 ```
 
 `dotnet test` runs the JIT, AOT and smoke lanes; the smoke lane publishes `rtok` and `rtok-hook` with AOT first. Lanes, helpers, the latency gate, benchmarks and fuzzing: [tests/README.md](tests/README.md).
+
+Analyzers, their severities and the shared build settings come from [packages/Pyrlyn.CodeStyle](packages/Pyrlyn.CodeStyle/README.md), which the root `Directory.Build.props` imports from source; the root `.csharpierrc.json` and the top of `.editorconfig` are its templates, and `.markdownlint-cli2.jsonc` extends its markdownlint rules. Rules for rtok alone stay in the root files.
 
 Release runs every analyzer, including the banned-API rules in `eng/BannedSymbols.*.txt`: only surface projects (`<RtokSurface>true</RtokSurface>`) write to the console, and only ProgressRunner (`<RtokProcessRunner>true</RtokProcessRunner>`) starts processes.
 

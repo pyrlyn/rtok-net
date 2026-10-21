@@ -49,6 +49,8 @@ jobs:
             dotnet package list --project rtok.slnx --vulnerable --include-transitive
             exit 1
           fi
+      - name: Markdown
+        run: npx --yes markdownlint-cli2@0.23.3
       - name: Duplication
         run: npx --yes jscpd@5.4.2 --config .jscpd.json .
       - name: Scripts

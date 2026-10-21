@@ -433,7 +433,7 @@ SQLite.Framework 7.1.1 + its source generator (LINQ joins and group-by worked un
 
 ### E.1 Layout
 
-```
+```text
 rtok-net/
   global.json
   Directory.Build.props

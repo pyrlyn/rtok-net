@@ -27,7 +27,7 @@ log.Write("error", "store", "open", "database is locked");   // also copied to e
 
 The file holds one line per call, stamped in UTC:
 
-```
+```text
 2026-09-09 15:04:05 info hook/pre_tool_use: rewrote git status
 2026-09-09 15:04:05 error store/open: database is locked
 ```

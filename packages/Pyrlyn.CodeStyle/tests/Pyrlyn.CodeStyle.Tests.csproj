@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The package's files under package/, and the repository's own copies under repo/. -->
+  <ItemGroup>
+    <None
+      Include="../src/build/Pyrlyn.CodeStyle.*;../src/templates/.*"
+      LinkBase="package"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../../.editorconfig;../../../.csharpierrc.json;../../../.markdownlint-cli2.jsonc"
+      LinkBase="repo"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+</Project>

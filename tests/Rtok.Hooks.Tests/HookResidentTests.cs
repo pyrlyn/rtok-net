@@ -34,11 +34,13 @@ public sealed class HookResidentTests : IDisposable
     }
 
     // The resident on a thread of its own, once its socket (or pipe) answers.
-    private Task<ResidentExit> Start(ResidentOptions? options = null)
+    private Task<ResidentExit> StartAsync(ResidentOptions? options = null)
     {
         var run = Task.Factory.StartNew(
             () => HookResident.Run(_endpoint, Echo, _cts.Token, options ?? Options()),
-            TaskCreationOptions.LongRunning
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default
         );
         var until = Stopwatch.StartNew();
         while (Exchange(Request("probe"), out _) == HookOutcome.Unreachable && !run.IsCompleted)
@@ -71,7 +73,7 @@ public sealed class HookResidentTests : IDisposable
     [Fact]
     public async Task It_serves_a_request_with_the_handler()
     {
-        var run = Start();
+        var run = StartAsync();
 
         Assert.Equal(HookOutcome.Served, Exchange(Request("PreToolUse"), out var stdout));
 
@@ -80,18 +82,18 @@ public sealed class HookResidentTests : IDisposable
         Assert.Equal("/w", request.Cwd);
         Assert.False(replay);
         await _cts.CancelAsync();
-        Assert.Equal(ResidentExit.Cancelled, await Exit(run));
+        Assert.Equal(ResidentExit.Cancelled, await ExitAsync(run));
         Assert.False(File.Exists(_endpoint.Address));
     }
 
     [Fact]
     public async Task It_refuses_another_version_and_exits()
     {
-        var run = Start();
+        var run = StartAsync();
 
         Assert.Equal(HookOutcome.RefusedVersion, Exchange(Request("x", version: "v2"), out _));
 
-        Assert.Equal(ResidentExit.VersionRefused, await Exit(run));
+        Assert.Equal(ResidentExit.VersionRefused, await ExitAsync(run));
         Assert.Empty(_calls);
         Assert.Equal(HookOutcome.Unreachable, Exchange(Request("x"), out _));
     }
@@ -99,7 +101,7 @@ public sealed class HookResidentTests : IDisposable
     [Fact]
     public void It_refuses_another_fingerprint_and_stays()
     {
-        var run = Start();
+        var run = StartAsync();
 
         Assert.Equal(HookOutcome.RefusedFingerprint, Exchange(Request("x", fingerprint: 8), out _));
 
@@ -111,14 +113,14 @@ public sealed class HookResidentTests : IDisposable
     [Fact]
     public async Task One_resident_per_home()
     {
-        var run = Start();
+        var run = StartAsync();
 
         var second = HookResident.Run(_endpoint, Echo, CancellationToken.None, Options());
 
         Assert.Equal(ResidentExit.AlreadyRunning, second);
         Assert.Equal(HookOutcome.Served, Exchange(Request("x"), out _));
         await _cts.CancelAsync();
-        await Exit(run);
+        await ExitAsync(run);
     }
 
     [Fact]
@@ -129,7 +131,7 @@ public sealed class HookResidentTests : IDisposable
         {
             Assert.Skip("Unix modes");
         }
-        var run = Start();
+        var run = StartAsync();
 
         Assert.Equal(
             UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute,
@@ -141,7 +143,7 @@ public sealed class HookResidentTests : IDisposable
         );
         Assert.Empty(Directory.EnumerateFiles(_endpoint.RunDir, ".s*"));
         await _cts.CancelAsync();
-        await Exit(run);
+        await ExitAsync(run);
     }
 
     [Fact]
@@ -153,7 +155,9 @@ public sealed class HookResidentTests : IDisposable
 
         var run = Task.Factory.StartNew(
             () => HookResident.Run(_endpoint, Echo, _cts.Token, Options()),
-            TaskCreationOptions.LongRunning
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default
         );
 
         // The drain deletes each entry as it reads it: wait for the last one, not the first call.
@@ -164,35 +168,35 @@ public sealed class HookResidentTests : IDisposable
                 TestContext.Current.CancellationToken
             )
         );
-        await UntilCalled();
+        await UntilCalledAsync();
         var (request, replay) = Assert.Single(_calls);
         Assert.Equal("SessionEnd", request.Event);
         Assert.True(replay);
         await _cts.CancelAsync();
-        await Exit(run);
+        await ExitAsync(run);
     }
 
     [Fact]
     public async Task A_request_queued_while_it_runs_is_replayed_on_the_next_tick()
     {
-        var run = Start();
+        var run = StartAsync();
 
         HookBacklog.Enqueue(_endpoint, HookWire.EncodeRequest(Request("Late")));
 
-        await UntilCalled();
+        await UntilCalledAsync();
         Assert.Equal("Late", Assert.Single(_calls).Request.Event);
         await _cts.CancelAsync();
-        await Exit(run);
+        await ExitAsync(run);
     }
 
     [Fact]
     public async Task It_exits_when_its_lock_file_vanishes()
     {
-        var run = Start();
+        var run = StartAsync();
 
         File.Delete(_endpoint.LockPath);
 
-        Assert.Equal(ResidentExit.LockLost, await Exit(run));
+        Assert.Equal(ResidentExit.LockLost, await ExitAsync(run));
     }
 
     [Fact]
@@ -206,7 +210,9 @@ public sealed class HookResidentTests : IDisposable
                     _cts.Token,
                     Options()
                 ),
-            TaskCreationOptions.LongRunning
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default
         );
         var until = Stopwatch.StartNew();
         string stdout;
@@ -218,7 +224,7 @@ public sealed class HookResidentTests : IDisposable
 
         Assert.Equal("{}", stdout);
         await _cts.CancelAsync();
-        await Exit(run);
+        await ExitAsync(run);
     }
 
     [Fact]
@@ -253,10 +259,10 @@ public sealed class HookResidentTests : IDisposable
         );
     }
 
-    private static Task<ResidentExit> Exit(Task<ResidentExit> run) =>
+    private static Task<ResidentExit> ExitAsync(Task<ResidentExit> run) =>
         run.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
-    private async Task UntilCalled()
+    private async Task UntilCalledAsync()
     {
         var until = Stopwatch.StartNew();
         while (_calls.IsEmpty && until.Elapsed < TimeSpan.FromSeconds(10))

@@ -90,7 +90,7 @@ public static class HookResident
         {
             // _stop is not disposed: a connection still being served may cancel it.
             Replay();
-            var listening = OperatingSystem.IsWindows() ? ListenPipe() : ListenSocket();
+            var listening = OperatingSystem.IsWindows() ? ListenPipeAsync() : ListenSocketAsync();
             var exit = ResidentExit.Cancelled;
             while (!_stop.Token.WaitHandle.WaitOne(options.Tick))
             {
@@ -179,7 +179,7 @@ public static class HookResident
 
         // Bound under a temporary name in the 0700 run directory, made 0600, then renamed into
         // place: no client ever sees a socket the umask left open (rtok S7).
-        private Task ListenSocket()
+        private Task ListenSocketAsync()
         {
             var tmp = Path.Join(
                 endpoint.RunDir,
@@ -234,7 +234,7 @@ public static class HookResident
 
         // CurrentUserOnly: the pipe's ACL admits this user alone. FirstPipeInstance: a pipe of
         // that name someone else made first fails the start instead of being joined.
-        private Task ListenPipe()
+        private Task ListenPipeAsync()
         {
             var first = new NamedPipeServerStream(
                 endpoint.Address,

@@ -244,7 +244,7 @@ macOS and Linux with the full binary, the resident and both fallbacks: research.
 | PDF report | QuestPDF, behind an own renderer interface (N18) | only in `Rtok.Report.Pdf`; native Skia |
 | SVG to PNG | Svg.Skia | optional |
 | Tests | xunit.v3, Verify.XunitV3, CsCheck, WireMock.Net, NSubstitute, CliWrap, Porta.Pty, BenchmarkDotNet, SharpFuzz | N11 |
-| Analyzers, format | Roslynator, Meziantou, VS Threading, BannedApiAnalyzers; CSharpier | |
+| Analyzers, format | Roslynator, Meziantou, VS Threading, BannedApiAnalyzers; CSharpier; markdownlint-cli2 | shared part in Pyrlyn.CodeStyle (T55) |
 
 ## Own packages
 
@@ -265,11 +265,12 @@ Each one lives in `packages/<Name>/` and gets its own task (T12.x, T5, T33).
 | Pyrlyn.OperationIcons | verb-to-icon table and icon gutter |
 | Pyrlyn.Config.Layered | TOML layers (defaults, user, project, `.env`, env, flags) with per-key provenance |
 | Pyrlyn.RotatingLog | `.N` rotating file log, lock-safe across processes; the file sink behind Serilog (N20) |
+| Pyrlyn.CodeStyle | shared analyzers, severities, build settings and editorconfig/CSharpier/markdownlint templates for every pyrlyn repository (T55) |
 | Pyrlyn.CommandLine.Docs | command model from ConsoleAppFramework `--help` output; roff man pages and static shell completions from it |
 
 ## Solution layout
 
-```
+```text
 global.json  Directory.Build.props  Directory.Build.targets  Directory.Packages.props  rtok.slnx
 src/
   Rtok.Hook/              rtok-hook exe (N6)
@@ -312,7 +313,7 @@ conflict on rebase: keep both sides.
 | L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
 | L7 | small packages, then inject, measure, worktrees, guard, OTel | T12.10, T12.8, T12.11, T12.2, T12.7, T21, T30, T40, T20, T47 |
 | L8 | agent SDK, ignore, usage, junk, docs plugin | T33, T12.4, T38, T39, T42 |
-| L9 | experiments, CI, tasks, host trees, report | T51, T3, T41, T36, T31 |
+| L9 | experiments, CI, tasks, host trees, report | T51, T3, T55, T41, T36, T31 |
 
 Main cross-lane dependencies: every package (T12.x) follows T12's layout; T6 needs T5;
 plugins, T13 and T15 need T6; T7 needs T12.9; T9, T10 and T13 need T8; T11 needs T12.8 and
@@ -320,6 +321,6 @@ T12.11; T17 needs T12.6; T19 and T24 need T12.4 (T24 also T12.5); T33 needs T12.
 and T32 need T12.3; T28 needs T9; T14 takes its fallback from T4; T46 needs T14 and T27;
 T44 and T45 need T43; T44.2 needs T44; T44.1 needs T44.2; T39 needs T12.7; T50 runs last.
 
-
+## Open questions for the creator
 
 None right now.

@@ -18,7 +18,7 @@ public sealed class WriterProcessTests : IDisposable
         await Task.WhenAll(
             Enumerable
                 .Range(0, Writers)
-                .Select(w => WriterProcess.Run(path, 1024, 200, $"w{w}", Lines))
+                .Select(w => WriterProcess.RunAsync(path, 1024, 200, $"w{w}", Lines))
         );
 
         var files = Directory

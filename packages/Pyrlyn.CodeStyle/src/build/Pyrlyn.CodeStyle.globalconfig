@@ -1,0 +1,12 @@
+# Pyrlyn.CodeStyle: analyzer severities for every C# file of a project that references it.
+# An .editorconfig entry overrides any line here.
+is_global = true
+
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_diagnostic.IDE0161.severity = warning
+
+dotnet_analyzer_diagnostic.category-Performance.severity = warning
+
+# VS Threading: a Task "not started in your context" means something only with a
+# JoinableTaskFactory, which pyrlyn code does not use.
+dotnet_diagnostic.VSTHRD003.severity = none

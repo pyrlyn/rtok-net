@@ -1,0 +1,11 @@
+// Pyrlyn.CodeStyle: shared markdownlint rules. A repository's .markdownlint-cli2.jsonc extends it
+// ("config": { "extends": "<path to this file>" }) and adds only its own exceptions.
+{
+  "default": true,
+  // Prose wraps where its author wants; tables and links make long lines normal.
+  "MD013": false,
+  // Compact and aligned tables are both fine.
+  "MD060": false,
+  // Changelogs repeat "Added" and "Fixed" under every version.
+  "MD024": { "siblings_only": true }
+}

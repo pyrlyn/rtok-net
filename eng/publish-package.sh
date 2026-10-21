@@ -35,7 +35,12 @@ dotnet test --solution "$dir/$name.slnx" -c Release
 dotnet pack "$project" -c Release -warnaserror -o "$out"
 
 nupkg=$out/$name.$version.nupkg
-[[ -f $nupkg && -f $out/$name.$version.snupkg ]] || fail "pack did not produce $name.$version.nupkg and .snupkg"
+[[ -f $nupkg ]] || fail "pack did not produce $name.$version.nupkg"
+# A package without an assembly (Pyrlyn.CodeStyle) sets IncludeSymbols=false and has no .snupkg.
+symbols=$(dotnet msbuild "$project" -getProperty:IncludeSymbols -p:Configuration=Release)
+if [[ $symbols == true && ! -f $out/$name.$version.snupkg ]]; then
+  fail "pack did not produce $name.$version.snupkg"
+fi
 
 if $dry_run; then
   feed=$(mktemp -d)

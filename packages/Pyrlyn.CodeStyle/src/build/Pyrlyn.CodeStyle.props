@@ -1,0 +1,17 @@
+<Project>
+  <!-- Defaults only: NuGet imports this after Directory.Build.props, so a value set there wins. -->
+  <PropertyGroup>
+    <Nullable Condition="'$(Nullable)' == ''">enable</Nullable>
+    <AnalysisLevel Condition="'$(AnalysisLevel)' == ''">latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild Condition="'$(EnforceCodeStyleInBuild)' == ''"
+      >true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors Condition="'$(TreatWarningsAsErrors)' == '' and '$(CI)' == 'true'"
+      >true</TreatWarningsAsErrors>
+    <!-- Nullable warnings and the trim and AOT warnings that break a published app. -->
+    <WarningsAsErrors>$(WarningsAsErrors);nullable;IL2026;IL2104;IL3050;IL3053;IL3058</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)Pyrlyn.CodeStyle.globalconfig" />
+  </ItemGroup>
+</Project>

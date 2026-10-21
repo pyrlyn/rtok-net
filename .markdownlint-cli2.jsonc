@@ -1,0 +1,24 @@
+// markdownlint for rtok-net (CI lint job): Pyrlyn.CodeStyle's rules plus rtok's house style.
+{
+  "config": {
+    "extends": "packages/Pyrlyn.CodeStyle/src/templates/.markdownlint.jsonc",
+    // Headings run straight into their text and lists follow "Done when:" with no blank line.
+    "MD022": false,
+    "MD032": false,
+    // research.md and plan files cite sources as bare links.
+    "MD034": false,
+    // Code spans quote commands with their trailing or leading space (`rtok run -- `).
+    "MD038": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "**/node_modules/**",
+    "artifacts/**",
+    ".worktrees/**",
+    "tests/fixtures/**",
+    // Task folders belong to their task's agent (project-plan skill); plan/README.md is linted.
+    "plan/T*/**",
+    // A one-line @AGENTS.md import, not a document.
+    "CLAUDE.md"
+  ]
+}

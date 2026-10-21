@@ -15,14 +15,14 @@ public sealed class LogsCommandTests : IDisposable
     [Fact]
     public async Task NothingLoggedSaysSoAndExportIsBare()
     {
-        var empty = await Run("logs");
+        var empty = await RunAsync("logs");
         _home.Write(
             "logs/rtok.log",
             "2026-10-22 10:00:00 info cli/x: a\n2026-10-22 10:00:01 error cli/y: b\n"
         );
 
         await Verify(
-            $"$ rtok logs\n{empty.StandardOutput}$ rtok logs export\n{(await Run("logs", "export")).StandardOutput}"
+            $"$ rtok logs\n{empty.StandardOutput}$ rtok logs export\n{(await RunAsync("logs", "export")).StandardOutput}"
         );
     }
 
@@ -32,7 +32,7 @@ public sealed class LogsCommandTests : IDisposable
         _home.Write("logs/rtok.log", "live-3\nlive-4\n");
         _home.Write("logs/rtok.log.1", "old-1\nold-2\n");
 
-        await Verify((await Run("logs", "--lines", "3")).StandardOutput);
+        await Verify((await RunAsync("logs", "--lines", "3")).StandardOutput);
     }
 
     [Fact]
@@ -40,25 +40,25 @@ public sealed class LogsCommandTests : IDisposable
     {
         _home.Write("logs/rtok.log", "a\nb\n");
 
-        Assert.Equal("b\n", (await Run("logs", "export", "--lines", "1")).StandardOutput);
+        Assert.Equal("b\n", (await RunAsync("logs", "export", "--lines", "1")).StandardOutput);
     }
 
     [Fact]
     public async Task JsonIsTheLinesNewestFirst()
     {
-        Assert.Equal("[]\n", (await Run("logs", "--json")).StandardOutput);
+        Assert.Equal("[]\n", (await RunAsync("logs", "--json")).StandardOutput);
         _home.Write("logs/rtok.log", "a\n\"b\"\n");
 
         Assert.Equal(
             "[\n  \"\\\"b\\\"\",\n  \"a\"\n]\n",
-            (await Run("logs", "export", "--json")).StandardOutput
+            (await RunAsync("logs", "export", "--json")).StandardOutput
         );
     }
 
     [Fact]
     public async Task TheDebugLogIsSilentWithoutTheVariable()
     {
-        var result = await Run("logs");
+        var result = await RunAsync("logs");
 
         Assert.Empty(result.StandardError);
     }
@@ -66,7 +66,7 @@ public sealed class LogsCommandTests : IDisposable
     [Fact]
     public async Task TheDebugLogPrintsArgvWithTheVariable()
     {
-        var result = await Run(["logs", "--lines", "1"], ("RTOK_LOG", "debug"));
+        var result = await RunAsync(["logs", "--lines", "1"], ("RTOK_LOG", "debug"));
 
         Assert.Contains(
             " debug cli/argv: argv [\"logs\",\"--lines\",\"1\"]",
@@ -104,7 +104,7 @@ public sealed class LogsCommandTests : IDisposable
                 return output.ToString();
             }
         }
-        async Task WaitFor(string text)
+        async Task WaitForAsync(string text)
         {
             for (var i = 0; i < 200 && !string.Equals(Text(), text, StringComparison.Ordinal); i++)
             {
@@ -113,10 +113,10 @@ public sealed class LogsCommandTests : IDisposable
             Assert.Equal(text, Text());
         }
 
-        await WaitFor("1 watch-b\n2 watch-a\n");
+        await WaitForAsync("1 watch-b\n2 watch-a\n");
         File.Move(LogPath, LogPath + ".1");
         File.WriteAllText(LogPath, "watch-c\nwatch-d\n");
-        await WaitFor("1 watch-b\n2 watch-a\n3 watch-c\n4 watch-d\n");
+        await WaitForAsync("1 watch-b\n2 watch-a\n3 watch-c\n4 watch-d\n");
         await stop.CancelAsync();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await watch);
 
@@ -125,9 +125,9 @@ public sealed class LogsCommandTests : IDisposable
 
     public void Dispose() => _home.Dispose();
 
-    private Task<BufferedCommandResult> Run(params string[] args) => Run(args, []);
+    private Task<BufferedCommandResult> RunAsync(params string[] args) => RunAsync(args, []);
 
-    private Task<BufferedCommandResult> Run(
+    private Task<BufferedCommandResult> RunAsync(
         string[] args,
         params (string Name, string Value)[] env
     ) => Command(args, env).ExecuteBufferedAsync(TestContext.Current.CancellationToken).Task;
