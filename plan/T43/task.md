@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 3
-readiness: 0%
-agent:
+readiness: 50%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T43. Operator model shared by web and TUI
@@ -32,3 +32,29 @@ Spec: catalog A25, catalog B20 in [docs/port/catalog.md](../../docs/port/catalog
 Ports: rtok closed T15.0.
 
 Check: The parity test fails when a reading command has no web or TUI page.
+
+Plan (agreed with the creator: build now on per-page sources, wire real ones as their tasks land; the task stays open until doctor fix exists):
+1. `src/Rtok.Model`: `Snapshot` of fifteen plain-data pages with an STJ source-generated context; one `IPageSource<T>` per page. Real sources where the data exists now (Config, Plugins, and the store-backed pages); the rest report "not available yet" until their tasks land.
+2. `SnapshotBuilder`: builds off the caller's thread, collapses refresh requests into one following build, and readers take the last complete snapshot without waiting. Config is read once per build from a swappable `LoadedConfig`.
+3. Caching: a background source with a TTL and a placeholder on `TimeProvider`, for Worktrees (300 s, "reading worktrees…") and Hosts (30 s, "probing hosts…").
+4. `ParityMap`: each reading command (one with `--json` in the command model) maps to a web page and a TUI page, or an EXEMPT reason; `Check` reports gaps and stale entries.
+5. Write actions: the plugin toggle plans and applies through the same config writer as `rtok config set`; doctor fix waits for the doctor task.
+6. `tests/Rtok.Model.Tests` for every listed case, and the architecture rule that `Rtok.Tui` references `Rtok.Model` and never `Rtok.Store`.
+
+Landed: the snapshot, builder, caches, parity map and plugin toggle with their tests; real
+sources for Overview, Plugins, Calls, Sessions, Config, Logs (T10, `rtok logs`), Hosts
+(T35, `rtok agents list`, read in the background, 30 s; the host context now comes from
+`HostContexts.Of`, shared with the CLI) and Usage (T38, `rtok agents usage`, read in the
+background, 120 s). `rtok plugins` now reads `plugins.<id>.enabled` from the
+config too. The Rust dashboard has a Skills page and no Memory page; this follows the task's
+list.
+
+Pending (the task stays open until each is wired; each page says "not available in this build
+yet" until then, and its reading command joins `ParityMap`):
+- Doctor page and the doctor fix action (plan → diff → apply, stale plan refused): T32, once
+  the doctor CLI function is on `main`.
+- Graph: T24 (`graph status`, `graph dead`).
+- Stats: T30 (`rtok stats`) and T31 (report).
+- Tasks: T41 (`task list`).
+- Memory: T22. Worktrees: T40 (`worktree list`), behind the 300 s background source.
+  Services: T46 (`demon status`, `otel status`).

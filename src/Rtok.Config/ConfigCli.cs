@@ -33,7 +33,7 @@ public sealed class ConfigCli(
             var file = UserFile;
             if (dryRun)
             {
-                Preview(file, ConfigFile.InitText(file, force));
+                Preview(ConfigFile.PlanInit(file, force));
                 return;
             }
             ConfigFile.Init(file, force);
@@ -75,7 +75,9 @@ public sealed class ConfigCli(
             var config = Load();
             var value = Lookup(config, key) ?? throw new ConfigException($"unknown key: {key}");
             stdout.WriteLine(
-                json ? Json(w => Value(w, key, value)) : ConfigDisplay.Show(key, value)
+                json
+                    ? Json(w => ConfigJson.Write(w, key, value, redact: true))
+                    : ConfigDisplay.Show(key, value)
             );
         });
 
@@ -92,7 +94,7 @@ public sealed class ConfigCli(
         {
             if (dryRun)
             {
-                Preview(UserFile, ConfigFile.SetText(UserFile, key, value, options));
+                Preview(ConfigFile.PlanSet(UserFile, key, value, options));
                 return;
             }
             ConfigFile.Set(UserFile, key, value, options);
@@ -147,13 +149,10 @@ public sealed class ConfigCli(
 
     private LoadedConfig Load() => ConfigLoader.Load(options);
 
-    /// <summary>
-    /// The unified diff of a write that was not made, or <c>no changes</c>. An absolute path
-    /// loses its leading slash after <c>a/</c> and <c>b/</c>, as in <c>git diff --no-index</c>.
-    /// </summary>
-    private void Preview(string file, (string Before, string After) text)
+    /// <summary>The unified diff of a write that was not made, or <c>no changes</c>.</summary>
+    private void Preview(ConfigEdit edit)
     {
-        var diff = new Preview().Edit(file.TrimStart('/'), text.Before, text.After).Render();
+        var diff = edit.Diff();
         stdout.Write(diff.Length == 0 ? "no changes\n" : PreviewText.Paint(diff, color));
     }
 
@@ -200,50 +199,11 @@ public sealed class ConfigCli(
             w.WriteStartObject();
             w.WriteString("key", e.Key);
             w.WritePropertyName("value");
-            Value(w, e.Key, e.Value);
+            ConfigJson.Write(w, e.Key, e.Value, redact: true);
             w.WriteString("source", ConfigDisplay.Source(e.Source));
             w.WriteEndObject();
         }
         w.WriteEndArray();
-    }
-
-    private static void Value(Utf8JsonWriter w, string key, object value)
-    {
-        switch (value)
-        {
-            case TomlTable table:
-                w.WriteStartObject();
-                foreach (var (k, v) in table)
-                {
-                    w.WritePropertyName(k);
-                    Value(w, $"{key}.{KeyPath.Segment(k)}", v);
-                }
-                w.WriteEndObject();
-                break;
-            case TomlArray or TomlTableArray:
-                w.WriteStartArray();
-                foreach (var item in (System.Collections.IEnumerable)value)
-                {
-                    Value(w, key, item!);
-                }
-                w.WriteEndArray();
-                break;
-            case bool b:
-                w.WriteBooleanValue(b);
-                break;
-            case long l:
-                w.WriteNumberValue(l);
-                break;
-            case double d:
-                w.WriteNumberValue(d);
-                break;
-            case string s:
-                w.WriteStringValue(ConfigDisplay.Show(key, s));
-                break;
-            default:
-                w.WriteStringValue(ConfigDisplay.Show(key, value));
-                break;
-        }
     }
 
     private static string Json(Action<Utf8JsonWriter> write)

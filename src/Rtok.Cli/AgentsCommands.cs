@@ -212,37 +212,8 @@ internal sealed class AgentsCommands
         return loaded;
     }
 
-    private HostContext Context(LoadedConfig loaded)
-    {
-        var setup = loaded.Config.Setup;
-        var env = HostEnvironment.Current();
-        var fs = new FileSystem();
-        var paths = SetupPaths.Of(
-            key =>
-                loaded.TryGet(key, out var entry)
-                && entry.Source.Kind != ConfigSourceKind.Defaults
-                && entry.Value is string path
-                    ? path
-                    : null,
-            fs
-        );
-        var settings = new HostSettings(
-            setup.DryRun,
-            setup.Yes,
-            setup.Backup,
-            (int)Math.Min(setup.BackupFiles, int.MaxValue),
-            setup.Mcp,
-            Console.IsInputRedirected ? null : Ask
-        );
-        return new HostContext(
-            env,
-            new McpDisk(fs, HostFile.Write),
-            HostCommands.Run,
-            RtokBinary.Current,
-            settings,
-            paths
-        );
-    }
+    private HostContext Context(LoadedConfig loaded) =>
+        HostContexts.Of(loaded, Console.IsInputRedirected ? null : Ask);
 
     private bool Ask(string question, bool defaultYes)
     {

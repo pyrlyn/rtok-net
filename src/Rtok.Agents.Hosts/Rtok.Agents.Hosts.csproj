@@ -8,10 +8,12 @@
     <PackageReference Include="CliWrap" />
     <PackageReference Include="SharpYaml" />
     <PackageReference Include="TestableIO.System.IO.Abstractions" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
     <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
   </ItemGroup>
 </Project>

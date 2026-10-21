@@ -1,4 +1,5 @@
 using ConsoleAppFramework;
+using Rtok.Config;
 using Rtok.Core;
 
 namespace Rtok.Cli;
@@ -13,8 +14,11 @@ internal sealed class PluginsCommands
     [Command("plugins")]
     public void Plugins(bool json = false)
     {
-        // Until the config feeds the registry, nothing overrides a plugin's default.
-        var registry = new PluginRegistry(LinkedPlugins.Create(), _ => null);
+        var config = ConfigLoader.Load();
+        var registry = new PluginRegistry(
+            LinkedPlugins.Create(),
+            key => ConfigJson.Find(config, key)
+        );
         _stdout.Write(json ? PluginsTable.RenderJson(registry) : PluginsTable.Render(registry));
     }
 }

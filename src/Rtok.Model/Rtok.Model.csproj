@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The operator model shared by the web dashboard and the TUI (plan/T43): one plain-data
+       snapshot built off-thread, the command-to-page parity map and the write actions. -->
+  <PropertyGroup>
+    <!-- The store's EF Core API is marked RequiresUnreferencedCode/RequiresDynamicCode; its AOT
+         path is the compiled model plus precompiled queries (Rtok.Store). -->
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Model.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
+    <ProjectReference Include="../Rtok.Agents/Rtok.Agents.csproj" />
+    <ProjectReference Include="../Rtok.Agents.Hosts/Rtok.Agents.Hosts.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Log/Rtok.Log.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+</Project>

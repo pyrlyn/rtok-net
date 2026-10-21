@@ -1,6 +1,5 @@
 using System.Reflection;
 using Pyrlyn.Config.Layered;
-using Pyrlyn.FsKit;
 using Tomlyn.Model;
 
 namespace Rtok.Config;
@@ -8,8 +7,6 @@ namespace Rtok.Config;
 /// <summary>Writes the user config file: <c>rtok config init</c> and <c>rtok config set</c>.</summary>
 public static class ConfigFile
 {
-    private static readonly AtomicWriteOptions Options = new() { CreateParent = true };
-
     /// <summary>The reference file <c>init</c> writes: every key at its default, commented out, with its doc.</summary>
     public static string Reference { get; } = ReadReference();
 
@@ -17,19 +14,21 @@ public static class ConfigFile
     /// <param name="file">The user config file.</param>
     /// <param name="force">Overwrite an existing file.</param>
     /// <exception cref="ConfigException">The file exists and <paramref name="force"/> is false.</exception>
-    public static void Init(string file, bool force) =>
-        AtomicFile.Write(file, InitText(file, force).After, Options);
+    public static void Init(string file, bool force) => PlanInit(file, force).Apply();
 
-    /// <summary>The user file's text now (empty when missing) and the reference <c>init</c> would write over it.</summary>
+    /// <summary>The write <c>init</c> makes: the reference over the user file.</summary>
+    /// <param name="file">The user config file.</param>
+    /// <param name="force">Overwrite an existing file.</param>
+    /// <returns>The planned edit.</returns>
     /// <exception cref="ConfigException">The file exists and <paramref name="force"/> is false.</exception>
-    internal static (string Before, string After) InitText(string file, bool force)
+    public static ConfigEdit PlanInit(string file, bool force)
     {
         ArgumentNullException.ThrowIfNull(file);
         if (File.Exists(file) && !force)
         {
             throw new ConfigException($"{file} exists; pass --force to overwrite");
         }
-        return (File.Exists(file) ? File.ReadAllText(file) : "", Reference);
+        return new ConfigEdit(file, File.Exists(file) ? File.ReadAllText(file) : "", Reference);
     }
 
     /// <summary>
@@ -95,23 +94,28 @@ public static class ConfigFile
         string key,
         string raw,
         ConfigLoadOptions? options = null
-    ) => AtomicFile.Write(file, SetText(file, key, raw, options).After, Options);
+    ) => PlanSet(file, key, raw, options).Apply();
 
     /// <summary>
-    /// The user file's text now (empty when missing) and with <paramref name="key"/> set; a
-    /// missing file starts from the reference.
+    /// The write <c>set</c> makes, checked as a real run is; a missing file starts from the
+    /// reference.
     /// </summary>
+    /// <param name="file">The user config file.</param>
+    /// <param name="key">The dotted key.</param>
+    /// <param name="raw">The value as typed.</param>
+    /// <param name="options">The environment the result is checked in.</param>
+    /// <returns>The planned edit.</returns>
     /// <exception cref="ConfigException">The key is unknown or the result does not validate.</exception>
-    internal static (string Before, string After) SetText(
+    public static ConfigEdit PlanSet(
         string file,
         string key,
         string raw,
-        ConfigLoadOptions? options
+        ConfigLoadOptions? options = null
     )
     {
         ArgumentNullException.ThrowIfNull(file);
         var text = File.Exists(file) ? File.ReadAllText(file) : null;
-        return (text ?? "", Edit(text ?? Reference, file, key, raw, options));
+        return new ConfigEdit(file, text ?? "", Edit(text ?? Reference, file, key, raw, options));
     }
 
     private static string[] SplitKey(string key)

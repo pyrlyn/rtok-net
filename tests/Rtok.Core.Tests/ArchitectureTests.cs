@@ -98,6 +98,20 @@ public sealed class ArchitectureTests
         Assert.Contains("Rtok.Hook", seen);
     }
 
+    // The TUI reads the operator model's snapshot, never the store (plan/T43); checked once the
+    // project exists.
+    [Fact]
+    public void The_tui_reads_the_operator_model_never_the_store()
+    {
+        if (!Projects().TryGetValue("Rtok.Tui", out var references))
+        {
+            return;
+        }
+        Assert.Contains("Rtok.Model", references, StringComparer.Ordinal);
+        Assert.DoesNotContain("Rtok.Store", references, StringComparer.Ordinal);
+        Assert.DoesNotContain("Rtok.Store.Model", references, StringComparer.Ordinal);
+    }
+
     [Theory]
     [InlineData("Rtok.Core", "Rtok.Cli", true)]
     [InlineData("Rtok.Plugin.Sdk", "Rtok.Core", true)]
