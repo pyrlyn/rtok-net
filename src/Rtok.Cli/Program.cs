@@ -42,6 +42,8 @@ app.UseFilter<ExitCodeFilter>();
 app.Add<AgentsCommands>("agents");
 app.Add<ConfigCommands>("config");
 app.Add<PluginsCommands>();
+app.Add("run", RunCommands.RunAsync);
+app.Add("filter", RunCommands.Filter);
 app.Add<ShellCommands>();
 app.Add("logs", LogsCommands.Show);
 app.Add("logs export", LogsCommands.Export);

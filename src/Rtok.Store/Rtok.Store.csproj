@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <!-- Built first and run below; never referenced at run time. -->
     <ProjectReference
       Include="../../eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj"

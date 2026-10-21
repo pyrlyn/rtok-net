@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The cmd plugin: rtok run, the rule engine, family formatters and the Bash rewrite. -->
+  <ItemGroup>
+    <PackageReference Include="TestableIO.System.IO.Abstractions" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../rules/default.toml" LogicalName="rules/default.toml" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Plugins.Cmd.Tests" />
+  </ItemGroup>
+</Project>

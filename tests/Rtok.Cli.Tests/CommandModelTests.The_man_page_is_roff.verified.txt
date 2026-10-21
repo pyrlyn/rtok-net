@@ -64,6 +64,10 @@ See \fBrtok\-config\-show\fR(1).
 Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
 See \fBrtok\-config\-validate\fR(1).
 .TP
+\fBfilter\fR
+Filter stdin as the output of a command, without running it.
+See \fBrtok\-filter\fR(1).
+.TP
 \fBhook\fR
 Run one hook event from stdin, or serve hooks as this home's resident.
 See \fBrtok\-hook\fR(1).
@@ -87,3 +91,7 @@ See \fBrtok\-man\fR(1).
 \fBplugins\fR
 List plugins: id, kind, enabled, surfaces.
 See \fBrtok\-plugins\fR(1).
+.TP
+\fBrun\fR
+Run a shell command, archive its output and print it filtered; exits with the command's code.
+See \fBrtok\-run\fR(1).

@@ -4,7 +4,7 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'completions', 'config', 'hook', 'logs', 'man', 'plugins')
+        '' = @('agents', 'completions', 'config', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'logs' = @('export', 'watch')
@@ -24,12 +24,14 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config set' = @('--dry-run', '--config', '-h', '--help', '--version')
         'config show' = @('--sources', '--json', '--config', '-h', '--help', '--version')
         'config validate' = @('--config', '-h', '--help', '--version')
+        'filter' = @('--stdin', '--cmd', '--archive', '--no-ref', '--config', '-h', '--help', '--version')
         'hook' = @('--host', '--serve', '-h', '--help', '--version')
         'logs' = @('--lines', '--json', '--config', '-h', '--help', '--version')
         'logs export' = @('--lines', '--json', '--config', '-h', '--help', '--version')
         'logs watch' = @('--lines', '--config', '-h', '--help', '--version')
         'man' = @('--dir', '-h', '--help', '--version')
         'plugins' = @('--json', '-h', '--help', '--version')
+        'run' = @('--agent', '--no-ref', '--config', '-h', '--help', '--version')
     }
     $values = @(
         'agents info|--config'
@@ -50,6 +52,8 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config set|--config'
         'config show|--config'
         'config validate|--config'
+        'filter|--cmd'
+        'filter|--config'
         'hook|--host'
         'logs|--lines'
         'logs|--config'
@@ -58,13 +62,17 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'logs watch|--lines'
         'logs watch|--config'
         'man|--dir'
+        'run|--agent'
+        'run|--config'
     )
     $hints = @{
         '|completions' = 'Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).'
+        '|filter' = 'Filter stdin as the output of a command, without running it.'
         '|hook' = 'Run one hook event from stdin, or serve hooks as this home''s resident.'
         '|logs' = 'Print the last lines of rtok''s log, numbered 1 = newest, across the rotated files.'
         '|man' = 'Print the man page (roff), or write every page with --dir.'
         '|plugins' = 'List plugins: id, kind, enabled, surfaces.'
+        '|run' = 'Run a shell command, archive its output and print it filtered; exits with the command''s code.'
         '|-h' = 'Show help.'
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
@@ -165,6 +173,14 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config validate|-h' = 'Show help.'
         'config validate|--help' = 'Show help.'
         'config validate|--version' = 'Show version.'
+        'filter|--stdin' = 'Read the payload from stdin (OpenCode tool.execute.after).'
+        'filter|--cmd' = 'Command family hint (git status, cargo test, …).'
+        'filter|--archive' = 'Archive stdin and print the expand trailer (same path as run).'
+        'filter|--no-ref' = 'Do not print the reference line after a cut.'
+        'filter|--config' = 'The config file to load instead of the user''s.'
+        'filter|-h' = 'Show help.'
+        'filter|--help' = 'Show help.'
+        'filter|--version' = 'Show version.'
         'hook|--host' = 'The host id, when the host is not inferred from the payload.'
         'hook|--serve' = 'Run the resident hook server that rtok-hook talks to.'
         'hook|-h' = 'Show help.'
@@ -197,6 +213,12 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'plugins|-h' = 'Show help.'
         'plugins|--help' = 'Show help.'
         'plugins|--version' = 'Show version.'
+        'run|--agent' = 'Sub-agent id from PreToolUse; scopes the dedup pointer.'
+        'run|--no-ref' = 'Do not print the reference line after a cut.'
+        'run|--config' = 'The config file to load instead of the user''s.'
+        'run|-h' = 'Show help.'
+        'run|--help' = 'Show help.'
+        'run|--version' = 'Show version.'
     }
     $cmd = ''
     $skip = $false

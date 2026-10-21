@@ -17,12 +17,14 @@ Commands:
   config set          Set a key in the user config file, keeping its comments; the result is checked first.
   config show         Print every effective key and value; secrets are redacted.
   config validate     Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
+  filter              Filter stdin as the output of a command, without running it.
   hook                Run one hook event from stdin, or serve hooks as this home's resident.
   logs                Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
   logs export         Print the same lines as rtok logs without numbers or colour.
   logs watch          Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
   man                 Print the man page (roff), or write every page with --dir.
   plugins             List plugins: id, kind, enabled, surfaces.
+  run                 Run a shell command, archive its output and print it filtered; exits with the command's code.
 
 $ rtok agents info --help
 Usage: agents info [arguments...] [options...] [-h|--help] [--version]
@@ -186,6 +188,18 @@ Arguments:
 Options:
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
+$ rtok filter --help
+Usage: filter [options...] [-h|--help] [--version]
+
+Filter stdin as the output of a command, without running it.
+
+Options:
+  --stdin               Read the payload from stdin (OpenCode tool.execute.after).
+  --cmd <string?>       Command family hint (git status, cargo test, …). [Default: null]
+  --archive             Archive stdin and print the expand trailer (same path as run).
+  --no-ref              Do not print the reference line after a cut.
+  --config <string?>    The config file to load instead of the user's. [Default: null]
+
 $ rtok hook --help
 Usage: hook [arguments...] [options...] [-h|--help] [--version]
 
@@ -242,4 +256,17 @@ List plugins: id, kind, enabled, surfaces.
 
 Options:
   --json    Print JSON.
+
+$ rtok run --help
+Usage: run [arguments...] [options...] [-h|--help] [--version]
+
+Run a shell command, archive its output and print it filtered; exits with the command's code.
+
+Arguments:
+  [0] <string[]>    The command, when it starts with no option; otherwise after --.
+
+Options:
+  --agent <string?>     Sub-agent id from PreToolUse; scopes the dedup pointer. [Default: null]
+  --no-ref              Do not print the reference line after a cut.
+  --config <string?>    The config file to load instead of the user's. [Default: null]
 

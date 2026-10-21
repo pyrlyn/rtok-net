@@ -1,0 +1,4 @@
+﻿CONTAINER ID IMAGE COMMAND STATUS NAMES
+3f1c2a9b7d10 postgres:16 "docker-entrypoint.s…" Up 2 hours db
+a8e44c01b2f3 redis:7 "redis-server" Up 2 hours cache
+    indented stays indented

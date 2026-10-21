@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Rtok.Plugin.Sdk;
 using Rtok.Plugin.Sdk.Testing;
+using Rtok.Plugins.Cmd;
 using Rtok.Plugins.Measure;
 
 namespace Rtok.Core.Tests;
@@ -8,7 +9,7 @@ namespace Rtok.Core.Tests;
 public sealed class RegistryTests
 {
     // Every built-in plugin in the repository; each new one is added here.
-    private static readonly IPlugin[] BuiltIn = [new MeasurePlugin()];
+    private static readonly IPlugin[] BuiltIn = [new MeasurePlugin(), new CmdPlugin()];
 
     [Fact]
     public void Every_built_in_plugin_matches_the_catalogue()

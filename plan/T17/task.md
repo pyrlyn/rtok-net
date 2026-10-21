@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 4
-readiness: 0%
-agent:
+readiness: 75%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T17. cmd plugin: `rtok run`, rule engine, Bash rewrite, `filter`
@@ -14,17 +14,17 @@ Done when:
 - `rtok run [--agent <id>] -- <cmd>`:
   - runs `sh -c`, merges the streams and keeps the exit code (128+signal on a signal death);
   - caps capture at 32 MiB and still drains the pipes;
-  - archives the raw output and prints the trailer and marker under rtok's rules.
+  - prints the trailer and marker under rtok's rules; archiving through the CLI's store host is T17.1, and until then the CLI fails open (raw output or compression only).
 - The TOML rule engine is ported, reading `rules/default.toml` copied from rtok. Its passes are dedupe, collapse_columns, dir and diag grouping, keep patterns, and the fail tail. Rule sources merge in rtok's order.
 - Bounded commands pass through unchanged.
 - The PreToolUse(Bash) rewrite follows every never-wrap rule: sudo, heredocs, `&`, interactive stems, sub-agent git, cd hops.
-- `rtok filter --stdin [--cmd]` and `rtok discover` behave as in the catalog.
+- `rtok filter --stdin [--cmd]` behaves as in the catalog. `rtok discover` is T17.1.
 
 Tests:
 - `Rtok.Plugins.Cmd.Tests` integration: `rtok run -- 'echo out; echo err >&2; exit 3'` runs under `sh -c`, merges both streams in order and exits 3.
 - `Rtok.Plugins.Cmd.Tests` integration: a child killed by SIGTERM makes `rtok run` exit 143 (128+signal), skipped on Windows.
 - `Rtok.Plugins.Cmd.Tests` integration: a child writing 40 MiB is captured up to 32 MiB, its pipes are still drained and it exits without blocking.
-- `Rtok.Plugins.Cmd.Tests` integration: shortened output prints the `[rtok <id> · N lines]` trailer and the `… N lines omitted (expand <id>)` marker, and `rtok expand <id>` returns the raw output byte for byte.
+- `Rtok.Plugins.Cmd.Tests` integration: shortened output prints the `[rtok <id> · N lines]` trailer and the `… N lines omitted (expand <id>)` marker.
 - `Rtok.Plugins.Cmd.Tests` unit: output that differs from raw only in whitespace runs or ANSI CSI/OSC, or whose body is no larger than the trailer, prints raw with no trailer and writes a zero-saving Measurement.
 - `Rtok.Plugins.Cmd.Tests` unit: with a failing store `rtok run` writes the raw bytes plus a trailing newline, and non-UTF-8 output is decoded lossily without cutting a multibyte character.
 - `Rtok.Plugins.Cmd.Tests` Verify: each rule pass on a fixture: dedupe `line (×N)`, collapse_columns, `group = "dir"`, `group = "diag"`, the built-in keep patterns and an 80-line fail tail, with a stack trace never cut and every dropped line counted in the trailer.
@@ -34,7 +34,7 @@ Tests:
 - `Rtok.Plugins.Cmd.Tests` unit: leading `cd x &&` hops stay outside the wrap, `mise exec` and `just -c` are peeled, and an existing `rtok run --agent <id> -- ` prefix is stripped and never doubled.
 - `Rtok.Plugins.Cmd.Tests` CsCheck: for any command string the rewrite returns it unchanged or as `rtok run -- ` plus the original, and never throws.
 - `Rtok.Plugins.Cmd.Tests` Verify: the rule goldens from rtok's `cmd_golden` fixtures pass and each meets its `min_saving` floor.
-- `Rtok.Cli.Tests` integration: `rtok filter --stdin --cmd "git status"` filters piped text without executing anything, and `rtok discover --json` ranks unfiltered command families by estimated tokens.
+- `Rtok.Cli.Tests` integration: `rtok filter --stdin --cmd "git status"` filters piped text without executing anything.
 - `Rtok.Fuzz` fuzz: the `cmd-filter` target is wired and feeds arbitrary bytes through the rule engine.
 
 Spec: catalog A4, catalog B12 in [docs/port/catalog.md](../../docs/port/catalog.md).
@@ -44,3 +44,18 @@ Ports: rtok closed T3.1, T3.2, T3.4, T3.6, T34.8, T36.3, T36.4, T50.1, T50.2, T5
 Fuzz: `cmd-filter` and `bash-rewrite` in `tests/Rtok.Fuzz`: each rule over any output is never longer than its input and archives the input unchanged; a Bash string either keeps every never-wrap rule or comes back unchanged.
 
 Check: Golden tests from rtok's cmd fixtures pass with their `min_saving` floors, and the rewrite table test covers every never-wrap case.
+
+Plan:
+1. `src/Rtok.Plugins.Cmd`, ported from rtok's `src/plugins/cmd`:
+   - the rule engine and its TOML (`rules/default.toml`, user rules, `rules.d`) with every pass;
+   - `bounded` (the quote-aware lexer);
+   - formatters and their families (git, diffs, grep, gh, python, logfmt, loops, mise, catfile, JSON compaction);
+   - `run` (`sh -c`, merged streams, 32 MiB cap, trailer and marker, archive, Measurement);
+   - the PreToolUse(Bash) rewrite.
+2. Link it as a built-in plugin in `eng/RtokPlugins.targets`.
+3. Add the CLI commands `rtok run` and `rtok filter --stdin [--cmd]`.
+4. `tests/Rtok.Plugins.Cmd.Tests`:
+   - goldens over rtok's `tests/cmd_golden` (copied to `tests/fixtures/cmd_golden`) with their `min_saving` floors;
+   - a rewrite table covering every never-wrap case;
+   - rule, bounded and run tests ported from rtok.
+

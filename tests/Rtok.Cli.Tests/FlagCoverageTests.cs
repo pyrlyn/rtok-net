@@ -30,6 +30,9 @@ public sealed class FlagCoverageTests
     private static readonly HashSet<string> ActionKeys = new(StringComparer.Ordinal)
     {
         "hook.serve", // runs the resident instead of answering one call
+        "plugins.cmd.agent", // `run`: the sub-agent the Bash rewrite dispatched this call for
+        "plugins.cmd.stdin", // `filter`: stdin is always the payload; kept for its callers
+        "plugins.cmd.archive", // `filter`: takes the `run` path for this one payload
     };
 
     [Fact]
@@ -88,6 +91,8 @@ public sealed class FlagCoverageTests
     [InlineData("filter", "no-trailer", "plugins.cmd.trailer_min_lines")]
     [InlineData("filter", "cmd", "filter.cmd")]
     [InlineData("run", "trailer", "plugins.cmd.trailer")]
+    [InlineData("run", "no-ref", "plugins.cmd.trailer")]
+    [InlineData("filter", "no-ref", "plugins.cmd.trailer")]
     [InlineData("config set", "dry-run", "config.set.dry_run")]
     [InlineData("logs export", "lines", "log.lines")]
     public void A_flag_maps_by_the_naming_rules(string command, string flag, string key) =>
@@ -140,6 +145,7 @@ public sealed class FlagCoverageTests
             ["run", ..] or ["filter", ..] => name switch
             {
                 "shell" => "plugins.cmd.shell",
+                "no_ref" => "plugins.cmd.trailer",
                 "no_trailer" => "plugins.cmd.trailer_min_lines",
                 "cmd" => "filter.cmd",
                 _ => $"plugins.cmd.{name}",

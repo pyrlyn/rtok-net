@@ -555,6 +555,59 @@
       ]
     },
     {
+      "path": "filter",
+      "aliases": [],
+      "description": "Filter stdin as the output of a command, without running it.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--stdin"
+          ],
+          "type": null,
+          "description": "Read the payload from stdin (OpenCode tool.execute.after).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--cmd"
+          ],
+          "type": "string?",
+          "description": "Command family hint (git status, cargo test, …).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--archive"
+          ],
+          "type": null,
+          "description": "Archive stdin and print the expand trailer (same path as run).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--no-ref"
+          ],
+          "type": null,
+          "description": "Do not print the reference line after a cut.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to load instead of the user's.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "hook",
       "aliases": [],
       "description": "Run one hook event from stdin, or serve hooks as this home's resident.",
@@ -710,6 +763,46 @@
           ],
           "type": null,
           "description": "Print JSON.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "run",
+      "aliases": [],
+      "description": "Run a shell command, archive its output and print it filtered; exits with the command's code.",
+      "arguments": [
+        {
+          "type": "string[]",
+          "description": "The command, when it starts with no option; otherwise after --."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--agent"
+          ],
+          "type": "string?",
+          "description": "Sub-agent id from PreToolUse; scopes the dedup pointer.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--no-ref"
+          ],
+          "type": null,
+          "description": "Do not print the reference line after a cut.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to load instead of the user's.",
           "default": null,
           "required": false
         }

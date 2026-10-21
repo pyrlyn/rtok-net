@@ -1,0 +1,11 @@
+﻿ok step 0
+ok step 1
+ok step 2
+… 37 lines omitted (expand a1b2c3d4)
+error[E0308]: mismatched types
+… 30 lines omitted (expand a1b2c3d4)
+warning: deprecated
+thread 'main' panicked at src/main.rs:4:5
+test cache::evicts ... FAILED
+level=warn msg="slow query"
+… 30 lines omitted (expand a1b2c3d4)

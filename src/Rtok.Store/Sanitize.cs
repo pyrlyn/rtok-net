@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Rtok.Core;
 
 namespace Rtok.Store;
 
@@ -128,45 +129,6 @@ public static class Sanitize
         return string.Equals(clean, s, StringComparison.Ordinal) ? s : clean;
     }
 
-    /// <summary>Skips one ANSI escape at <paramref name="i"/> (CSI <c>ESC [ … final</c>, OSC
-    /// <c>ESC ] … BEL|ESC \</c>, else <c>ESC</c> plus one ASCII character) and returns the index
-    /// after it.</summary>
-    public static int SkipEscape(ReadOnlySpan<char> s, int i)
-    {
-        var j = i + 1;
-        if (j >= s.Length)
-        {
-            return j;
-        }
-        switch (s[j])
-        {
-            case '[':
-                j++;
-                while (j < s.Length && s[j] is not (>= '\x40' and <= '\x7e'))
-                {
-                    j++;
-                }
-                return Math.Min(j + 1, s.Length);
-            case ']':
-                for (j++; j < s.Length; j++)
-                {
-                    if (s[j] == '\a')
-                    {
-                        return j + 1;
-                    }
-                    if (s[j] == '\x1b' && j + 1 < s.Length && s[j + 1] == '\\')
-                    {
-                        return j + 2;
-                    }
-                }
-                return j;
-            case < '\x80':
-                return j + 1;
-            default:
-                return j;
-        }
-    }
-
     private static JsonNode? TryParse(byte[] bytes)
     {
         try
@@ -194,7 +156,7 @@ public static class Sanitize
             switch (c)
             {
                 case '\x1b':
-                    i = SkipEscape(s, i);
+                    i = Ansi.SkipEscape(s, i);
                     continue;
                 case '\r' when lineEnds && i + 1 < s.Length && s[i + 1] == '\n':
                     break;

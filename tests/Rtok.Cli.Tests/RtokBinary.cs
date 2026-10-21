@@ -33,12 +33,14 @@ internal static class RtokBinary
     /// </summary>
     internal static (int Code, string Stdout, string Stderr) Exec(
         IReadOnlyList<string> args,
-        IReadOnlyDictionary<string, string?>? environment = null
+        IReadOnlyDictionary<string, string?>? environment = null,
+        string? stdin = null
     )
     {
         var result = CliWrap
             .Cli.Wrap(Path)
             .WithArguments(args)
+            .WithStandardInputPipe(stdin is null ? PipeSource.Null : PipeSource.FromString(stdin))
             .WithEnvironmentVariables(env =>
             {
                 env.Set("HOME", Home.Path)

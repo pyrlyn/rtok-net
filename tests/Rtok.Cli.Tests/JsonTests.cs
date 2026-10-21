@@ -33,6 +33,8 @@ public sealed class JsonTests
         ["agents install"] = "writes host files",
         ["agents update"] = "writes host files",
         ["agents uninstall"] = "writes host files",
+        ["run"] = "prints the command's own output, filtered",
+        ["filter"] = "prints its stdin, filtered",
     };
 
     [Fact]

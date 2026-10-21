@@ -21,7 +21,17 @@
       Type="Rtok.Plugins.Measure.MeasurePlugin"
       Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',measure,'))"
     />
+    <RtokPlugin
+      Include="$(MSBuildThisFileDirectory)../src/Rtok.Plugins.Cmd/Rtok.Plugins.Cmd.csproj"
+      Type="Rtok.Plugins.Cmd.CmdPlugin"
+      Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',cmd,'))"
+    />
   </ItemGroup>
+
+  <!-- The CLI's run and filter commands call the cmd plugin only when it is linked. -->
+  <PropertyGroup Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',cmd,'))">
+    <DefineConstants>$(DefineConstants);RTOK_PLUGIN_CMD</DefineConstants>
+  </PropertyGroup>
 
   <Import Project="$(RtokPluginsFile)" Condition="'$(RtokPluginsFile)' != ''" />
 

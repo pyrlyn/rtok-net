@@ -21,6 +21,7 @@ public sealed class MemoryHost : ICapabilities
     private readonly List<string> _logged = [];
     private readonly Dictionary<string, byte[]> _blobs = new(StringComparer.Ordinal);
     private readonly Dictionary<string, ArchiveDecision> _decisions = new(StringComparer.Ordinal);
+    private readonly Dictionary<(string Sha256, string? Context), string> _session = [];
 
     /// <summary>A host with no configuration: every section a plugin asks for is
     /// <c>new T()</c>.</summary>
@@ -130,10 +131,19 @@ public sealed class MemoryHost : ICapabilities
         return node;
     }
 
+    /// <summary>When set, every archive write throws <see cref="IOException"/>, as a full or
+    /// broken store does.</summary>
+    public bool ArchiveFails { get; set; }
+
     /// <summary>Content-addressed: the same bytes always get the same id, and two different
     /// bodies never share one.</summary>
     public string PutArchive(ReadOnlySpan<byte> body)
     {
+        if (ArchiveFails)
+        {
+            throw new IOException("archive write failed");
+        }
+
         Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
         SHA256.HashData(body, hash);
         var id = "mem" + Convert.ToHexStringLower(hash[..8]);
@@ -144,6 +154,32 @@ public sealed class MemoryHost : ICapabilities
         }
 
         return id;
+    }
+
+    /// <summary><see cref="PutArchive"/>, remembered for <see cref="ArchiveInSession"/> under
+    /// <paramref name="context"/>.</summary>
+    public string PutArchiveFor(ReadOnlySpan<byte> body, string? context)
+    {
+        var id = PutArchive(body);
+        var sha256 = Convert.ToHexStringLower(SHA256.HashData(body));
+        lock (_gate)
+        {
+            _session[(sha256, context)] = id;
+        }
+
+        return id;
+    }
+
+    /// <summary>A body <see cref="PutArchiveFor"/> stored under the same
+    /// <paramref name="context"/>, one turn ago.</summary>
+    public ArchiveHit? ArchiveInSession(string sha256, string? context)
+    {
+        lock (_gate)
+        {
+            return _session.TryGetValue((sha256, context), out var id)
+                ? new ArchiveHit(id, 1)
+                : null;
+        }
     }
 
     /// <inheritdoc/>

@@ -86,4 +86,26 @@ public sealed class MemoryHostTests
         Assert.Equal(400, Assert.Single(host.Recorded()).BeforeBytes);
         Assert.Equal(["info plugin/demo: shrunk"], host.Logged());
     }
+
+    [Fact]
+    public void ArchiveInSessionFindsOnlyTheSameContext()
+    {
+        var host = new MemoryHost();
+        var body = "the original output"u8;
+        var sha = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(body));
+        Assert.Null(host.ArchiveInSession(sha, "agent-a"));
+        var id = host.PutArchiveFor(body, "agent-a");
+        Assert.Equal(new ArchiveHit(id, 1), host.ArchiveInSession(sha, "agent-a"));
+        Assert.Null(host.ArchiveInSession(sha, "agent-b"));
+        Assert.Null(host.ArchiveInSession(sha, null));
+    }
+
+    [Fact]
+    public void ArchiveFailsMakesEveryWriteThrow()
+    {
+        var host = new MemoryHost { ArchiveFails = true };
+
+        Assert.Throws<IOException>(() => host.PutArchive("x"u8));
+        Assert.Throws<IOException>(() => host.PutArchiveFor("x"u8, null));
+    }
 }

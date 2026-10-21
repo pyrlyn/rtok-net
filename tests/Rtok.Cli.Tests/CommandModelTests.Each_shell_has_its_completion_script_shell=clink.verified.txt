@@ -3,44 +3,56 @@
 
 local value = clink.argmatcher():addarg(clink.filematches)
 
+-- rtok run
+local node_23 = clink.argmatcher()
+node_23:addflags({ "--agent" .. value, "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_23:adddescriptions({
+    ["--agent"] = "Sub-agent id from PreToolUse; scopes the dedup pointer.",
+    ["--no-ref"] = "Do not print the reference line after a cut.",
+    ["--config"] = "The config file to load instead of the user's.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
 -- rtok plugins
-local node_21 = clink.argmatcher()
-node_21:addflags({ "--json", "-h", "--help", "--version" })
-node_21:adddescriptions({
+local node_22 = clink.argmatcher()
+node_22:addflags({ "--json", "-h", "--help", "--version" })
+node_22:adddescriptions({
     ["--json"] = "Print JSON.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_22:nofiles()
+
+-- rtok man
+local node_21 = clink.argmatcher()
+node_21:addflags({ "--dir" .. value, "-h", "--help", "--version" })
+node_21:adddescriptions({
+    ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
 node_21:nofiles()
 
--- rtok man
-local node_20 = clink.argmatcher()
-node_20:addflags({ "--dir" .. value, "-h", "--help", "--version" })
-node_20:adddescriptions({
-    ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
-    ["-h"] = "Show help.",
-    ["--help"] = "Show help.",
-    ["--version"] = "Show version.",
-})
-node_20:nofiles()
-
 -- rtok logs watch
-local node_19 = clink.argmatcher()
-node_19:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_19:adddescriptions({
+local node_20 = clink.argmatcher()
+node_20:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_20:adddescriptions({
     ["--lines"] = "How many lines the screen keeps; [log] lines when omitted.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_19:nofiles()
+node_20:nofiles()
 
 -- rtok logs export
-local node_18 = clink.argmatcher()
-node_18:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_18:adddescriptions({
+local node_19 = clink.argmatcher()
+node_19:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_19:adddescriptions({
     ["--lines"] = "How many lines; [log] lines when omitted.",
     ["--json"] = "Print the lines as a JSON array, newest first.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -48,13 +60,13 @@ node_18:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_18:nofiles()
+node_19:nofiles()
 
 -- rtok logs
-local node_17 = clink.argmatcher()
-node_17:addarg({ "export" .. node_18, "watch" .. node_19 })
-node_17:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_17:adddescriptions({
+local node_18 = clink.argmatcher()
+node_18:addarg({ "export" .. node_19, "watch" .. node_20 })
+node_18:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_18:adddescriptions({
     ["export"] = "Print the same lines as rtok logs without numbers or colour.",
     ["watch"] = "Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.",
     ["--lines"] = "How many lines; [log] lines when omitted.",
@@ -64,18 +76,33 @@ node_17:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_17:nofiles()
+node_18:nofiles()
 
 -- rtok hook
-local node_16 = clink.argmatcher()
-node_16:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
-node_16:adddescriptions({
+local node_17 = clink.argmatcher()
+node_17:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
+node_17:adddescriptions({
     ["--host"] = "The host id, when the host is not inferred from the payload.",
     ["--serve"] = "Run the resident hook server that rtok-hook talks to.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
+
+-- rtok filter
+local node_16 = clink.argmatcher()
+node_16:addflags({ "--stdin", "--cmd" .. value, "--archive", "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_16:adddescriptions({
+    ["--stdin"] = "Read the payload from stdin (OpenCode tool.execute.after).",
+    ["--cmd"] = "Command family hint (git status, cargo test, …).",
+    ["--archive"] = "Archive stdin and print the expand trailer (same path as run).",
+    ["--no-ref"] = "Do not print the reference line after a cut.",
+    ["--config"] = "The config file to load instead of the user's.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_16:nofiles()
 
 -- rtok config validate
 local node_15 = clink.argmatcher()
@@ -273,14 +300,16 @@ node_1:nofiles()
 
 -- rtok
 local node_0 = clink.argmatcher("rtok")
-node_0:addarg({ "agents" .. node_1, "completions" .. node_8, "config" .. node_9, "hook" .. node_16, "logs" .. node_17, "man" .. node_20, "plugins" .. node_21 })
+node_0:addarg({ "agents" .. node_1, "completions" .. node_8, "config" .. node_9, "filter" .. node_16, "hook" .. node_17, "logs" .. node_18, "man" .. node_21, "plugins" .. node_22, "run" .. node_23 })
 node_0:addflags({ "-h", "--help", "--version" })
 node_0:adddescriptions({
     ["completions"] = "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",
+    ["filter"] = "Filter stdin as the output of a command, without running it.",
     ["hook"] = "Run one hook event from stdin, or serve hooks as this home's resident.",
     ["logs"] = "Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.",
     ["man"] = "Print the man page (roff), or write every page with --dir.",
     ["plugins"] = "List plugins: id, kind, enabled, surfaces.",
+    ["run"] = "Run a shell command, archive its output and print it filtered; exits with the command's code.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",

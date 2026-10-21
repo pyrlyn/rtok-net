@@ -1,0 +1,5 @@
+﻿   Compiling serde v1.0.200
+warning: unused import: `std::fmt` (×6)
+   Compiling rtok v0.1.0
+    Blocking waiting for file lock (×3)
+    Finished dev [unoptimized] target(s) in 4.2s

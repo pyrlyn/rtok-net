@@ -3,7 +3,7 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents completions config hook logs man plugins' ;;
+        '') echo 'agents completions config filter hook logs man plugins run' ;;
         'agents') echo 'info install list uninstall update usage' ;;
         'config') echo 'get init path set show validate' ;;
         'logs') echo 'export watch' ;;
@@ -26,12 +26,14 @@ _rtok_options() {
         'config set') echo '--dry-run --config -h --help --version' ;;
         'config show') echo '--sources --json --config -h --help --version' ;;
         'config validate') echo '--config -h --help --version' ;;
+        'filter') echo '--stdin --cmd --archive --no-ref --config -h --help --version' ;;
         'hook') echo '--host --serve -h --help --version' ;;
         'logs') echo '--lines --json --config -h --help --version' ;;
         'logs export') echo '--lines --json --config -h --help --version' ;;
         'logs watch') echo '--lines --config -h --help --version' ;;
         'man') echo '--dir -h --help --version' ;;
         'plugins') echo '--json -h --help --version' ;;
+        'run') echo '--agent --no-ref --config -h --help --version' ;;
     esac
 }
 
@@ -49,11 +51,13 @@ _rtok_values() {
         'config set') echo '--config' ;;
         'config show') echo '--config' ;;
         'config validate') echo '--config' ;;
+        'filter') echo '--cmd --config' ;;
         'hook') echo '--host' ;;
         'logs') echo '--lines --config' ;;
         'logs export') echo '--lines --config' ;;
         'logs watch') echo '--lines --config' ;;
         'man') echo '--dir' ;;
+        'run') echo '--agent --config' ;;
     esac
 }
 

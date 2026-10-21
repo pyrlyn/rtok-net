@@ -1,0 +1,10 @@
+running 3 tests
+test a::ok ... ok
+test a::bad ... FAILED
+
+failures:
+
+---- a::bad stdout ----
+thread panicked at src/lib.rs:3:5
+
+test result: FAILED. 1 passed; 1 failed
