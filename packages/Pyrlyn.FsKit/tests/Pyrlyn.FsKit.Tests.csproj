@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- LibraryImport for link(2) and CreateHardLinkW: .NET has no hard-link API. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/Pyrlyn.FsKit.csproj" />
+  </ItemGroup>
+</Project>

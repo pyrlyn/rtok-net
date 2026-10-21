@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>Atomic writes through symlink chains, path identity without verbatim prefixes, contain(), file identity and tree disk usage.</Description>
+    <PackageTags>filesystem;atomic-write;symlink;realpath;disk-usage;hardlink</PackageTags>
+    <!-- LibraryImport over stat buffers and paths. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pyrlyn.FsKit.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Pyrlyn.FsKit.csproj" />
+  <Project Path="tests/Pyrlyn.FsKit.Tests.csproj" />
+</Solution>
