@@ -14,6 +14,7 @@ public sealed class FlagCoverageTests
         "config", // which file to load, not a setting inside it
         "json", // how one call prints
         "force", // overwrite on one call
+        "dry-run", // print the diff of one call instead of writing
         "sources", // annotates `config show`
         "install", // `completions`: write the script once
         "uninstall", // `completions`: remove it

@@ -1,0 +1,11 @@
+﻿--- a{root}/user/.rtok/config.toml
++++ b{root}/user/.rtok/config.toml
+@@ -1,6 +1,6 @@
+ # my rtok settings
+ [proxy]   # the proxy
+-# port = 8790      # keep in sync with the IDE
++port = 9000      # keep in sync with the IDE
+ mode = "passthrough"   # not compress yet
+ 
+ [plugins.read]
+1 file changed, 1 insertion(+), 1 deletion(-)

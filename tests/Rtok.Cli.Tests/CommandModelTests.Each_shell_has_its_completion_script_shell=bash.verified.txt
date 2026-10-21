@@ -13,9 +13,9 @@ _rtok_options() {
         '') echo '-h --help --version' ;;
         'completions') echo '--install --uninstall -h --help --version' ;;
         'config get') echo '--json --config -h --help --version' ;;
-        'config init') echo '--force --config -h --help --version' ;;
+        'config init') echo '--force --dry-run --config -h --help --version' ;;
         'config path') echo '--config -h --help --version' ;;
-        'config set') echo '--config -h --help --version' ;;
+        'config set') echo '--dry-run --config -h --help --version' ;;
         'config show') echo '--sources --json --config -h --help --version' ;;
         'config validate') echo '--config -h --help --version' ;;
         'hook') echo '--host --serve -h --help --version' ;;

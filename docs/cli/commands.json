@@ -87,6 +87,15 @@
         },
         {
           "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print the diff instead of writing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
             "--config"
           ],
           "type": "string?",
@@ -128,6 +137,15 @@
         }
       ],
       "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Check the result and print the diff instead of writing.",
+          "default": null,
+          "required": false
+        },
         {
           "names": [
             "--config"

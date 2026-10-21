@@ -11,9 +11,9 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '' = @('-h', '--help', '--version')
         'completions' = @('--install', '--uninstall', '-h', '--help', '--version')
         'config get' = @('--json', '--config', '-h', '--help', '--version')
-        'config init' = @('--force', '--config', '-h', '--help', '--version')
+        'config init' = @('--force', '--dry-run', '--config', '-h', '--help', '--version')
         'config path' = @('--config', '-h', '--help', '--version')
-        'config set' = @('--config', '-h', '--help', '--version')
+        'config set' = @('--dry-run', '--config', '-h', '--help', '--version')
         'config show' = @('--sources', '--json', '--config', '-h', '--help', '--version')
         'config validate' = @('--config', '-h', '--help', '--version')
         'hook' = @('--host', '--serve', '-h', '--help', '--version')
@@ -55,6 +55,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config get|--help' = 'Show help.'
         'config get|--version' = 'Show version.'
         'config init|--force' = 'Overwrite an existing file.'
+        'config init|--dry-run' = 'Print the diff instead of writing.'
         'config init|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'config init|-h' = 'Show help.'
         'config init|--help' = 'Show help.'
@@ -63,6 +64,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config path|-h' = 'Show help.'
         'config path|--help' = 'Show help.'
         'config path|--version' = 'Show version.'
+        'config set|--dry-run' = 'Check the result and print the diff instead of writing.'
         'config set|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'config set|-h' = 'Show help.'
         'config set|--help' = 'Show help.'

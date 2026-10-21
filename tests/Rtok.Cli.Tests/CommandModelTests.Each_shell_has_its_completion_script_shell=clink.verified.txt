@@ -61,8 +61,9 @@ node_7:nofiles()
 
 -- rtok config set
 local node_6 = clink.argmatcher()
-node_6:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_6:addflags({ "--dry-run", "--config" .. value, "-h", "--help", "--version" })
 node_6:adddescriptions({
+    ["--dry-run"] = "Check the result and print the diff instead of writing.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -82,9 +83,10 @@ node_5:nofiles()
 
 -- rtok config init
 local node_4 = clink.argmatcher()
-node_4:addflags({ "--force", "--config" .. value, "-h", "--help", "--version" })
+node_4:addflags({ "--force", "--dry-run", "--config" .. value, "-h", "--help", "--version" })
 node_4:adddescriptions({
     ["--force"] = "Overwrite an existing file.",
+    ["--dry-run"] = "Print the diff instead of writing.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",

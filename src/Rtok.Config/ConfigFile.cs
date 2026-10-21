@@ -17,14 +17,19 @@ public static class ConfigFile
     /// <param name="file">The user config file.</param>
     /// <param name="force">Overwrite an existing file.</param>
     /// <exception cref="ConfigException">The file exists and <paramref name="force"/> is false.</exception>
-    public static void Init(string file, bool force)
+    public static void Init(string file, bool force) =>
+        AtomicFile.Write(file, InitText(file, force).After, Options);
+
+    /// <summary>The user file's text now (empty when missing) and the reference <c>init</c> would write over it.</summary>
+    /// <exception cref="ConfigException">The file exists and <paramref name="force"/> is false.</exception>
+    internal static (string Before, string After) InitText(string file, bool force)
     {
         ArgumentNullException.ThrowIfNull(file);
         if (File.Exists(file) && !force)
         {
             throw new ConfigException($"{file} exists; pass --force to overwrite");
         }
-        AtomicFile.Write(file, Reference, Options);
+        return (File.Exists(file) ? File.ReadAllText(file) : "", Reference);
     }
 
     /// <summary>
@@ -85,11 +90,28 @@ public static class ConfigFile
     /// <param name="raw">The value as typed.</param>
     /// <param name="options">The environment the result is checked in.</param>
     /// <exception cref="ConfigException">The key is unknown or the result does not validate.</exception>
-    public static void Set(string file, string key, string raw, ConfigLoadOptions? options = null)
+    public static void Set(
+        string file,
+        string key,
+        string raw,
+        ConfigLoadOptions? options = null
+    ) => AtomicFile.Write(file, SetText(file, key, raw, options).After, Options);
+
+    /// <summary>
+    /// The user file's text now (empty when missing) and with <paramref name="key"/> set; a
+    /// missing file starts from the reference.
+    /// </summary>
+    /// <exception cref="ConfigException">The key is unknown or the result does not validate.</exception>
+    internal static (string Before, string After) SetText(
+        string file,
+        string key,
+        string raw,
+        ConfigLoadOptions? options
+    )
     {
         ArgumentNullException.ThrowIfNull(file);
-        var text = File.Exists(file) ? File.ReadAllText(file) : Reference;
-        AtomicFile.Write(file, Edit(text, file, key, raw, options), Options);
+        var text = File.Exists(file) ? File.ReadAllText(file) : null;
+        return (text ?? "", Edit(text ?? Reference, file, key, raw, options));
     }
 
     private static string[] SplitKey(string key)

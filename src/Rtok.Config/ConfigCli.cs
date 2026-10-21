@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Pyrlyn.ChangePreview;
 using Pyrlyn.Config.Layered;
 using Tomlyn.Model;
 
@@ -12,17 +13,29 @@ namespace Rtok.Config;
 /// <param name="stdout">Where results go.</param>
 /// <param name="stderr">Where errors and notes go.</param>
 /// <param name="options">What a load reads; <see cref="ConfigLoadOptions.ConfigFile"/> is <c>--config</c>.</param>
-public sealed class ConfigCli(TextWriter stdout, TextWriter stderr, ConfigLoadOptions options)
+/// <param name="color">Colour <c>--dry-run</c> diffs; the caller applies its rule for stdout.</param>
+public sealed class ConfigCli(
+    TextWriter stdout,
+    TextWriter stderr,
+    ConfigLoadOptions options,
+    bool color = false
+)
 {
     private string UserFile => ConfigLoader.UserFile(options);
 
     /// <summary>Writes the reference file to the user config file and prints its path.</summary>
     /// <param name="force">Overwrite an existing file.</param>
+    /// <param name="dryRun">Print the diff instead of writing.</param>
     /// <returns>The exit code.</returns>
-    public int Init(bool force) =>
+    public int Init(bool force, bool dryRun = false) =>
         Run(() =>
         {
             var file = UserFile;
+            if (dryRun)
+            {
+                Preview(file, ConfigFile.InitText(file, force));
+                return;
+            }
             ConfigFile.Init(file, force);
             stdout.WriteLine(file);
         });
@@ -72,10 +85,16 @@ public sealed class ConfigCli(TextWriter stdout, TextWriter stderr, ConfigLoadOp
     /// </summary>
     /// <param name="key">The dotted key.</param>
     /// <param name="value">The value as typed.</param>
+    /// <param name="dryRun">Check the result and print the diff instead of writing.</param>
     /// <returns>The exit code.</returns>
-    public int Set(string key, string value) =>
+    public int Set(string key, string value, bool dryRun = false) =>
         Run(() =>
         {
+            if (dryRun)
+            {
+                Preview(UserFile, ConfigFile.SetText(UserFile, key, value, options));
+                return;
+            }
             ConfigFile.Set(UserFile, key, value, options);
             var config = Load();
             var dotted = KeyPath.Join(KeyPath.Split(key));
@@ -127,6 +146,16 @@ public sealed class ConfigCli(TextWriter stdout, TextWriter stderr, ConfigLoadOp
         });
 
     private LoadedConfig Load() => ConfigLoader.Load(options);
+
+    /// <summary>
+    /// The unified diff of a write that was not made, or <c>no changes</c>. An absolute path
+    /// loses its leading slash after <c>a/</c> and <c>b/</c>, as in <c>git diff --no-index</c>.
+    /// </summary>
+    private void Preview(string file, (string Before, string After) text)
+    {
+        var diff = new Preview().Edit(file.TrimStart('/'), text.Before, text.After).Render();
+        stdout.Write(diff.Length == 0 ? "no changes\n" : PreviewText.Paint(diff, color));
+    }
 
     /// <summary>Problems in the effective config do not stop show and get; they are listed first.</summary>
     private void Warn(LoadedConfig config)

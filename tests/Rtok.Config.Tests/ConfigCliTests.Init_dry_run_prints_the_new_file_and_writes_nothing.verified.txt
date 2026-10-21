@@ -1,0 +1,6 @@
+﻿--- a{root}/user/.rtok/config.toml
++++ b{root}/user/.rtok/config.toml
+@@ -0,0 +1,652 @@
++# rtok configuration. Flags and RTOK_* environment variables override it.
++# Precedence: defaults < this file < <git root>/.rtok.toml < .env < env < flags.
++# Check: `rtok config validate`. Where a value came from: `rtok config show --sources`.

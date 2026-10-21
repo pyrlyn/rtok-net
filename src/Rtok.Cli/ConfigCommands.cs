@@ -1,4 +1,5 @@
 using ConsoleAppFramework;
+using Rtok.Cli.Ui;
 using Rtok.Config;
 
 namespace Rtok.Cli;
@@ -11,9 +12,11 @@ internal sealed class ConfigCommands
 
     /// <summary>Write the reference config file (every key commented out at its default) and print its path.</summary>
     /// <param name="force">Overwrite an existing file.</param>
+    /// <param name="dryRun">Print the diff instead of writing.</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("init")]
-    public int Init(bool force = false, string? config = null) => Cli(config).Init(force);
+    public int Init(bool force = false, bool dryRun = false, string? config = null) =>
+        Cli(config).Init(force, dryRun);
 
     /// <summary>Print the path of the user config file.</summary>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
@@ -39,10 +42,15 @@ internal sealed class ConfigCommands
     /// <summary>Set a key in the user config file, keeping its comments; the result is checked first.</summary>
     /// <param name="key">The dotted key, for example proxy.port.</param>
     /// <param name="value">The value: TOML (8080, true, ["a"]) or plain text.</param>
+    /// <param name="dryRun">Check the result and print the diff instead of writing.</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("set")]
-    public int Set([Argument] string key, [Argument] string value, string? config = null) =>
-        Cli(config).Set(key, value);
+    public int Set(
+        [Argument] string key,
+        [Argument] string value,
+        bool dryRun = false,
+        string? config = null
+    ) => Cli(config).Set(key, value, dryRun);
 
     /// <summary>Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.</summary>
     /// <param name="path">The file to check; the user config file when omitted (created when missing).</param>
@@ -52,5 +60,10 @@ internal sealed class ConfigCommands
         Cli(config).Validate(path);
 
     private ConfigCli Cli(string? config) =>
-        new(_stdout, _stderr, new ConfigLoadOptions { ConfigFile = config });
+        new(
+            _stdout,
+            _stderr,
+            new ConfigLoadOptions { ConfigFile = config },
+            Lines.ColorOn(stderr: false)
+        );
 }

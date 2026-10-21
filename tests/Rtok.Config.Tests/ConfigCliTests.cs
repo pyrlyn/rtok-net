@@ -166,6 +166,47 @@ public sealed class ConfigCliTests
     }
 
     [Fact]
+    public async Task Set_dry_run_prints_the_diff_and_leaves_the_file_alone()
+    {
+        using var box = new Sandbox();
+        var file = box.Write("user/.rtok/config.toml", Commented);
+
+        var (code, stdout, stderr) = Run(box, cli => cli.Set("proxy.port", "9000", dryRun: true));
+
+        Assert.Equal((0, ""), (code, stderr));
+        Assert.Equal(Commented, File.ReadAllText(file));
+        await Verify(box.Scrub(stdout));
+    }
+
+    [Fact]
+    public void Set_dry_run_checks_the_value_like_a_real_run()
+    {
+        using var box = new Sandbox();
+
+        var (code, stdout, _) = Run(box, cli => cli.Set("proxy.port", "0", dryRun: true));
+
+        Assert.Equal((1, ""), (code, stdout));
+        Assert.False(File.Exists(box.UserFile));
+    }
+
+    [Fact]
+    public async Task Init_dry_run_prints_the_new_file_and_writes_nothing()
+    {
+        using var box = new Sandbox();
+
+        var (code, stdout, stderr) = Run(box, cli => cli.Init(force: false, dryRun: true));
+
+        Assert.Equal((0, ""), (code, stderr));
+        Assert.False(File.Exists(box.UserFile));
+        Assert.EndsWith(" insertions(+)\n", stdout, StringComparison.Ordinal);
+        await Verify(box.Scrub(string.Join('\n', stdout.Split('\n').Take(6))));
+
+        box.Write("user/.rtok/config.toml", ConfigFile.Reference);
+        Assert.Equal(1, Run(box, cli => cli.Init(force: false, dryRun: true)).Code);
+        Assert.Equal((0, "no changes\n", ""), Run(box, cli => cli.Init(force: true, dryRun: true)));
+    }
+
+    [Fact]
     public void Validate_creates_the_missing_user_file_and_lists_pinned_keys()
     {
         using var box = new Sandbox();

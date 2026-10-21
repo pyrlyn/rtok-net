@@ -14,9 +14,9 @@ _rtok_options() {
     '') items=('-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'completions') items=('--install:Write the script to the shell'\''s per-user completions directory.' '--uninstall:Remove what --install wrote.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config get') items=('--json:Print JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
-    'config init') items=('--force:Overwrite an existing file.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'config init') items=('--force:Overwrite an existing file.' '--dry-run:Print the diff instead of writing.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config path') items=('--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
-    'config set') items=('--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'config set') items=('--dry-run:Check the result and print the diff instead of writing.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config show') items=('--sources:Show where each value came from: default, a file and line, env or flag.' '--json:Print JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config validate') items=('--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'hook') items=('--host:The host id, when the host is not inferred from the payload.' '--serve:Run the resident hook server that rtok-hook talks to.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;

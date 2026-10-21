@@ -44,6 +44,7 @@ Write the reference config file (every key commented out at its default) and pri
 
 Options:
   --force               Overwrite an existing file.
+  --dry-run             Print the diff instead of writing.
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok config path --help
@@ -64,6 +65,7 @@ Arguments:
   [1] <string>    The value: TOML (8080, true, ["a"]) or plain text.
 
 Options:
+  --dry-run             Check the result and print the diff instead of writing.
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok config show --help

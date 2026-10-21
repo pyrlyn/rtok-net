@@ -2,7 +2,7 @@
 status: in progress
 priority: P0
 complexity: 4
-readiness: 92%
+readiness: 100%
 agent: Claude Code / claude-opus-5-5
 ---
 
@@ -51,4 +51,4 @@ Plan:
 6. The flag-to-key coverage test (`tests/Rtok.Cli.Tests`), reading the command model from the built binary's `--help`.
 7. `--dry-run` with a unified diff on `init` and `set` once T12.2 (L7) has landed the diff package.
 
-Status: steps 1–6 are merged. Step 7 waits for T12.2; the task closes with it.
+Status: all seven steps are merged.
