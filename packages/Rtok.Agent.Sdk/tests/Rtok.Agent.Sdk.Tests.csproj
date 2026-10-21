@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../src/Rtok.Agent.Sdk.csproj" />
+  </ItemGroup>
+</Project>

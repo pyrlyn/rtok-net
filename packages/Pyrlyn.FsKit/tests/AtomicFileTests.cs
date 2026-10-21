@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using System.Text;
 
 namespace Pyrlyn.FsKit.Tests;
@@ -172,6 +173,8 @@ public sealed class AtomicFileTests : IDisposable
     }
 
     [Fact]
+    [SupportedOSPlatform("linux")]
+    [SupportedOSPlatform("macos")]
     public void KeepsTheOldMode()
     {
         if (OperatingSystem.IsWindows())
@@ -186,6 +189,8 @@ public sealed class AtomicFileTests : IDisposable
     }
 
     [Fact]
+    [SupportedOSPlatform("linux")]
+    [SupportedOSPlatform("macos")]
     public void ModeAppliesAtCreationAndYieldsToAnExistingFile()
     {
         if (OperatingSystem.IsWindows())
