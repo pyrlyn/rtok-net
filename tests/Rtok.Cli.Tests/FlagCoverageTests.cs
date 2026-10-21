@@ -19,6 +19,7 @@ public sealed class FlagCoverageTests
         "install", // `completions`: write the script once
         "uninstall", // `completions`: remove it
         "dir", // `man`: where to write the pages
+        "unpriced", // `agents usage` lists one call's unpriced models instead of the tables
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

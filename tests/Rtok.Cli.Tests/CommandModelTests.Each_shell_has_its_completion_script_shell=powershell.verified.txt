@@ -4,11 +4,13 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('completions', 'config', 'hook', 'man', 'plugins')
+        '' = @('agents', 'completions', 'config', 'hook', 'man', 'plugins')
+        'agents' = @('usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
     }
     $options = @{
         '' = @('-h', '--help', '--version')
+        'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
         'completions' = @('--install', '--uninstall', '-h', '--help', '--version')
         'config get' = @('--json', '--config', '-h', '--help', '--version')
         'config init' = @('--force', '--dry-run', '--config', '-h', '--help', '--version')
@@ -21,6 +23,13 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'plugins' = @('--json', '-h', '--help', '--version')
     }
     $values = @(
+        'agents usage|--source'
+        'agents usage|--host'
+        'agents usage|--since'
+        'agents usage|--until'
+        'agents usage|--by'
+        'agents usage|--tz'
+        'agents usage|--config'
         'config get|--config'
         'config init|--config'
         'config path|--config'
@@ -38,6 +47,21 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '|-h' = 'Show help.'
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
+        'agents|usage' = 'Tokens and estimated cost per agent and month (or day), from the agents'' logs or rtok.'
+        'agents usage|--source' = 'Data source: logs (the agents'' own session files, the default), rtok (what passed through rtok) or both.'
+        'agents usage|--host' = 'Only these hosts, comma-separated (claude,codex).'
+        'agents usage|--since' = 'From a date (2026-09-01, whole days in --tz) or a duration back from now (30d).'
+        'agents usage|--until' = 'Through this date, inclusive.'
+        'agents usage|--daily' = 'Bottom table by day.'
+        'agents usage|--monthly' = 'Bottom table by month (the default).'
+        'agents usage|--by' = 'Middle table grouping: agent (the default) or model.'
+        'agents usage|--tz' = 'IANA time zone for day and month boundaries (default: the system zone).'
+        'agents usage|--unpriced' = 'List the models without a price instead of the tables.'
+        'agents usage|--json' = 'One JSON document.'
+        'agents usage|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents usage|-h' = 'Show help.'
+        'agents usage|--help' = 'Show help.'
+        'agents usage|--version' = 'Show version.'
         'completions|--install' = 'Write the script to the shell''s per-user completions directory.'
         'completions|--uninstall' = 'Remove what --install wrote.'
         'completions|-h' = 'Show help.'

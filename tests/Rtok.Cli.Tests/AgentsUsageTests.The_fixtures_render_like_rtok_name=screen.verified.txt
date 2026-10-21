@@ -1,0 +1,22 @@
+﻿rtok agents usage: logs from 6 agents, up to 2026-10-02 (UTC)
+
+  6.85M tokens
+  $7.70 estimated cost
+  6 sessions
+  7 daily rows
+
+! Cost is incomplete: 3 models have no price in [stats.prices], so their tokens are not in
+  the estimate. `rtok agents usage --unpriced` lists them.
+
+Agent       Tokens Estimated cost
+Codex         3.2M          $6.00
+Claude Code  3.65M          $1.70
+Copilot CLI  1.08K          $0.00
+Gemini CLI     550          $0.00
+pi           1.48K          $0.00
+Kimi Code      865              -
+
+Monthly totals
+Month   Tokens Estimated cost
+2026-09   3.1M          $1.70
+2026-10  3.75M          $6.00

@@ -30,6 +30,7 @@ if (display is not null)
 
 var app = ConsoleApp.Create();
 app.UseFilter<ExitCodeFilter>();
+app.Add<AgentsCommands>("agents");
 app.Add<ConfigCommands>("config");
 app.Add<PluginsCommands>();
 app.Add<ShellCommands>();

@@ -60,6 +60,7 @@
     <Project Path="eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Rtok.Agents/Rtok.Agents.csproj" />
     <Project Path="src/Rtok.Cli/Rtok.Cli.csproj" />
     <Project Path="src/Rtok.Config/Rtok.Config.csproj" />
     <Project Path="src/Rtok.Core/Rtok.Core.csproj" />
@@ -74,6 +75,7 @@
     <Project Path="src/Rtok.Process/Rtok.Process.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Rtok.Agents.Tests/Rtok.Agents.Tests.csproj" />
     <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
     <Project Path="tests/Rtok.Benchmarks/Rtok.Benchmarks.csproj" />
     <Project Path="tests/Rtok.Cli.Tests/Rtok.Cli.Tests.csproj" />

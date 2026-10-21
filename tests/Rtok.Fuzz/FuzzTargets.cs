@@ -48,7 +48,7 @@ internal static class FuzzTargets
         new("doctor-config", "T32", null),
         new("agents-install", "T35", null),
         new("agent-message", "T37", null),
-        new("usage-logs", "T38", null),
+        new("usage-logs", "T38", UsageLogs.Run),
         new("worktree-arg", "T40", null),
         new("task-file", "T41", null),
         new("lockfiles", "T42", null),

@@ -14,10 +14,13 @@
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../Rtok.Agents/Rtok.Agents.csproj" />
     <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../Rtok.Hooks/Rtok.Hooks.csproj" />
     <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.OperationIcons/src/Pyrlyn.OperationIcons.csproj" />
   </ItemGroup>
@@ -28,4 +31,5 @@
     <EmbeddedResource Include="../../docs/cli/commands.json" LogicalName="commands.json" />
   </ItemGroup>
   <Import Project="../../eng/RtokPlugins.targets" />
+  <Import Project="../Rtok.Store/StoreHost.targets" />
 </Project>

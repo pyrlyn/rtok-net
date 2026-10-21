@@ -4,6 +4,7 @@
     <PackageReference Include="Verify.XunitV3" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
     <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />

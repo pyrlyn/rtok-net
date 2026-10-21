@@ -1,0 +1,122 @@
+﻿{
+  "source": "logs",
+  "tz": "UTC",
+  "through": "2026-10-02",
+  "totals": {
+    "tokens": 6853975,
+    "input": 3501250,
+    "cache_write": 100,
+    "cache_read": 3002400,
+    "output": 350225,
+    "cost_usd": 7.70224,
+    "sessions": 6,
+    "daily_rows": 7
+  },
+  "unpriced_models": 3,
+  "unpriced": [
+    {
+      "model": "claude-sonnet-4-5",
+      "host": "pi",
+      "tokens": 1430
+    },
+    {
+      "model": "kimi-k2",
+      "host": "kimi",
+      "tokens": 865
+    },
+    {
+      "model": "mystery-model",
+      "host": "claude",
+      "tokens": 550000
+    }
+  ],
+  "agents": [
+    {
+      "host": "codex",
+      "name": "Codex",
+      "tokens": 3200000,
+      "input": 2000000,
+      "cache_write": 0,
+      "cache_read": 1000000,
+      "output": 200000,
+      "cost_usd": 6.0
+    },
+    {
+      "host": "claude",
+      "name": "Claude Code",
+      "tokens": 3650000,
+      "input": 1500000,
+      "cache_write": 0,
+      "cache_read": 2000000,
+      "output": 150000,
+      "cost_usd": 1.7
+    },
+    {
+      "host": "copilot",
+      "name": "Copilot CLI",
+      "tokens": 1080,
+      "input": 400,
+      "cache_write": 0,
+      "cache_read": 600,
+      "output": 80,
+      "cost_usd": 0.0016
+    },
+    {
+      "host": "gemini",
+      "name": "Gemini CLI",
+      "tokens": 550,
+      "input": 300,
+      "cache_write": 0,
+      "cache_read": 200,
+      "output": 50,
+      "cost_usd": 0.00055
+    },
+    {
+      "host": "pi",
+      "name": "pi",
+      "tokens": 1480,
+      "input": 340,
+      "cache_write": 80,
+      "cache_read": 1000,
+      "output": 60,
+      "cost_usd": 0.00009
+    },
+    {
+      "host": "kimi",
+      "name": "Kimi Code",
+      "tokens": 865,
+      "input": 210,
+      "cache_write": 20,
+      "cache_read": 600,
+      "output": 35,
+      "cost_usd": null
+    }
+  ],
+  "periods": [
+    {
+      "period": "2026-09",
+      "tokens": 3100000,
+      "input": 1000000,
+      "cache_write": 0,
+      "cache_read": 2000000,
+      "output": 100000,
+      "cost_usd": 1.7
+    },
+    {
+      "period": "2026-10",
+      "tokens": 3753975,
+      "input": 2501250,
+      "cache_write": 100,
+      "cache_read": 1002400,
+      "output": 250225,
+      "cost_usd": 6.00224
+    }
+  ],
+  "skipped": [
+    {
+      "host": "grok",
+      "reason": "unsupported: xAI documents `grok usage`, not the session files",
+      "path": "{fixtures}/grok"
+    }
+  ]
+}

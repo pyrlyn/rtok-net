@@ -10,6 +10,7 @@ public sealed class JsonTests
 {
     private static readonly Dictionary<string, string[]> Reading = new(StringComparer.Ordinal)
     {
+        ["agents usage"] = ["--tz", "UTC"],
         ["config show"] = [],
         ["config get"] = ["proxy.port"],
         ["plugins"] = [],

@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 3
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T38. Agent usage and cost: `rtok agents usage`
@@ -37,3 +37,11 @@ Ports: rtok closed T358, T358.1, T358.2, T358.3, T358.4, T358.5, T358.6, T389; o
 Fuzz: `usage-logs` in `tests/Rtok.Fuzz`: each host log reader over any bytes never throws and gives non-negative totals.
 
 Check: Reader fixtures for each host give the expected totals, and DST bucket tests pass.
+
+Plan:
+1. `src/Rtok.Agents` (app layer, references Rtok.Config): `UsageSlice`, the shared log-file walk (symlinks followed, canonical dedup, mtime cutoff) and one reader per host: Claude Code (dedup by `message.id`, sub-agents to the parent session), Codex `token_count`, OpenCode/Kilo SQLite `message.data` (Microsoft.Data.Sqlite, `mode=ro`), Copilot last `session.shutdown`, Gemini chats (jsonl + legacy json), pi (fork dedup), Kimi `usage.record`; Droid, Grok, ZCode and Antigravity named as unsupported.
+2. `UsageReport`: source logs/rtok/both, hosts, since/until (date in `--tz` or a duration), DST-aware day and month buckets through `TimeZoneInfo`, by agent/model, unpriced list, price lookup without the provider prefix and `-YYYYMMDD`; the store side behind an `IUsageLedger` until T8 lands.
+3. Text screen (decimal SI units, `$` with grouping) and the `--json` document, written with `Utf8JsonWriter` (AOT).
+4. `rtok agents usage` in Rtok.Cli, flags bound to `[agents.usage]` keys through T7's `ConfigFlag`, prices from `[stats.prices]`.
+5. Tests: a fixture per reader shape (`tests/fixtures/usage-logs`, SQLite built in the test), the rtok screen golden, DST month and day edges, filters and bad values, JSON field order.
+

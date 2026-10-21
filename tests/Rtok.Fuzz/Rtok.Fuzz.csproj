@@ -19,6 +19,7 @@
     <ProjectReference Include="../../packages/Pyrlyn.Shlex/src/Pyrlyn.Shlex.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.Trash/src/Pyrlyn.Trash.csproj" />
     <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
+    <ProjectReference Include="../../src/Rtok.Agents/Rtok.Agents.csproj" />
     <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />

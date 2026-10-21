@@ -12,6 +12,10 @@ Show help.
 Show version.
 .SH COMMANDS
 .TP
+\fBagents usage\fR
+Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
+See \fBrtok\-agents\-usage\fR(1).
+.TP
 \fBcompletions\fR
 Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
 See \fBrtok\-completions\fR(1).

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The agents rtok works with, as the app layer sees them: `rtok agents usage` (plan T38). -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Agents</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Agents.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+  </ItemGroup>
+</Project>

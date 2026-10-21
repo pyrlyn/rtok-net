@@ -86,6 +86,10 @@ public sealed class StoreTests : IDisposable
         var m = new MeasurementInput("dedup", "dedup", 100, 10, 25, 3, "ref", call);
         store.InsertMeasurement("s", m, once: "PreToolUse:t1");
         store.InsertMeasurements("s", [m, m with { Kind = "inject" }], once: "PreToolUse:t1");
+        Assert.Equal([("claude", 44L)], store.MeasurementSavedByHost(0, long.MaxValue));
+        var usage = store.UsageSlices(0, long.MaxValue);
+        Assert.All(usage, u => Assert.Equal("claude", u.Host));
+        Assert.Equal(14, usage.Sum(u => u.Input + u.CacheCreate + u.CacheRead + u.Output));
 
         store.KvSet("k", "1");
         store.KvSet("k", "2");

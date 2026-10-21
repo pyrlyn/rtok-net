@@ -1,0 +1,1 @@
+{"sessionId":"g","messages":[{"id":"g1","timestamp":"2026-10-02T08:00:05.000Z","type":"gemini","content":"ok","model":"gemini-test","tokens":{"input":500,"output":40,"cached":200,"thoughts":10,"tool":0,"total":550}}]}

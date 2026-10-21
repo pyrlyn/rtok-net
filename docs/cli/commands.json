@@ -9,6 +9,113 @@
       "options": []
     },
     {
+      "path": "agents usage",
+      "aliases": [],
+      "description": "Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.\nPrices come from [stats.prices]; a model without one counts in the tokens and is left out\nof the cost (--unpriced names those).",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--source"
+          ],
+          "type": "string?",
+          "description": "Data source: logs (the agents' own session files, the default), rtok (what passed through rtok) or both.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--host"
+          ],
+          "type": "string?",
+          "description": "Only these hosts, comma-separated (claude,codex).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--since"
+          ],
+          "type": "string?",
+          "description": "From a date (2026-09-01, whole days in --tz) or a duration back from now (30d).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--until"
+          ],
+          "type": "string?",
+          "description": "Through this date, inclusive.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--daily"
+          ],
+          "type": null,
+          "description": "Bottom table by day.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--monthly"
+          ],
+          "type": null,
+          "description": "Bottom table by month (the default).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--by"
+          ],
+          "type": "string?",
+          "description": "Middle table grouping: agent (the default) or model.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--tz"
+          ],
+          "type": "string?",
+          "description": "IANA time zone for day and month boundaries (default: the system zone).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--unpriced"
+          ],
+          "type": null,
+          "description": "List the models without a price instead of the tables.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "One JSON document.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "completions",
       "aliases": [],
       "description": "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",
