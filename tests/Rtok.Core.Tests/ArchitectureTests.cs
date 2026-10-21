@@ -25,6 +25,7 @@ public sealed class ArchitectureTests
         [
             "Rtok.Plugins.*",
             "Rtok.Agents",
+            "Rtok.Agents.Hosts",
             "Rtok.Mcp.Install",
             "Rtok.Worktree",
             "Rtok.Tasks",

@@ -29,6 +29,8 @@
     <PackageVersion Include="SharpFuzz" Version="2.3.0" />
     <PackageVersion Include="TestableIO.System.IO.Abstractions" Version="22.3.0" />
     <PackageVersion Include="Testably.Abstractions.Testing" Version="7.1.1" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="22.3.0" />
+    <PackageVersion Include="SharpYaml" Version="3.15.0" />
   </ItemGroup>
   <!-- PyrlynCodeStyle marks the analyzers packages/Pyrlyn.CodeStyle depends on. -->
   <ItemGroup>

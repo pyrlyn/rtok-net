@@ -315,7 +315,7 @@ conflict on rebase: keep both sides.
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T44.2, T45 |
 | L4 | hook latency, hooks, resident, MCP, agents | T4, T13, T14, T15, T16, T37, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |
-| L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.2, T35.1 |
+| L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.3, T35.5, T35.4, T35.6, T35.2, T35.1 |
 | L7 | small packages, then inject, measure, worktrees, guard, OTel | T12.10, T12.8, T12.11, T12.2, T12.7, T21, T30, T40, T20, T47 |
 | L8 | agent SDK, ignore, usage, junk, docs plugin | T33, T12.4, T38, T39, T42 |
 | L9 | experiments, CI, tasks, host trees, report | T51, T3, T55, T41, T36, T31 |
@@ -323,8 +323,9 @@ conflict on rebase: keep both sides.
 Main cross-lane dependencies: every package (T12.x) follows T12's layout; T6 needs T5;
 plugins, T13 and T15 need T6; T7 needs T12.9; T9, T10 and T13 need T8; T11 needs T12.8 and
 T12.11; T17 needs T12.6; T19 and T24 need T12.4 (T24 also T12.5); T33 needs T12.1; T34, T35
-and T32 need T12.3; T28 needs T9; T14 takes its fallback from T4; T46 needs T14 and T27;
-T44 and T45 need T43; T44.2 needs T44; T44.1 needs T44.2; T39 needs T12.7; T50 runs last.
+and T32 need T12.3; T35.3 needs T13, T35.4 T27, T35.5 T36, T35.6 T11; T28 needs T9; T14 takes
+its fallback from T4; T46 needs T14 and T27; T44 and T45 need T43; T44.2 needs T44; T44.1
+needs T44.2; T39 needs T12.7; T50 runs last.
 
 ## Open questions for the creator
 

@@ -20,6 +20,10 @@ public sealed class FlagCoverageTests
         "uninstall", // `completions`: remove it
         "dir", // `man`: where to write the pages
         "unpriced", // `agents usage` lists one call's unpriced models instead of the tables
+        "cli", // which apps of a host one `agents` call touches
+        "desktop",
+        "gui", // `--desktop`
+        "all",
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

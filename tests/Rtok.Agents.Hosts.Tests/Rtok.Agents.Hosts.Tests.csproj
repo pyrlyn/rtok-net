@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- JIT lane for rtok agents (T35): the host table, the MCP module on every host, the
+       install matrix on fake homes and the docs/agents.md support table. -->
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+    <PackageReference Include="Verify.XunitV3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Agents.Hosts/Rtok.Agents.Hosts.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

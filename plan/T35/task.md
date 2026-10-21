@@ -1,37 +1,33 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 5
-readiness: 0%
-agent:
+readiness: 95%
+agent: Claude Code / claude-opus-5-5
 ---
 
-# T35. Agent hosts: install, update, remove, list, info, outdated
+# T35. Agent hosts: descriptors, MCP module, install, update, remove, list, info
 
 rtok installs into about 45 agent hosts; each host is mostly data plus a small adapter.
 
 Done when:
-- `rtok agents install|update|uninstall|list|info|outdated` behave as in the catalog for every host listed there, as data-driven descriptors on Rtok.Agent.Sdk and the MCP core. Covered: hooks, MCP, proxy base URL, host plugin link, skills, desktop restart, `--dry-run`, `--yes`.
-- There is one plugin version scheme for every install source: a version file and a receipt, a SemVer compare, and `agents outdated --exit-code 10` (rtok T279).
+- Every host in the catalog has a data-driven descriptor on Rtok.Agent.Sdk and the MCP core: variants (cli/desktop, binaries, app paths), presence and `--version` probes, and per-module support with the reason when a module cannot be installed.
+- `rtok agents install|update|uninstall|list|info` behave as in the catalog for the MCP module on every host, goose, continue and reasonix included, with `--cli`, `--desktop`, `--all`, `--dry-run` and `--yes`. The other modules come with T35.3 (hooks), T35.4 (proxy base URL), T35.5 (plugin link, skills, the plugin version scheme and `agents outdated`) and T35.6 (desktop restart).
 - A support-matrix doc table is generated from the descriptors.
 - `agents info` and `agents list` report the real MCP state from Rtok.Mcp.Install's `McpStatus` rows, the same in `--json` and the web model (moved from T34; T43 consumes the web-model part).
 
+The split into T35.3–T35.6 follows the creator's go-ahead: those modules need T13, T27, T36 and T11 from other lanes; each took its tests along.
+
 Tests:
-- `Rtok.Agents.Tests` integration: for every host descriptor on fake Linux, macOS and Windows homes (`MemFs`), install, install again, update and uninstall leave at most one rtok MCP entry and one rtok hook per event per surface, also across hosts that cross-load each other's files.
-- `Rtok.Agents.Tests` CsCheck: install then uninstall on generated JSONC, TOML and YAML host files keeps every byte outside rtok's entry.
-- `Rtok.Agents.Tests` unit: a current entry prints NO_CHANGES and is not rewritten, a stale one prints `~ <event> <cmd>`, and a pair no longer listed prints `- <event>`.
-- `Rtok.Agents.Tests` unit: an unparseable TOML or broken strict-JSON host file is refused with a file+line message and left byte for byte.
-- `Rtok.Agents.Tests` unit: uninstall clears a base URL only when it parses as rtok's http(s) loopback URL, and Codex gets its provider back from `# rtok: was "openai"`.
-- `Rtok.Agents.Tests` unit: a linked plugin is up-to-date, stale (relinked) or foreign (never touched), and a skill copy newer than its `.rtok-owned` marker is left on uninstall.
-- `Rtok.Agents.Tests` unit: `--dry-run` writes nothing; an edited rtok entry with no TTY prints `leave … (changed by you; remove by hand)` and `--yes` removes it.
-- `Rtok.Agents.Tests` unit: when every requested host is absent, install fails with `error: <host> is not installed`.
-- `Rtok.Agents.Tests` unit: a running desktop app (fake process seam) is closed before the write and reopened after, every preflight runs before any quit, a failure prints "restart manually", and `--no-restart` skips it.
-- `Rtok.Agents.Tests` unit: `agents update` runs the Claude and Codex marketplace commands through a fake ProgressRunner, reports "already current" when the cache bytes do not change, and falls back to uninstall + install on failure.
-- `Rtok.Agents.Tests` CsCheck: the plugin version file and receipt round-trip, and the compare follows SemVer precedence ignoring build metadata: equal skips, newer updates, lower warns.
-- `Rtok.Agents.Tests` unit: the support-matrix table generated from the descriptors equals the committed table in `docs/agents.md`.
-- `Rtok.Agents.Tests` unit: with `rtok` not on PATH a warning is printed, and on `MemFs.Windows()` hook commands carry the absolute `rtok.exe`.
-- `Rtok.Cli.Tests` Verify: `rtok agents list` and `agents info <host>` text and `--json` show each `McpStatus` row (present, missing, stale with its diff), the same rows the web model reads.
-- `Rtok.Cli.Tests` unit: `rtok agents outdated --exit-code 10` exits 10 when a plugin is behind and 0 when all are current.
+- `Rtok.Agents.Hosts.Tests` integration: for every host descriptor on fake Linux, macOS and Windows homes (`MemFs`), install, install again, update and uninstall leave at most one rtok MCP entry per surface, also across hosts that cross-load each other's files.
+- `Rtok.Agents.Hosts.Tests` CsCheck: install then uninstall on generated JSONC, TOML and YAML host files keeps every byte outside rtok's entry.
+- `Rtok.Agents.Hosts.Tests` unit: a current MCP entry prints NO_CHANGES and is not rewritten; Goose, Continue and Reasonix files keep their foreign lines and CRLF.
+- `Rtok.Agents.Hosts.Tests` unit: an unparseable TOML, YAML or broken strict-JSON host file is refused with a message naming the file and left byte for byte.
+- `Rtok.Agents.Hosts.Tests` unit: `--dry-run` writes nothing; an edited rtok entry with no TTY prints `leave … (changed by you; remove by hand)` and `--yes` removes it.
+- `Rtok.Agents.Hosts.Tests` unit: when every requested host is absent, install fails with `error: <host> is not installed`.
+- `Rtok.Agents.Hosts.Tests` unit: the support-matrix table generated from the descriptors equals the committed table in `docs/agents.md`.
+- `Rtok.Agents.Hosts.Tests` unit: with `rtok` not on PATH a warning is printed, and on `MemFs.Windows()` MCP entries carry the absolute `rtok.exe`.
+- `Rtok.Agents.Hosts.Tests` Verify: `agents list` and `agents info <host>` text and `--json` show each `McpStatus` row (present, missing, stale with its diff), the same rows the web model reads.
 
 Spec: catalog A19, catalog B3 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
@@ -40,3 +36,11 @@ Ports: rtok closed T2.3, T4.7, T9.3, T10.1, T10.3, T10.5, T10.7, T10.8, T10.9, T
 Fuzz: `agents-install` in `tests/Rtok.Fuzz`: any existing host config file is refused with a clear error or changed only in rtok's own entry.
 
 Check: An install-matrix test against fake homes runs install twice, update and uninstall for every host, with at most one rtok entry per surface.
+
+## Plan
+
+1. `src/Rtok.Agents`: host descriptors (variants, support per module), probes (PATH with PATHEXT, app paths, `RTOK_HOST_SANDBOX`, `--version` with a 3 s limit), modules (MCP now).
+2. MCP adapters the core left out: goose and continue (YAML, text edit validated by a parser), reasonix (TOML array of tables).
+3. `rtok agents install|update|uninstall|list|info` in Rtok.Cli, text and `--json`.
+4. `docs/agents.md` support matrix generated from the descriptors, with a drift test.
+5. Install-matrix test over fake homes for every host, variant and OS.

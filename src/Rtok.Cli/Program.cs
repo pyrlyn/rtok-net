@@ -14,6 +14,9 @@ if (args is ["--version"] or ["-V"])
     return;
 }
 
+// `agent`, `agents setup` and `agents remove` are spelled out before anything reads the command.
+args = AgentsCommands.Aliases(args);
+
 // The hook stays on its budget: no command model, no display and no config load for the log.
 var hook = args is ["hook", ..];
 

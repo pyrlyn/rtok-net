@@ -2,22 +2,93 @@
 Usage: [command] [-h|--help] [--version]
 
 Commands:
-  agents usage       Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
+  agents info         One or more hosts in detail: apps, files, and each module's state.
+  agents install      Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
+  agents list         Every host rtok knows: whether its apps are here, and what of rtok each one has.
+  agents uninstall    Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.
+  agents update       Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).
+  agents usage        Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
      Prices come from [stats.prices]; a model without one counts in the tokens and is left out
      of the cost (--unpriced names those).
-  completions        Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
-  config get         Print the effective value of one key or table.
-  config init        Write the reference config file (every key commented out at its default) and print its path.
-  config path        Print the path of the user config file.
-  config set         Set a key in the user config file, keeping its comments; the result is checked first.
-  config show        Print every effective key and value; secrets are redacted.
-  config validate    Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
-  hook               Run one hook event from stdin, or serve hooks as this home's resident.
-  logs               Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
-  logs export        Print the same lines as rtok logs without numbers or colour.
-  logs watch         Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
-  man                Print the man page (roff), or write every page with --dir.
-  plugins            List plugins: id, kind, enabled, surfaces.
+  completions         Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
+  config get          Print the effective value of one key or table.
+  config init         Write the reference config file (every key commented out at its default) and print its path.
+  config path         Print the path of the user config file.
+  config set          Set a key in the user config file, keeping its comments; the result is checked first.
+  config show         Print every effective key and value; secrets are redacted.
+  config validate     Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
+  hook                Run one hook event from stdin, or serve hooks as this home's resident.
+  logs                Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
+  logs export         Print the same lines as rtok logs without numbers or colour.
+  logs watch          Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
+  man                 Print the man page (roff), or write every page with --dir.
+  plugins             List plugins: id, kind, enabled, surfaces.
+
+$ rtok agents info --help
+Usage: agents info [arguments...] [options...] [-h|--help] [--version]
+
+One or more hosts in detail: apps, files, and each module's state.
+
+Arguments:
+  [0] <string>    The hosts, comma-separated.
+
+Options:
+  --json                Print JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents install --help
+Usage: agents install [arguments...] [options...] [-h|--help] [--version]
+
+Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
+
+Arguments:
+  [0] <string>    The hosts, comma-separated: claude,codex.
+
+Options:
+  --dry-run             Print what would change; write nothing.
+  --yes                 Answer yes to every question.
+  --mcp                 Register rtok's MCP server.
+  --cli                 Only the CLI apps.
+  --gui, --desktop      Only the desktop apps.
+  --all                 Every app of the host (the default without --cli or --desktop).
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents list --help
+Usage: agents list [options...] [-h|--help] [--version]
+
+Every host rtok knows: whether its apps are here, and what of rtok each one has.
+
+Options:
+  --json                Print JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents uninstall --help
+Usage: agents uninstall [arguments...] [options...] [-h|--help] [--version]
+
+Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.
+
+Arguments:
+  [0] <string>    The hosts, comma-separated.
+
+Options:
+  --dry-run             Print what would change; write nothing.
+  --yes                 Remove entries you changed without asking.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents update --help
+Usage: agents update [arguments...] [options...] [-h|--help] [--version]
+
+Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).
+
+Arguments:
+  [0] <string?>    The hosts, comma-separated; every host with rtok when omitted.
+
+Options:
+  --dry-run             Print what would change; write nothing.
+  --cli                 Only the CLI apps.
+  --gui, --desktop      Only the desktop apps.
+  --all                 Every app of the host (the default without --cli or --desktop).
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok agents usage --help
 Usage: agents usage [options...] [-h|--help] [--version]

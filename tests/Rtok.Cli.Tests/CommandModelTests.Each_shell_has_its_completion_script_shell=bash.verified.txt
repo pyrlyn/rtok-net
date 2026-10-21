@@ -4,7 +4,7 @@
 _rtok_children() {
     case $1 in
         '') echo 'agents completions config hook logs man plugins' ;;
-        'agents') echo 'usage' ;;
+        'agents') echo 'info install list uninstall update usage' ;;
         'config') echo 'get init path set show validate' ;;
         'logs') echo 'export watch' ;;
     esac
@@ -13,6 +13,11 @@ _rtok_children() {
 _rtok_options() {
     case $1 in
         '') echo '-h --help --version' ;;
+        'agents info') echo '--json --config -h --help --version' ;;
+        'agents install') echo '--dry-run --yes --mcp --cli --gui --desktop --all --config -h --help --version' ;;
+        'agents list') echo '--json --config -h --help --version' ;;
+        'agents uninstall') echo '--dry-run --yes --config -h --help --version' ;;
+        'agents update') echo '--dry-run --cli --gui --desktop --all --config -h --help --version' ;;
         'agents usage') echo '--source --host --since --until --daily --monthly --by --tz --unpriced --json --config -h --help --version' ;;
         'completions') echo '--install --uninstall -h --help --version' ;;
         'config get') echo '--json --config -h --help --version' ;;
@@ -32,6 +37,11 @@ _rtok_options() {
 
 _rtok_values() {
     case $1 in
+        'agents info') echo '--config' ;;
+        'agents install') echo '--config' ;;
+        'agents list') echo '--config' ;;
+        'agents uninstall') echo '--config' ;;
+        'agents update') echo '--config' ;;
         'agents usage') echo '--source --host --since --until --by --tz --config' ;;
         'config get') echo '--config' ;;
         'config init') echo '--config' ;;

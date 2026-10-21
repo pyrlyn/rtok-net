@@ -1,6 +1,7 @@
 using CliWrap;
 using CliWrap.Buffered;
 using Pyrlyn.CommandLine.Docs;
+using Rtok.Agents.Hosts;
 using Rtok.Testing;
 
 namespace Rtok.Cli.Tests;
@@ -27,7 +28,8 @@ internal static class RtokBinary
 
     /// <summary>
     /// Runs rtok with these arguments, its home and the user home in an empty directory so no
-    /// real config is read, and returns its exit code and both streams.
+    /// real config is read, agent hosts probed only under that home so no real agent is found
+    /// or run, and returns its exit code and both streams.
     /// </summary>
     internal static (int Code, string Stdout, string Stderr) Exec(
         IReadOnlyList<string> args,
@@ -39,7 +41,10 @@ internal static class RtokBinary
             .WithArguments(args)
             .WithEnvironmentVariables(env =>
             {
-                env.Set("HOME", Home.Path).Set("USERPROFILE", Home.Path).Set("RTOK_HOME", null);
+                env.Set("HOME", Home.Path)
+                    .Set("USERPROFILE", Home.Path)
+                    .Set("RTOK_HOME", null)
+                    .Set(HostEnvironment.SandboxVariable, "1");
                 foreach (
                     var (name, value) in environment
                         ?? new Dictionary<string, string?>(StringComparer.Ordinal)

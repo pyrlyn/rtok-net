@@ -9,6 +9,239 @@
       "options": []
     },
     {
+      "path": "agents info",
+      "aliases": [],
+      "description": "One or more hosts in detail: apps, files, and each module's state.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The hosts, comma-separated."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "agents install",
+      "aliases": [],
+      "description": "Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The hosts, comma-separated: claude,codex."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print what would change; write nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--yes"
+          ],
+          "type": null,
+          "description": "Answer yes to every question.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--mcp"
+          ],
+          "type": null,
+          "description": "Register rtok's MCP server.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--cli"
+          ],
+          "type": null,
+          "description": "Only the CLI apps.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--gui",
+            "--desktop"
+          ],
+          "type": null,
+          "description": "Only the desktop apps.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--all"
+          ],
+          "type": null,
+          "description": "Every app of the host (the default without --cli or --desktop).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "agents list",
+      "aliases": [],
+      "description": "Every host rtok knows: whether its apps are here, and what of rtok each one has.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "agents uninstall",
+      "aliases": [],
+      "description": "Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The hosts, comma-separated."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print what would change; write nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--yes"
+          ],
+          "type": null,
+          "description": "Remove entries you changed without asking.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "agents update",
+      "aliases": [],
+      "description": "Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).",
+      "arguments": [
+        {
+          "type": "string?",
+          "description": "The hosts, comma-separated; every host with rtok when omitted."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print what would change; write nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--cli"
+          ],
+          "type": null,
+          "description": "Only the CLI apps.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--gui",
+            "--desktop"
+          ],
+          "type": null,
+          "description": "Only the desktop apps.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--all"
+          ],
+          "type": null,
+          "description": "Every app of the host (the default without --cli or --desktop).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "agents usage",
       "aliases": [],
       "description": "Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.\nPrices come from [stats.prices]; a model without one counts in the tokens and is left out\nof the cost (--unpriced names those).",

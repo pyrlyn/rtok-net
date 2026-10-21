@@ -1,0 +1,99 @@
+﻿[
+  {
+    host: claude,
+    kind: cli,
+    name: Claude Code,
+    present: true,
+    app: /Users/u/bin/claude,
+    version: 1.0.0 (fake),
+    config: [
+      /Users/u/.claude.json
+    ],
+    modules: [
+      {
+        name: mcp,
+        state: installed,
+        note: 
+      }
+    ],
+    mcp: [
+      {
+        surface: cli,
+        file: ~/.claude.json,
+        entry: present,
+        plugin: null
+      }
+    ]
+  },
+  {
+    host: claude,
+    kind: desktop,
+    name: Claude Desktop,
+    present: true,
+    app: /Users/u/Applications/Claude.app,
+    version: -,
+    config: [
+      /Users/u/Library/Application Support/Claude/claude_desktop_config.json
+    ],
+    modules: [
+      {
+        name: mcp,
+        state: installed,
+        note: 
+      }
+    ],
+    mcp: [
+      {
+        surface: desktop,
+        file: ~/Library/Application Support/Claude/claude_desktop_config.json,
+        entry: stale,
+        diff: runs `rtok serve`, want `rtok mcp --host claude`,
+        plugin: null
+      }
+    ]
+  },
+  {
+    host: goose,
+    kind: cli,
+    name: Goose CLI,
+    present: true,
+    app: /Users/u/bin/goose,
+    version: 1.0.0 (fake),
+    config: [
+      /Users/u/.config/goose/config.yaml
+    ],
+    modules: [
+      {
+        name: mcp,
+        state: installed,
+        note: 
+      }
+    ]
+  },
+  {
+    host: goose,
+    kind: desktop,
+    name: Goose,
+    present: false,
+    app: null,
+    version: null,
+    config: [
+      /Users/u/.config/goose/config.yaml
+    ]
+  },
+  {
+    host: aider,
+    kind: cli,
+    name: aider,
+    present: true,
+    app: /Users/u/bin/aider,
+    version: 1.0.0 (fake),
+    modules: [
+      {
+        name: mcp,
+        state: not_supported,
+        note: : aider has no MCP support
+      }
+    ]
+  }
+]

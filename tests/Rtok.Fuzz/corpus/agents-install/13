@@ -1,0 +1,6 @@
+# my reasonix
+model = "deepseek"
+
+[[plugins]]
+name = "fs"
+command = "fs-mcp"  # keep

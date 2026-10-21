@@ -46,7 +46,7 @@ internal static class FuzzTargets
         new("transcript-jsonl", "T30", null),
         new("report-html", "T31", null),
         new("doctor-config", "T32", null),
-        new("agents-install", "T35", null),
+        new("agents-install", "T35", AgentsInstall.Run),
         new("agent-message", "T37", null),
         new("usage-logs", "T38", UsageLogs.Run),
         new("worktree-arg", "T40", null),

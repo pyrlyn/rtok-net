@@ -1,0 +1,18 @@
+﻿CLI: Claude Code
+  app     /Users/u/bin/claude (1.0.0 (fake))
+  config  /Users/u/.claude.json
+  ✓ mcp     cli  entry ~/.claude.json
+Desktop: Claude Desktop
+  app     /Users/u/Applications/Claude.app (-)
+  config  /Users/u/Library/Application Support/Claude/claude_desktop_config.json
+  ✗ mcp     desktop  stale (runs `rtok serve`, want `rtok mcp --host claude`)
+CLI: Goose CLI
+  app     /Users/u/bin/goose (1.0.0 (fake))
+  config  /Users/u/.config/goose/config.yaml
+  ✓ mcp     installed
+Desktop: Goose — not found
+  app     -
+  config  /Users/u/.config/goose/config.yaml
+CLI: aider
+  app     /Users/u/bin/aider (1.0.0 (fake))
+  − mcp     not supported: aider has no MCP support

@@ -1,0 +1,6 @@
+name: n
+mcpServers:
+  - name: rtok
+    type: stdio
+    command: rtok
+    args: [mcp, --host, continue]

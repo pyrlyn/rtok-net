@@ -1,0 +1,4 @@
+name: n
+mcpServers:
+  - name: other
+    command: x

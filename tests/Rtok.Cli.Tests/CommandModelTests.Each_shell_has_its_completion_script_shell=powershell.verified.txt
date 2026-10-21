@@ -5,12 +5,17 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
         '' = @('agents', 'completions', 'config', 'hook', 'logs', 'man', 'plugins')
-        'agents' = @('usage')
+        'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'logs' = @('export', 'watch')
     }
     $options = @{
         '' = @('-h', '--help', '--version')
+        'agents info' = @('--json', '--config', '-h', '--help', '--version')
+        'agents install' = @('--dry-run', '--yes', '--mcp', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
+        'agents list' = @('--json', '--config', '-h', '--help', '--version')
+        'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
+        'agents update' = @('--dry-run', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
         'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
         'completions' = @('--install', '--uninstall', '-h', '--help', '--version')
         'config get' = @('--json', '--config', '-h', '--help', '--version')
@@ -27,6 +32,11 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'plugins' = @('--json', '-h', '--help', '--version')
     }
     $values = @(
+        'agents info|--config'
+        'agents install|--config'
+        'agents list|--config'
+        'agents uninstall|--config'
+        'agents update|--config'
         'agents usage|--source'
         'agents usage|--host'
         'agents usage|--since'
@@ -58,7 +68,48 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '|-h' = 'Show help.'
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
+        'agents|info' = 'One or more hosts in detail: apps, files, and each module''s state.'
+        'agents|install' = 'Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.'
+        'agents|list' = 'Every host rtok knows: whether its apps are here, and what of rtok each one has.'
+        'agents|uninstall' = 'Take rtok out of hosts: only entries that are still rtok''s; one you changed asks first.'
+        'agents|update' = 'Rewrite rtok''s entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).'
         'agents|usage' = 'Tokens and estimated cost per agent and month (or day), from the agents'' logs or rtok.'
+        'agents info|--json' = 'Print JSON.'
+        'agents info|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents info|-h' = 'Show help.'
+        'agents info|--help' = 'Show help.'
+        'agents info|--version' = 'Show version.'
+        'agents install|--dry-run' = 'Print what would change; write nothing.'
+        'agents install|--yes' = 'Answer yes to every question.'
+        'agents install|--mcp' = 'Register rtok''s MCP server.'
+        'agents install|--cli' = 'Only the CLI apps.'
+        'agents install|--gui' = 'Only the desktop apps.'
+        'agents install|--desktop' = 'Only the desktop apps.'
+        'agents install|--all' = 'Every app of the host (the default without --cli or --desktop).'
+        'agents install|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents install|-h' = 'Show help.'
+        'agents install|--help' = 'Show help.'
+        'agents install|--version' = 'Show version.'
+        'agents list|--json' = 'Print JSON.'
+        'agents list|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents list|-h' = 'Show help.'
+        'agents list|--help' = 'Show help.'
+        'agents list|--version' = 'Show version.'
+        'agents uninstall|--dry-run' = 'Print what would change; write nothing.'
+        'agents uninstall|--yes' = 'Remove entries you changed without asking.'
+        'agents uninstall|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents uninstall|-h' = 'Show help.'
+        'agents uninstall|--help' = 'Show help.'
+        'agents uninstall|--version' = 'Show version.'
+        'agents update|--dry-run' = 'Print what would change; write nothing.'
+        'agents update|--cli' = 'Only the CLI apps.'
+        'agents update|--gui' = 'Only the desktop apps.'
+        'agents update|--desktop' = 'Only the desktop apps.'
+        'agents update|--all' = 'Every app of the host (the default without --cli or --desktop).'
+        'agents update|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents update|-h' = 'Show help.'
+        'agents update|--help' = 'Show help.'
+        'agents update|--version' = 'Show version.'
         'agents usage|--source' = 'Data source: logs (the agents'' own session files, the default), rtok (what passed through rtok) or both.'
         'agents usage|--host' = 'Only these hosts, comma-separated (claude,codex).'
         'agents usage|--since' = 'From a date (2026-09-01, whole days in --tz) or a duration back from now (30d).'

@@ -2,6 +2,7 @@
   <!-- rtok's own MCP entry in every host's config: one spec table, one core (plan/T34). -->
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Mcp.Install.Tests" />
+    <InternalsVisibleTo Include="Rtok.Agents.Hosts" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="TestableIO.System.IO.Abstractions" />

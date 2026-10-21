@@ -11,6 +11,8 @@ public sealed class JsonTests
     private static readonly Dictionary<string, string[]> Reading = new(StringComparer.Ordinal)
     {
         ["agents usage"] = ["--tz", "UTC"],
+        ["agents list"] = [],
+        ["agents info"] = ["claude"],
         ["config show"] = [],
         ["config get"] = ["proxy.port"],
         ["plugins"] = [],
@@ -28,6 +30,9 @@ public sealed class JsonTests
         ["completions"] = "prints or installs a shell script",
         ["man"] = "prints or writes roff pages",
         ["logs watch"] = "streams the log until Ctrl-C",
+        ["agents install"] = "writes host files",
+        ["agents update"] = "writes host files",
+        ["agents uninstall"] = "writes host files",
     };
 
     [Fact]

@@ -1,0 +1,11 @@
+# my reasonix
+model = "deepseek"
+
+[[plugins]]
+name = "fs"
+command = "fs-mcp"  # keep
+
+[[plugins]]
+name = "rtok"
+command = "rtok"
+args = ["mcp", "--host", "reasonix"]

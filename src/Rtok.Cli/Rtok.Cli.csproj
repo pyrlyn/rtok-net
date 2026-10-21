@@ -12,9 +12,11 @@
       IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"
     />
     <PackageReference Include="Spectre.Console" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Rtok.Agents/Rtok.Agents.csproj" />
+    <ProjectReference Include="../Rtok.Agents.Hosts/Rtok.Agents.Hosts.csproj" />
     <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../Rtok.Hooks/Rtok.Hooks.csproj" />

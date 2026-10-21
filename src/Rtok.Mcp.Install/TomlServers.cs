@@ -231,13 +231,13 @@ internal static class TomlServers
         path.Length >= prefix.Length
         && path.AsSpan(0, prefix.Length).SequenceEqual(prefix, StringComparer.Ordinal);
 
-    private static int End(SyntaxNode node) => node.Span.Offset + node.Span.Length;
+    internal static int End(SyntaxNode node) => node.Span.Offset + node.Span.Length;
 
-    private static int LineStart(string text, int at) =>
+    internal static int LineStart(string text, int at) =>
         at == 0 ? 0 : text.LastIndexOf('\n', at - 1) + 1;
 
     /// <summary>Past the line break that ends the line <paramref name="at"/> is on; a node's span may already end past it.</summary>
-    private static int LineEnd(string text, int at)
+    internal static int LineEnd(string text, int at)
     {
         if (at > 0 && text[at - 1] == '\n')
         {
@@ -247,7 +247,7 @@ internal static class TomlServers
         return nl < 0 ? text.Length : nl + 1;
     }
 
-    private static JsonNode? Json(object? value) =>
+    internal static JsonNode? Json(object? value) =>
         value switch
         {
             TomlTable t => new JsonObject(

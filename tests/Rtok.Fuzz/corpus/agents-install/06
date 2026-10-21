@@ -1,0 +1,4 @@
+mcpServers:
+- name: other
+  command: x
+rules: []
