@@ -32,6 +32,7 @@ How it was checked:
   - Missing files, folders, `../escape` and empty names inject nothing.
   - The rtok glue and fence tables are ported, plus 4-space indent, tilde info strings, inline triple backticks and pleasantry edge cases.
   - CsCheck, 2000 samples: output is never longer in chars or UTF-8 bytes, and every fenced block survives in order, byte for byte.
+- Fuzz: `prose-compress` in `tests/Rtok.Fuzz` is wired with four seeds. The first byte picks the intensity. It checks that two runs agree, that the output never grows in chars or UTF-8 bytes, and that every fenced block survives in order. `Rtok.Fuzz.Tests` replays it over the corpus, random bytes and mutated seeds. T53 added the `Fuzz:` line while T21 was in flight, so the target landed in a second commit.
 - Mutation checks:
   - Dropping the left-glue check fails 11 cases.
   - Restoring rtok's fence line-break behaviour fails 8.

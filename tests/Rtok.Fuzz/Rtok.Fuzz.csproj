@@ -24,6 +24,7 @@
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <ProjectReference Include="../../src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
+    <ProjectReference Include="../../src/Rtok.Plugins.Inject/Rtok.Plugins.Inject.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Fuzz.Tests" />

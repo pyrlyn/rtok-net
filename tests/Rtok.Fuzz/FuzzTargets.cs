@@ -33,7 +33,7 @@ internal static class FuzzTargets
         new("read-roots", "T19", null),
         new("text-ops", "T19", null),
         new("guard-key", "T20", null),
-        new("prose-compress", "T21", null),
+        new("prose-compress", "T21", ProseCompress.Run),
         new("mem-text", "T22", null),
         new("extractor-reply", "T22.1", null),
         new("checkpoint", "T23", null),

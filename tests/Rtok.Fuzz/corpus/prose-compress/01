@@ -1,0 +1,5 @@
+Sure! The bug is just really in auth.
+```rs
+fn f() { let the = 1; }
+```
+Then fix the thing.
