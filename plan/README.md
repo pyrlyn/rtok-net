@@ -138,6 +138,15 @@ html and pdf. QuestPDF is referenced only by `Rtok.Report.Pdf`, which implements
 interface. Nothing else sees a QuestPDF type, so the PDF layer can be rewritten or replaced
 without touching the report logic. The project sets the QuestPDF licence type explicitly.
 
+N19. **rtok's flag-gated experiments (catalog A33).** The creator decided these from the
+evidence in T51's `done.md`:
+- Embeddings beside FTS5: **deferred**. FTS5 is the only memory search; no vector table.
+  Reopen as a task, on the `http` provider only, when a bench shows a recall gain over FTS5.
+- WASM plugin host: **dropped**. Out-of-tree plugins build their own `rtok` (N12). Runtime
+  loading of third-party plugins would be a new decision, not a port.
+- Tiered L0/L1/L2 archive context: **deferred**. The archive ships without tiers. Reopen as
+  a task behind `plugins.archive.tiers` when a real-session Measurement beats the plain archive.
+
 ## Measured on this machine (2026-10-21, M3 Max, SDK 10.0.402)
 
 | Probe | Size | Start-to-exit |
