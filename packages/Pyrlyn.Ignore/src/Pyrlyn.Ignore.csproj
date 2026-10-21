@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Description>gitignore-correct directory walking: .gitignore at every level, .ignore, info/exclude, global excludes, overrides.</Description>
+    <PackageTags>gitignore;ignore;walk;directory;glob;wildmatch</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pyrlyn.Ignore.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+  </ItemGroup>
+</Project>

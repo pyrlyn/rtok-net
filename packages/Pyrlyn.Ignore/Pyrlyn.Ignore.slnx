@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Pyrlyn.Ignore.csproj" />
+  <Project Path="tests/Pyrlyn.Ignore.Tests.csproj" />
+</Solution>

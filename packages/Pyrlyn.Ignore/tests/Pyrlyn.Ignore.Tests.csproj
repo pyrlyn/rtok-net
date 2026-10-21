@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- The corpus test runs git to compare against; ProgressRunner (T11) is not a package. -->
+    <RtokProcessRunner>true</RtokProcessRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../src/Pyrlyn.Ignore.csproj" />
+  </ItemGroup>
+</Project>

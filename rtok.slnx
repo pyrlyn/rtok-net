@@ -12,6 +12,10 @@
     <Project Path="packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
     <Project Path="packages/Pyrlyn.FsKit/tests/Pyrlyn.FsKit.Tests.csproj" />
   </Folder>
+  <Folder Name="/packages/Pyrlyn.Ignore/">
+    <Project Path="packages/Pyrlyn.Ignore/src/Pyrlyn.Ignore.csproj" />
+    <Project Path="packages/Pyrlyn.Ignore/tests/Pyrlyn.Ignore.Tests.csproj" />
+  </Folder>
   <Folder Name="/packages/Pyrlyn.Jsonc/">
     <Project Path="packages/Pyrlyn.Jsonc/src/Pyrlyn.Jsonc.csproj" />
     <Project Path="packages/Pyrlyn.Jsonc/tests/Pyrlyn.Jsonc.Tests.csproj" />
