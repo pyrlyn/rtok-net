@@ -1,0 +1,25 @@
+# .NET build output (artifacts layout)
+/artifacts/
+bin/
+obj/
+*.user
+.vs/
+.idea/
+TestResults/
+*.binlog
+
+# Agent worktrees must not be indexed or committed
+.worktrees/
+.claude/settings.local.json
+
+# rtok's own home and stores
+/.rtok/
+rtok.db
+rtok.db-shm
+rtok.db-wal
+
+# web/ SPA (Vite + React)
+/web/node_modules/
+/web/dist/
+
+.DS_Store
