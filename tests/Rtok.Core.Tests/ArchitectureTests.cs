@@ -13,7 +13,7 @@ public sealed class ArchitectureTests
         ["Pyrlyn.*"],
         ["Rtok.Plugin.Sdk", "Rtok.Agent.Sdk"],
         ["Rtok.Hook.Contracts"],
-        ["Rtok.Core", "Rtok.Config", "Rtok.Store", "Rtok.Archive", "Rtok.Log"],
+        ["Rtok.Core", "Rtok.Config", "Rtok.Store", "Rtok.Store.Model", "Rtok.Archive", "Rtok.Log"],
         [
             "Rtok.Plugins.*",
             "Rtok.Agents",

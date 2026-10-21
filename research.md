@@ -678,6 +678,31 @@ EF Core under AOT, found while building the probes (adds to C.4):
 - Without an `IDesignTimeDbContextFactory`, the Tasks package runs the app's entry point at publish
   to find a host.
 
+More from T8 (the real store, EF 10.0.13; `src/Rtok.Store/StoreHost.targets` holds the wiring):
+- **The compiled model is scaffolded only in the context's own assembly**, and EF finds it only
+  there. With the context in `Rtok.Store.Model` and the queries in `Rtok.Store`, the model project
+  needs its own Tasks reference, and the executable must reference both projects directly:
+  `_EFPrepareDependenciesForPublishAOT` optimizes direct references only. Build-stage
+  generation (`EFScaffoldModelStage=build`) is no way out: the task's "NativeAOT support is
+  experimental" warning has no code, so `-warnaserror` fails every Release build.
+- ILC flags the scaffolded model's `byte[]` comparers (IL3050, `Array.CreateInstance` in
+  expression trees, which run interpreted). `TrimmerSingleWarn` on the model assembly folds them
+  into one IL3053, like EF's own assemblies.
+- A list parameter (`ids.Contains(x.Id)`) precompiles, but at run time EF builds its JSON reader
+  (`JsonCollectionOfStructsReaderWriter<,>`) by reflection, which NativeAOT lacks. Bound a batch
+  by its highest id instead.
+- A query that is not ended by an operator the precompiler knows (`ToList`, `First`, `Any`, ...)
+  is not precompiled and throws at run time: a collection spread `[.. query]` enumerates it unseen.
+- `ExecuteUpdate` with several setters: the generated interceptor reads the captured values in
+  the reverse order of the `SetProperty` calls, so two different values swap or fail a cast.
+  Keep one captured value per `ExecuteUpdate` (or only nulls in the same lambda form). A constant
+  value fails the precompile (`SqlConstantExpression.Quote`), as does a block-bodied setter lambda.
+- A value-type value in `SetProperty(prop, value)` fails the precompile; use `_ => value` with a
+  nullable local for a nullable column. `AsNoTracking()` and anonymous-type projections generate
+  code that does not compile; tracked materialization needs non-sealed entity classes.
+- The generated files also raise CS0184, CS0618 and CS9270; `.editorconfig` silences them for
+  `*.EFInterceptors.*.g.cs`.
+
 ---
 
 ## Unverified / open items

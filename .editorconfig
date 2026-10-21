@@ -17,3 +17,10 @@ dotnet_analyzer_diagnostic.category-Performance.severity = warning
 # An application, not a library consumed from a UI thread.
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.MA0004.severity = none
+
+# EF Core's generated query interceptors (src/Rtok.Store; research.md F): the older
+# InterceptsLocation form and EF's own obsolete members. CS8669 is in the project's NoWarn.
+[*.EFInterceptors.*.g.cs]
+dotnet_diagnostic.CS0184.severity = none
+dotnet_diagnostic.CS0618.severity = none
+dotnet_diagnostic.CS9270.severity = none

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The store's EF Core model: entities, RtokDbContext and the migrations (README N7).
+       Rtok.Store embeds one EF-generated SQL script per migration from this assembly. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Store.Model</RootNamespace>
+    <!-- dotnet ef uses this library as its own startup project (DesignTimeFactory). -->
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <!-- EF Core marks its whole API RequiresUnreferencedCode/RequiresDynamicCode. The AOT path
+         is the compiled model plus precompiled queries (research C.4), proved by the AOT smoke
+         test; CA1720: entity properties mirror their column names. -->
+    <NoWarn>$(NoWarn);IL2026;IL3050;CA1720</NoWarn>
+    <!-- The compiled model is scaffolded at AOT publish (StoreHost.targets), in this assembly:
+         EF finds a compiled model only next to its context. Rtok.Store precompiles the queries. -->
+    <EFPrecompileQueriesStage>none</EFPrecompileQueriesStage>
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.EntityFrameworkCore.GeneratedInterceptors</InterceptorsNamespaces>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

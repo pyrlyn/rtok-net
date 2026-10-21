@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build-time tool: writes the EF-generated SQL script of every migration for
+       src/Rtok.Store to embed (T8; Migrate() does not run under AOT, README N7). JIT only. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Rtok.Store.Scripts</RootNamespace>
+    <RtokJitOnly>true</RtokJitOnly>
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Store.Model/Rtok.Store.Model.csproj" />
+  </ItemGroup>
+</Project>

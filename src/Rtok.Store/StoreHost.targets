@@ -1,0 +1,27 @@
+<Project>
+  <!-- Imported by every executable that opens the store. At AOT publish EF scaffolds the
+       compiled model in Rtok.Store.Model and precompiles the queries in Rtok.Store, so no query
+       builds a model at run time (research.md F); both must be direct references for that. -->
+  <PropertyGroup>
+    <!-- The executable itself defines no context and runs no query. -->
+    <EFOptimizeContext>false</EFOptimizeContext>
+    <!-- EF's own assemblies carry trim and AOT warnings, each reported once (research.md F). -->
+    <WarningsAsErrors>$(WarningsAsErrors.Replace('IL2104','').Replace('IL3053',''))</WarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Rtok.Store.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)../Rtok.Store.Model/Rtok.Store.Model.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- The scaffolded model builds its byte[] comparers with expression trees, which ILC flags
+       (IL3050); they run interpreted. Report the model assembly once, like EF's own. -->
+  <Target Name="RtokStoreModelSingleWarn" AfterTargets="_ComputeManagedAssemblyForILLink">
+    <ItemGroup>
+      <ManagedAssemblyToLink
+        Condition="'%(Filename)' == 'Rtok.Store.Model'"
+        TrimmerSingleWarn="true"
+      />
+    </ItemGroup>
+  </Target>
+</Project>

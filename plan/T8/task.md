@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P0
 complexity: 5
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T8. Store on EF Core + SQLite: model, migrations runner, retention
@@ -31,3 +31,10 @@ Spec: catalog A15, catalog B10 in [docs/port/catalog.md](../../docs/port/catalog
 Ports: rtok closed T0.3, T13.2, T13.3, T13.4, T34.1, T36.11, T102, T104, T207, T208, T209, T210, T211, T324, T352, T354, T431, T433, T531, T534, T599, T672, T906, T907; open S3, I-S4 ([open work](../../docs/port/open-work.md)).
 
 Check: An AOT smoke test creates a fresh store, applies every migration, and runs every repository method once. Every published query is precompiled, so no query falls back to runtime model building.
+
+Plan:
+1. `src/Rtok.Store.Model`: entities for the final rtok schema (minus the unused `events`; plus `plugin_state`), one `RtokDbContext`, the initial EF migration (`dotnet ef migrations add`, dotnet-ef as a local tool); FTS5 tables, triggers and the expression index as `migrationBuilder.Sql` operations.
+2. `eng/Rtok.Store.Scripts`: a JIT tool run at build that writes one EF-generated SQL script per migration (plus the history-table script); `src/Rtok.Store` embeds them.
+3. `src/Rtok.Store`: open (0700 dir, 0600 files, busy_timeout, WAL, foreign_keys, auto_vacuum=INCREMENTAL on a new file), refusal of a store rtok-net did not create or one with a newer migration (N15), the embedded migration runner under one write transaction, the ledger write API (sessions, hosts, models, calls, call_io with spill and sanitize, hook session fields, tokens, usage, logs, measurements with once_key, kv, plugin_state) and atomic retention.
+4. Tests: `tests/Rtok.Store.Tests` (JIT: schema snapshot, model drift, refusal, permissions, sanitize, retention, every repository method); an AOT smoke in `tests/Rtok.AotTests` (T2) that applies every migration and runs every repository method with precompiled queries.
+5. Release `-warnaserror`, `dotnet test`, csharpier; `done.md`.

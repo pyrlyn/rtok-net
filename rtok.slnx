@@ -52,6 +52,9 @@
     <Project Path="packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
     <Project Path="packages/Rtok.Plugin.Sdk/tests/Rtok.Plugin.Sdk.Tests.csproj" />
   </Folder>
+  <Folder Name="/eng/">
+    <Project Path="eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Rtok.Cli/Rtok.Cli.csproj" />
     <Project Path="src/Rtok.Config/Rtok.Config.csproj" />
@@ -59,6 +62,8 @@
     <Project Path="src/Rtok.Hook/Rtok.Hook.csproj" />
     <Project Path="src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
     <Project Path="src/Rtok.Plugins.Measure/Rtok.Plugins.Measure.csproj" />
+    <Project Path="src/Rtok.Store.Model/Rtok.Store.Model.csproj" />
+    <Project Path="src/Rtok.Store/Rtok.Store.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.AotTests/Rtok.AotTests.csproj" />
@@ -71,6 +76,7 @@
     <Project Path="tests/Rtok.Mcp.Install.Tests/Rtok.Mcp.Install.Tests.csproj" />
     <Project Path="tests/Rtok.SamplePlugin/Rtok.SamplePlugin.csproj" />
     <Project Path="tests/Rtok.Smoke/Rtok.Smoke.csproj" />
+    <Project Path="tests/Rtok.Store.Tests/Rtok.Store.Tests.csproj" />
     <Project Path="tests/Rtok.Testing.Tests/Rtok.Testing.Tests.csproj" />
     <Project Path="tests/Rtok.Testing/Rtok.Testing.csproj" />
   </Folder>

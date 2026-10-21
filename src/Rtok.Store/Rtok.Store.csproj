@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The store (README N7): open, the embedded migration runner, the ledger write API and
+       retention over the Rtok.Store.Model context. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Store</RootNamespace>
+    <!-- EF Core marks its whole API RequiresUnreferencedCode/RequiresDynamicCode. The AOT path
+         is the compiled model plus precompiled queries (research C.4), proved by the AOT smoke
+         test. -->
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+    <!-- EF's generated query interceptors use `?` outside a `#nullable` context; .editorconfig
+         cannot lower CS8669 below the nullable WarningsAsErrors. Hand-written code here is all
+         nullable-enabled, so only the generated files can raise it. -->
+    <NoWarn>$(NoWarn);CS8669</NoWarn>
+    <!-- The queries are precompiled at AOT publish (StoreHost.targets); the model is scaffolded
+         in Rtok.Store.Model, next to its context. -->
+    <EFScaffoldModelStage>none</EFScaffoldModelStage>
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);Microsoft.EntityFrameworkCore.GeneratedInterceptors</InterceptorsNamespaces>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Store.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />
+    <!-- Built first and run below; never referenced at run time. -->
+    <ProjectReference
+      Include="../../eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj"
+      ReferenceOutputAssembly="false"
+      Private="false"
+      UndefineProperties="RuntimeIdentifier;SelfContained;PublishAot;_IsPublishing;EFOptimizeContext;EFScaffoldModelStage;EFPrecompileQueriesStage"
+    />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- One EF-generated SQL script per migration, written by eng/Rtok.Store.Scripts from the
+       model assembly and embedded as Rtok.Store.Migrations.<id>.sql (README N7). -->
+  <Target Name="RtokMigrationScriptsTool" DependsOnTargets="ResolveProjectReferences">
+    <!-- IntermediateOutputPath is set by the SDK targets, after this file's properties. -->
+    <PropertyGroup>
+      <RtokMigrationScriptsDir>$(IntermediateOutputPath)migrations/</RtokMigrationScriptsDir>
+    </PropertyGroup>
+    <MSBuild
+      Projects="../../eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj"
+      Targets="GetTargetPath"
+      Properties="Configuration=$(Configuration)"
+      RemoveProperties="RuntimeIdentifier;SelfContained;PublishAot;_IsPublishing;EFOptimizeContext;EFScaffoldModelStage;EFPrecompileQueriesStage;TargetFramework"
+    >
+      <Output TaskParameter="TargetOutputs" PropertyName="RtokMigrationScriptsToolPath" />
+    </MSBuild>
+  </Target>
+
+  <Target
+    Name="RtokMigrationScripts"
+    DependsOnTargets="RtokMigrationScriptsTool"
+    Inputs="$(RtokMigrationScriptsToolPath);$([System.IO.Path]::GetDirectoryName($(RtokMigrationScriptsToolPath)))/Rtok.Store.Model.dll"
+    Outputs="$(RtokMigrationScriptsDir).stamp"
+  >
+    <PropertyGroup>
+      <_RtokDotnet>$(DOTNET_HOST_PATH)</_RtokDotnet>
+      <_RtokDotnet Condition="'$(_RtokDotnet)' == ''">dotnet</_RtokDotnet>
+    </PropertyGroup>
+    <Exec Command="&quot;$(_RtokDotnet)&quot; exec &quot;$(RtokMigrationScriptsToolPath)&quot; &quot;$(RtokMigrationScriptsDir)&quot;" />
+    <Touch Files="$(RtokMigrationScriptsDir).stamp" AlwaysCreate="true" />
+  </Target>
+
+  <Target
+    Name="RtokEmbedMigrationScripts"
+    BeforeTargets="AssignTargetPaths"
+    DependsOnTargets="RtokMigrationScripts"
+  >
+    <ItemGroup>
+      <_RtokMigrationScript Include="$(RtokMigrationScriptsDir)*.sql" />
+      <EmbeddedResource
+        Include="@(_RtokMigrationScript)"
+        LogicalName="Rtok.Store.Migrations.%(_RtokMigrationScript.Filename)%(_RtokMigrationScript.Extension)"
+        WithCulture="false"
+      />
+      <FileWrites Include="@(_RtokMigrationScript);$(RtokMigrationScriptsDir).stamp" />
+    </ItemGroup>
+  </Target>
+</Project>

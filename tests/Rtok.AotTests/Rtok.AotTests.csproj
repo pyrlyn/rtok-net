@@ -28,4 +28,5 @@
     />
   </ItemGroup>
   <Import Project="../../packages/Pyrlyn.TreeSitter/src/build/Pyrlyn.TreeSitter.targets" />
+  <Import Project="../../src/Rtok.Store/StoreHost.targets" />
 </Project>

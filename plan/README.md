@@ -89,8 +89,9 @@ SQLite: `rtok-hook` links none. For `rtok`, static linking works on macOS and Li
 - On Linux, SourceGear.sqlite3 3.53.3's own `libe_sqlite3.a` with SQLitePCLRaw 3 also links.
 - On macOS, SourceGear ships only a dylib.
 
-Which source the store uses is T8's call, with the creator. Until then the native library
-ships beside the binary.
+The creator chose (T8): the store uses SQLitePCLRaw 2.1.13's `bundle_e_sqlite3`, the one
+Microsoft.EntityFrameworkCore.Sqlite 10.0.13 brings, and `libe_sqlite3` (dylib, so or DLL) ships beside the
+binary. Linking it statically into `rtok` is T54.
 
 N9. **CLI parsing: ConsoleAppFramework v5, output: Spectre.Console.** The creator decided
 this. ConsoleAppFramework is a source generator: commands are plain methods, options and
@@ -261,13 +262,14 @@ src/
   Rtok.Hook.Contracts/    hook wire DTOs + JsonSerializerContext, shared by both binaries
   Rtok.Cli/               rtok exe: ConsoleAppFramework commands, surfaces wired here
   Rtok.Core/              runtime, registry, dispatcher, estimator, foundation helpers
-  Rtok.Config/  Rtok.Store/  Rtok.Archive/  Rtok.Log/
+  Rtok.Config/  Rtok.Store/  Rtok.Store.Model/ (EF entities, context, migrations)  Rtok.Archive/  Rtok.Log/
   Rtok.Hooks/  Rtok.Mcp/  Rtok.Proxy/  Rtok.Web/  Rtok.Tui/  Rtok.Demon/  Rtok.Otel/
   Rtok.Plugins.<Id>/      one project per plugin (measure, cmd, read, archive, inject, guard,
                           memory, graph, toon, json_tree, compress, checkpoint, docs)
   Rtok.Agents/  Rtok.Mcp.Install/  Rtok.Worktree/  Rtok.Tasks/  Rtok.Measure/  Rtok.Report/  Rtok.Report.Pdf/
   Rtok.Doctor/  Rtok.Model/ (operator model shared by web and TUI)
 packages/                 own NuGet packages (above)
+eng/                      build-time tools (Rtok.Store.Scripts: one SQL script per migration)
 tests/                    *.Tests (JIT), Rtok.AotTests, Rtok.Smoke, Rtok.Benchmarks, Rtok.Fuzz
 web/                      React SPA from rtok
 plugins/  skills/  rules/  modes/   host plugin trees and data files from rtok
@@ -287,7 +289,7 @@ conflict on rebase: keep both sides.
 | Lane | Area | Order |
 | --- | --- | --- |
 | L1 | tests, plugin contract, core, cmd/inject/guard/memory plugins | T2, T5, T6, T17, T18, T22, T23, T20, T21, T22.1 |
-| L2 | store, archive, logs, proxy, measure, OTel | T8, T10, T9, T27, T29, T28, T30, T47, T50 |
+| L2 | store, archive, logs, proxy, measure, OTel | T8, T10, T9, T27, T29, T28, T30, T47, T54, T50 |
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T45 |
 | L4 | hook latency, hooks, resident, MCP, agents, worktrees | T4, T13, T14, T15, T16, T37, T40, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |

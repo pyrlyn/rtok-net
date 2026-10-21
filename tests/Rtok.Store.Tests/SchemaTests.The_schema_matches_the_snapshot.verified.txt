@@ -1,0 +1,773 @@
+﻿index IX_agents_host_id_host_session_id_parent_key on agents
+CREATE UNIQUE INDEX "IX_agents_host_id_host_session_id_parent_key" ON "agents" ("host_id", "host_session_id", "parent_key")
+
+index IX_agents_last_seen on agents
+CREATE INDEX "IX_agents_last_seen" ON "agents" ("last_seen")
+
+index IX_agents_parent_id on agents
+CREATE INDEX "IX_agents_parent_id" ON "agents" ("parent_id")
+
+index IX_archive_decisions_archive_id on archive_decisions
+CREATE INDEX "IX_archive_decisions_archive_id" ON "archive_decisions" ("archive_id")
+
+index IX_call_io_hook_session_id on call_io
+CREATE INDEX "IX_call_io_hook_session_id" ON "call_io" ("hook_session_id")
+
+index IX_call_io_request_archive on call_io
+CREATE INDEX "IX_call_io_request_archive" ON "call_io" ("request_archive")
+
+index IX_call_io_response_archive on call_io
+CREATE INDEX "IX_call_io_response_archive" ON "call_io" ("response_archive")
+
+index IX_calls_host_id on calls
+CREATE INDEX "IX_calls_host_id" ON "calls" ("host_id")
+
+index IX_calls_kind_ts on calls
+CREATE INDEX "IX_calls_kind_ts" ON "calls" ("kind", "ts")
+
+index IX_calls_model_id on calls
+CREATE INDEX "IX_calls_model_id" ON "calls" ("model_id")
+
+index IX_calls_parent_id on calls
+CREATE INDEX "IX_calls_parent_id" ON "calls" ("parent_id")
+
+index IX_calls_plugin_ts on calls
+CREATE INDEX "IX_calls_plugin_ts" ON "calls" ("plugin", "ts")
+
+index IX_calls_provider_id on calls
+CREATE INDEX "IX_calls_provider_id" ON "calls" ("provider_id")
+
+index IX_calls_session_id_ts on calls
+CREATE INDEX "IX_calls_session_id_ts" ON "calls" ("session_id", "ts")
+
+index IX_doc_items_crate_name_version on doc_items
+CREATE INDEX "IX_doc_items_crate_name_version" ON "doc_items" ("crate_name", "version")
+
+index IX_hook_sessions_fields on hook_sessions
+CREATE UNIQUE INDEX "IX_hook_sessions_fields" ON "hook_sessions" ("fields")
+
+index IX_hosts_slug on hosts
+CREATE UNIQUE INDEX "IX_hosts_slug" ON "hosts" ("slug")
+
+index IX_logs_call_id on logs
+CREATE INDEX "IX_logs_call_id" ON "logs" ("call_id")
+
+index IX_logs_session_ts on logs
+CREATE INDEX "IX_logs_session_ts" ON "logs" ("session", "ts")
+
+index IX_logs_source_name_ts on logs
+CREATE INDEX "IX_logs_source_name_ts" ON "logs" ("source", "name", "ts")
+
+index IX_logs_ts on logs
+CREATE INDEX "IX_logs_ts" ON "logs" ("ts")
+
+index IX_measurements_call_id on measurements
+CREATE INDEX "IX_measurements_call_id" ON "measurements" ("call_id")
+
+index IX_measurements_once_key on measurements
+CREATE UNIQUE INDEX "IX_measurements_once_key" ON "measurements" ("once_key")
+
+index IX_measurements_plugin_ts on measurements
+CREATE INDEX "IX_measurements_plugin_ts" ON "measurements" ("plugin", "ts")
+
+index IX_measurements_session_ts on measurements
+CREATE INDEX "IX_measurements_session_ts" ON "measurements" ("session", "ts")
+
+index IX_messages_from_agent on messages
+CREATE INDEX "IX_messages_from_agent" ON "messages" ("from_agent")
+
+index IX_messages_to_agent_id on messages
+CREATE INDEX "IX_messages_to_agent_id" ON "messages" ("to_agent", "id")
+
+index IX_models_provider_id_slug on models
+CREATE UNIQUE INDEX "IX_models_provider_id_slug" ON "models" ("provider_id", "slug")
+
+index IX_note_embeddings_model on note_embeddings
+CREATE INDEX "IX_note_embeddings_model" ON "note_embeddings" ("model")
+
+index IX_note_files_path on note_files
+CREATE INDEX "IX_note_files_path" ON "note_files" ("path")
+
+index IX_note_versions_note_id_version on note_versions
+CREATE UNIQUE INDEX "IX_note_versions_note_id_version" ON "note_versions" ("note_id", "version")
+
+index IX_observation_files_path on observation_files
+CREATE INDEX "IX_observation_files_path" ON "observation_files" ("path")
+
+index IX_observations_call_key on observations
+CREATE UNIQUE INDEX "IX_observations_call_key" ON "observations" ("call_key")
+
+index IX_observations_project_ts on observations
+CREATE INDEX "IX_observations_project_ts" ON "observations" ("project", "ts")
+
+index IX_observations_session_id_dedup_ts on observations
+CREATE INDEX "IX_observations_session_id_dedup_ts" ON "observations" ("session_id", "dedup", "ts")
+
+index IX_project_links_to_id on project_links
+CREATE INDEX "IX_project_links_to_id" ON "project_links" ("to_id")
+
+index IX_projects_root on projects
+CREATE UNIQUE INDEX "IX_projects_root" ON "projects" ("root")
+
+index IX_projects_selected on projects
+CREATE UNIQUE INDEX "IX_projects_selected" ON "projects" ("selected") WHERE selected = 1
+
+index IX_providers_slug on providers
+CREATE UNIQUE INDEX "IX_providers_slug" ON "providers" ("slug")
+
+index IX_read_cache_archive_id on read_cache
+CREATE INDEX "IX_read_cache_archive_id" ON "read_cache" ("archive_id")
+
+index IX_sessions_end_seq on sessions
+CREATE INDEX "IX_sessions_end_seq" ON "sessions" ("end_seq")
+
+index IX_sessions_host_id on sessions
+CREATE INDEX "IX_sessions_host_id" ON "sessions" ("host_id")
+
+index IX_symbols_root_name on symbols
+CREATE INDEX "IX_symbols_root_name" ON "symbols" ("root", "name")
+
+index IX_symbols_root_path on symbols
+CREATE INDEX "IX_symbols_root_path" ON "symbols" ("root", "path")
+
+index IX_tokens_call_id_phase on tokens
+CREATE INDEX "IX_tokens_call_id_phase" ON "tokens" ("call_id", "phase")
+
+index IX_tokens_plugin_ts on tokens
+CREATE INDEX "IX_tokens_plugin_ts" ON "tokens" ("plugin", "ts")
+
+index IX_usage_call_id on usage
+CREATE INDEX "IX_usage_call_id" ON "usage" ("call_id")
+
+index IX_usage_result_key on usage
+CREATE UNIQUE INDEX "IX_usage_result_key" ON "usage" ("result_key") WHERE result_key IS NOT NULL
+
+index IX_usage_session_ts on usage
+CREATE INDEX "IX_usage_session_ts" ON "usage" ("session", "ts")
+
+index IX_worktree_claims_agent_id on worktree_claims
+CREATE INDEX "IX_worktree_claims_agent_id" ON "worktree_claims" ("agent_id")
+
+index notes_topic on notes
+CREATE UNIQUE INDEX notes_topic ON notes (COALESCE(project, ''), kind, title)
+
+index sqlite_autoindex___EFMigrationsHistory_1 on __EFMigrationsHistory
+index sqlite_autoindex_agents_1 on agents
+index sqlite_autoindex_archive_1 on archive
+index sqlite_autoindex_archive_decisions_1 on archive_decisions
+index sqlite_autoindex_archive_summaries_1 on archive_summaries
+index sqlite_autoindex_doc_crates_1 on doc_crates
+index sqlite_autoindex_extractor_1 on extractor
+index sqlite_autoindex_file_rank_1 on file_rank
+index sqlite_autoindex_kv_1 on kv
+index sqlite_autoindex_note_files_1 on note_files
+index sqlite_autoindex_observation_files_1 on observation_files
+index sqlite_autoindex_otel_export_1 on otel_export
+index sqlite_autoindex_plugin_state_1 on plugin_state
+index sqlite_autoindex_project_links_1 on project_links
+index sqlite_autoindex_read_cache_1 on read_cache
+index sqlite_autoindex_sessions_1 on sessions
+index sqlite_autoindex_symbol_stale_1 on symbol_stale
+index sqlite_autoindex_task_claims_1 on task_claims
+index sqlite_autoindex_task_counters_1 on task_counters
+index sqlite_autoindex_worktree_claims_1 on worktree_claims
+index sqlite_autoindex_worktree_pending_1 on worktree_pending
+table __EFMigrationsHistory on __EFMigrationsHistory
+CREATE TABLE "__EFMigrationsHistory" (
+    "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
+    "ProductVersion" TEXT NOT NULL
+)
+
+table agents on agents
+CREATE TABLE "agents" (
+    "id" TEXT NOT NULL CONSTRAINT "PK_agents" PRIMARY KEY,
+    "host_id" INTEGER NOT NULL,
+    "host_session_id" TEXT NOT NULL,
+    "parent_key" TEXT NOT NULL,
+    "parent_id" TEXT NULL,
+    "cwd" TEXT NULL,
+    "started_at" INTEGER NOT NULL,
+    "last_seen" INTEGER NOT NULL,
+    "ended_at" INTEGER NULL,
+    "activity" TEXT NULL,
+    "status_text" TEXT NULL,
+    "ancestors" TEXT NULL,
+    CONSTRAINT "FK_agents_agents_parent_id" FOREIGN KEY ("parent_id") REFERENCES "agents" ("id"),
+    CONSTRAINT "FK_agents_hosts_host_id" FOREIGN KEY ("host_id") REFERENCES "hosts" ("id")
+)
+
+table archive on archive
+CREATE TABLE "archive" (
+    "id" TEXT NOT NULL CONSTRAINT "PK_archive" PRIMARY KEY,
+    "ts" INTEGER NOT NULL,
+    "session" TEXT NOT NULL,
+    "tool" TEXT NULL,
+    "bytes" INTEGER NOT NULL,
+    "path" TEXT NOT NULL,
+    "sha256" TEXT NOT NULL,
+    "agent_id" TEXT NULL
+)
+
+table archive_decisions on archive_decisions
+CREATE TABLE "archive_decisions" (
+    "session" TEXT NOT NULL,
+    "tool_use_id" TEXT NOT NULL,
+    "archive_id" TEXT NOT NULL,
+    "pointer" TEXT NOT NULL,
+    "expanded_ts" INTEGER NULL,
+    "ts" INTEGER NOT NULL,
+    CONSTRAINT "PK_archive_decisions" PRIMARY KEY ("session", "tool_use_id"),
+    CONSTRAINT "FK_archive_decisions_archive_archive_id" FOREIGN KEY ("archive_id") REFERENCES "archive" ("id")
+)
+
+table archive_summaries on archive_summaries
+CREATE TABLE "archive_summaries" (
+    "archive_id" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "summary" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL,
+    CONSTRAINT "PK_archive_summaries" PRIMARY KEY ("archive_id", "version"),
+    CONSTRAINT "FK_archive_summaries_archive_archive_id" FOREIGN KEY ("archive_id") REFERENCES "archive" ("id")
+)
+
+table call_io on call_io
+CREATE TABLE "call_io" (
+    "call_id" INTEGER NOT NULL CONSTRAINT "PK_call_io" PRIMARY KEY,
+    "request_bytes" INTEGER NOT NULL,
+    "response_bytes" INTEGER NOT NULL,
+    "request_sha256" TEXT NULL,
+    "response_sha256" TEXT NULL,
+    "request_json" TEXT NULL,
+    "response_json" TEXT NULL,
+    "request_archive" TEXT NULL,
+    "response_archive" TEXT NULL,
+    "request_raw" BLOB NULL,
+    "response_raw" BLOB NULL,
+    "hook_session_id" INTEGER NULL,
+    CONSTRAINT "FK_call_io_archive_request_archive" FOREIGN KEY ("request_archive") REFERENCES "archive" ("id"),
+    CONSTRAINT "FK_call_io_archive_response_archive" FOREIGN KEY ("response_archive") REFERENCES "archive" ("id"),
+    CONSTRAINT "FK_call_io_calls_call_id" FOREIGN KEY ("call_id") REFERENCES "calls" ("id"),
+    CONSTRAINT "FK_call_io_hook_sessions_hook_session_id" FOREIGN KEY ("hook_session_id") REFERENCES "hook_sessions" ("id")
+)
+
+table calls on calls
+CREATE TABLE "calls" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_calls" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "session_id" TEXT NOT NULL,
+    "host_id" INTEGER NULL,
+    "provider_id" INTEGER NULL,
+    "model_id" INTEGER NULL,
+    "plugin" TEXT NULL,
+    "surface" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "parent_id" INTEGER NULL,
+    "name" TEXT NULL,
+    "ms" REAL NULL,
+    "ok" INTEGER NOT NULL,
+    "error" TEXT NULL,
+    "service_tier" TEXT NULL,
+    CONSTRAINT "FK_calls_calls_parent_id" FOREIGN KEY ("parent_id") REFERENCES "calls" ("id"),
+    CONSTRAINT "FK_calls_hosts_host_id" FOREIGN KEY ("host_id") REFERENCES "hosts" ("id"),
+    CONSTRAINT "FK_calls_models_model_id" FOREIGN KEY ("model_id") REFERENCES "models" ("id"),
+    CONSTRAINT "FK_calls_providers_provider_id" FOREIGN KEY ("provider_id") REFERENCES "providers" ("id"),
+    CONSTRAINT "FK_calls_sessions_session_id" FOREIGN KEY ("session_id") REFERENCES "sessions" ("id")
+)
+
+table doc_crates on doc_crates
+CREATE TABLE "doc_crates" (
+    "name" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "sha256" TEXT NOT NULL,
+    "format_version" INTEGER NOT NULL,
+    "fetched_unix" INTEGER NOT NULL,
+    CONSTRAINT "PK_doc_crates" PRIMARY KEY ("name", "version")
+)
+
+table doc_items on doc_items
+CREATE TABLE "doc_items" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_doc_items" PRIMARY KEY AUTOINCREMENT,
+    "crate_name" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "docs" TEXT NOT NULL
+)
+
+table doc_items_fts on doc_items_fts
+CREATE VIRTUAL TABLE doc_items_fts USING fts5 (path, docs, content = 'doc_items', content_rowid = 'id')
+
+table doc_items_fts_config on doc_items_fts_config
+CREATE TABLE 'doc_items_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID
+
+table doc_items_fts_data on doc_items_fts_data
+CREATE TABLE 'doc_items_fts_data'(id INTEGER PRIMARY KEY, block BLOB)
+
+table doc_items_fts_docsize on doc_items_fts_docsize
+CREATE TABLE 'doc_items_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)
+
+table doc_items_fts_idx on doc_items_fts_idx
+CREATE TABLE 'doc_items_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID
+
+table extractor on extractor
+CREATE TABLE "extractor" (
+    "root" TEXT NOT NULL CONSTRAINT "PK_extractor" PRIMARY KEY,
+    "fingerprint" TEXT NOT NULL,
+    "indexed_at" INTEGER NULL
+)
+
+table file_rank on file_rank
+CREATE TABLE "file_rank" (
+    "root" TEXT NOT NULL CONSTRAINT "PK_file_rank" PRIMARY KEY,
+    "graph" TEXT NOT NULL
+)
+
+table graph_events on graph_events
+CREATE TABLE "graph_events" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_graph_events" PRIMARY KEY AUTOINCREMENT,
+    "ts_ms" INTEGER NOT NULL,
+    "call" TEXT NOT NULL,
+    "phase" TEXT NOT NULL,
+    "session" TEXT NOT NULL,
+    "tool" TEXT NOT NULL,
+    "target" TEXT NULL,
+    "project" TEXT NULL,
+    "backend" TEXT NULL,
+    "ok" INTEGER NOT NULL,
+    "error" TEXT NULL,
+    "ms" REAL NULL,
+    "done" INTEGER NULL,
+    "total" INTEGER NULL,
+    "answer_tokens" INTEGER NULL,
+    "rows_json" TEXT NULL,
+    "symbols" INTEGER NULL,
+    "symbols_returned" INTEGER NULL,
+    "files_touched" INTEGER NULL,
+    "projects_hit" INTEGER NULL
+)
+
+table hook_sessions on hook_sessions
+CREATE TABLE "hook_sessions" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_hook_sessions" PRIMARY KEY AUTOINCREMENT,
+    "fields" TEXT NOT NULL
+)
+
+table hosts on hosts
+CREATE TABLE "hosts" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_hosts" PRIMARY KEY AUTOINCREMENT,
+    "slug" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL
+)
+
+table kv on kv
+CREATE TABLE "kv" (
+    "key" TEXT NOT NULL CONSTRAINT "PK_kv" PRIMARY KEY,
+    "value" TEXT NOT NULL
+)
+
+table logs on logs
+CREATE TABLE "logs" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_logs" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "level" TEXT NOT NULL,
+    "source" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "session" TEXT NULL,
+    "call_id" INTEGER NULL,
+    "plugin" TEXT NULL,
+    "message" TEXT NOT NULL,
+    "fields" TEXT NULL,
+    CONSTRAINT "FK_logs_calls_call_id" FOREIGN KEY ("call_id") REFERENCES "calls" ("id")
+)
+
+table measurements on measurements
+CREATE TABLE "measurements" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_measurements" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "session" TEXT NOT NULL,
+    "plugin" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "before_bytes" INTEGER NOT NULL,
+    "after_bytes" INTEGER NOT NULL,
+    "est_before" INTEGER NOT NULL,
+    "est_after" INTEGER NOT NULL,
+    "ref_id" TEXT NULL,
+    "call_id" INTEGER NULL,
+    "once_key" TEXT NULL,
+    CONSTRAINT "FK_measurements_calls_call_id" FOREIGN KEY ("call_id") REFERENCES "calls" ("id")
+)
+
+table messages on messages
+CREATE TABLE "messages" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_messages" PRIMARY KEY AUTOINCREMENT,
+    "from_agent" TEXT NULL,
+    "to_agent" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL,
+    "delivered_at" INTEGER NULL,
+    "read_at" INTEGER NULL,
+    "task" TEXT NULL,
+    CONSTRAINT "FK_messages_agents_from_agent" FOREIGN KEY ("from_agent") REFERENCES "agents" ("id"),
+    CONSTRAINT "FK_messages_agents_to_agent" FOREIGN KEY ("to_agent") REFERENCES "agents" ("id")
+)
+
+table models on models
+CREATE TABLE "models" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_models" PRIMARY KEY AUTOINCREMENT,
+    "provider_id" INTEGER NOT NULL,
+    "slug" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL,
+    CONSTRAINT "FK_models_providers_provider_id" FOREIGN KEY ("provider_id") REFERENCES "providers" ("id")
+)
+
+table note_embeddings on note_embeddings
+CREATE TABLE "note_embeddings" (
+    "note_id" INTEGER NOT NULL CONSTRAINT "PK_note_embeddings" PRIMARY KEY,
+    "model" TEXT NOT NULL,
+    "dims" INTEGER NOT NULL,
+    "text_hash" TEXT NOT NULL,
+    "embedded_at" INTEGER NOT NULL,
+    "vector" BLOB NOT NULL,
+    CONSTRAINT "FK_note_embeddings_notes_note_id" FOREIGN KEY ("note_id") REFERENCES "notes" ("id") ON DELETE CASCADE
+)
+
+table note_files on note_files
+CREATE TABLE "note_files" (
+    "note_id" INTEGER NOT NULL,
+    "path" TEXT NOT NULL,
+    CONSTRAINT "PK_note_files" PRIMARY KEY ("note_id", "path"),
+    CONSTRAINT "FK_note_files_notes_note_id" FOREIGN KEY ("note_id") REFERENCES "notes" ("id") ON DELETE CASCADE
+)
+
+table note_versions on note_versions
+CREATE TABLE "note_versions" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_note_versions" PRIMARY KEY AUTOINCREMENT,
+    "note_id" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "version" INTEGER NOT NULL,
+    "ts" INTEGER NOT NULL,
+    CONSTRAINT "FK_note_versions_notes_note_id" FOREIGN KEY ("note_id") REFERENCES "notes" ("id")
+)
+
+table notes on notes
+CREATE TABLE "notes" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_notes" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "project" TEXT NULL,
+    "kind" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "retired" INTEGER NULL,
+    "superseded_by" INTEGER NULL,
+    "pinned" INTEGER NOT NULL,
+    "uses" INTEGER NOT NULL,
+    "last_used" INTEGER NULL
+)
+
+table notes_fts on notes_fts
+CREATE VIRTUAL TABLE notes_fts USING fts5 (title, body, content = 'notes', content_rowid = 'id')
+
+table notes_fts_config on notes_fts_config
+CREATE TABLE 'notes_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID
+
+table notes_fts_data on notes_fts_data
+CREATE TABLE 'notes_fts_data'(id INTEGER PRIMARY KEY, block BLOB)
+
+table notes_fts_docsize on notes_fts_docsize
+CREATE TABLE 'notes_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)
+
+table notes_fts_idx on notes_fts_idx
+CREATE TABLE 'notes_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID
+
+table observation_files on observation_files
+CREATE TABLE "observation_files" (
+    "observation_id" INTEGER NOT NULL,
+    "path" TEXT NOT NULL,
+    CONSTRAINT "PK_observation_files" PRIMARY KEY ("observation_id", "path"),
+    CONSTRAINT "FK_observation_files_observations_observation_id" FOREIGN KEY ("observation_id") REFERENCES "observations" ("id") ON DELETE CASCADE
+)
+
+table observations on observations
+CREATE TABLE "observations" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_observations" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "session_id" TEXT NOT NULL,
+    "project" TEXT NULL,
+    "obs_type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "narrative" TEXT NOT NULL,
+    "dedup" TEXT NOT NULL,
+    "call_key" TEXT NULL
+)
+
+table observations_fts on observations_fts
+CREATE VIRTUAL TABLE observations_fts USING fts5 (title, narrative, content = 'observations', content_rowid = 'id')
+
+table observations_fts_config on observations_fts_config
+CREATE TABLE 'observations_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID
+
+table observations_fts_data on observations_fts_data
+CREATE TABLE 'observations_fts_data'(id INTEGER PRIMARY KEY, block BLOB)
+
+table observations_fts_docsize on observations_fts_docsize
+CREATE TABLE 'observations_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)
+
+table observations_fts_idx on observations_fts_idx
+CREATE TABLE 'observations_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID
+
+table otel_export on otel_export
+CREATE TABLE "otel_export" (
+    "stream" TEXT NOT NULL CONSTRAINT "PK_otel_export" PRIMARY KEY,
+    "mark" INTEGER NOT NULL
+)
+
+table plugin_state on plugin_state
+CREATE TABLE "plugin_state" (
+    "plugin" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    CONSTRAINT "PK_plugin_state" PRIMARY KEY ("plugin", "key")
+)
+
+table project_links on project_links
+CREATE TABLE "project_links" (
+    "from_id" INTEGER NOT NULL,
+    "to_id" INTEGER NOT NULL,
+    "kind" TEXT NOT NULL,
+    "reason" TEXT NULL,
+    "unlinked" INTEGER NOT NULL,
+    "created_at" INTEGER NOT NULL,
+    CONSTRAINT "PK_project_links" PRIMARY KEY ("from_id", "to_id"),
+    CONSTRAINT "ck_project_links_kind" CHECK (kind IN ('manual', 'auto')),
+    CONSTRAINT "ck_project_links_not_self" CHECK (from_id != to_id),
+    CONSTRAINT "FK_project_links_projects_from_id" FOREIGN KEY ("from_id") REFERENCES "projects" ("id") ON DELETE CASCADE,
+    CONSTRAINT "FK_project_links_projects_to_id" FOREIGN KEY ("to_id") REFERENCES "projects" ("id") ON DELETE CASCADE
+)
+
+table projects on projects
+CREATE TABLE "projects" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_projects" PRIMARY KEY AUTOINCREMENT,
+    "root" TEXT NOT NULL,
+    "name" TEXT NULL,
+    "origin" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL,
+    "last_used_at" INTEGER NOT NULL,
+    "selected" INTEGER NOT NULL,
+    CONSTRAINT "ck_projects_origin" CHECK (origin IN ('manual', 'session', 'worktree', 'mcp', 'reference'))
+)
+
+table providers on providers
+CREATE TABLE "providers" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_providers" PRIMARY KEY AUTOINCREMENT,
+    "slug" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL
+)
+
+table read_cache on read_cache
+CREATE TABLE "read_cache" (
+    "session" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "sha256" TEXT NOT NULL,
+    "ts" INTEGER NOT NULL,
+    "archive_id" TEXT NULL,
+    CONSTRAINT "PK_read_cache" PRIMARY KEY ("session", "path"),
+    CONSTRAINT "FK_read_cache_archive_archive_id" FOREIGN KEY ("archive_id") REFERENCES "archive" ("id")
+)
+
+table sessions on sessions
+CREATE TABLE "sessions" (
+    "id" TEXT NOT NULL CONSTRAINT "PK_sessions" PRIMARY KEY,
+    "host_id" INTEGER NULL,
+    "project" TEXT NULL,
+    "cwd" TEXT NULL,
+    "source" TEXT NULL,
+    "started_at" INTEGER NOT NULL,
+    "ended_at" INTEGER NULL,
+    "end_seq" INTEGER NOT NULL,
+    CONSTRAINT "FK_sessions_hosts_host_id" FOREIGN KEY ("host_id") REFERENCES "hosts" ("id")
+)
+
+table sqlite_sequence on sqlite_sequence
+CREATE TABLE sqlite_sequence(name,seq)
+
+table symbol_stale on symbol_stale
+CREATE TABLE "symbol_stale" (
+    "root" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    CONSTRAINT "PK_symbol_stale" PRIMARY KEY ("root", "path")
+)
+
+table symbols on symbols
+CREATE TABLE "symbols" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_symbols" PRIMARY KEY AUTOINCREMENT,
+    "root" TEXT NOT NULL,
+    "path" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "line" INTEGER NOT NULL,
+    "end_line" INTEGER NOT NULL,
+    "start_byte" INTEGER NOT NULL,
+    "end_byte" INTEGER NOT NULL,
+    "is_def" INTEGER NOT NULL,
+    "scope" TEXT NOT NULL,
+    "file_sha" TEXT NOT NULL,
+    "mtime" INTEGER NOT NULL,
+    "size" INTEGER NOT NULL,
+    "content_hash" TEXT NOT NULL,
+    "signature" TEXT NOT NULL,
+    "doc" TEXT NOT NULL
+)
+
+table symbols_fts on symbols_fts
+CREATE VIRTUAL TABLE symbols_fts USING fts5 (name, signature, doc, content = 'symbols', content_rowid = 'id')
+
+table symbols_fts_config on symbols_fts_config
+CREATE TABLE 'symbols_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID
+
+table symbols_fts_data on symbols_fts_data
+CREATE TABLE 'symbols_fts_data'(id INTEGER PRIMARY KEY, block BLOB)
+
+table symbols_fts_docsize on symbols_fts_docsize
+CREATE TABLE 'symbols_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)
+
+table symbols_fts_idx on symbols_fts_idx
+CREATE TABLE 'symbols_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID
+
+table task_claims on task_claims
+CREATE TABLE "task_claims" (
+    "project" TEXT NOT NULL,
+    "task_id" TEXT NOT NULL,
+    "agent_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "since" INTEGER NOT NULL,
+    "seq" INTEGER NOT NULL,
+    CONSTRAINT "PK_task_claims" PRIMARY KEY ("project", "task_id")
+)
+
+table task_counters on task_counters
+CREATE TABLE "task_counters" (
+    "project" TEXT NOT NULL,
+    "parent" TEXT NOT NULL,
+    "last" INTEGER NOT NULL,
+    CONSTRAINT "PK_task_counters" PRIMARY KEY ("project", "parent")
+)
+
+table tokens on tokens
+CREATE TABLE "tokens" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_tokens" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "call_id" INTEGER NOT NULL,
+    "plugin" TEXT NULL,
+    "phase" TEXT NOT NULL,
+    "source" TEXT NOT NULL,
+    "tokens" INTEGER NOT NULL,
+    "bytes" INTEGER NULL,
+    "input" INTEGER NULL,
+    "output" INTEGER NULL,
+    "cache_create" INTEGER NULL,
+    "cache_read" INTEGER NULL,
+    CONSTRAINT "FK_tokens_calls_call_id" FOREIGN KEY ("call_id") REFERENCES "calls" ("id")
+)
+
+table usage on usage
+CREATE TABLE "usage" (
+    "id" INTEGER NOT NULL CONSTRAINT "PK_usage" PRIMARY KEY AUTOINCREMENT,
+    "ts" INTEGER NOT NULL,
+    "session" TEXT NOT NULL,
+    "model" TEXT NULL,
+    "input" INTEGER NOT NULL,
+    "cache_create" INTEGER NOT NULL,
+    "cache_read" INTEGER NOT NULL,
+    "output" INTEGER NOT NULL,
+    "call_id" INTEGER NULL,
+    "api" TEXT NOT NULL,
+    "result_key" TEXT NULL,
+    CONSTRAINT "FK_usage_calls_call_id" FOREIGN KEY ("call_id") REFERENCES "calls" ("id")
+)
+
+table worktree_claims on worktree_claims
+CREATE TABLE "worktree_claims" (
+    "path" TEXT NOT NULL CONSTRAINT "PK_worktree_claims" PRIMARY KEY,
+    "agent_id" TEXT NOT NULL,
+    "task" TEXT NOT NULL,
+    "claimed_at" INTEGER NOT NULL,
+    "released_at" INTEGER NULL,
+    CONSTRAINT "FK_worktree_claims_agents_agent_id" FOREIGN KEY ("agent_id") REFERENCES "agents" ("id")
+)
+
+table worktree_pending on worktree_pending
+CREATE TABLE "worktree_pending" (
+    "path" TEXT NOT NULL CONSTRAINT "PK_worktree_pending" PRIMARY KEY,
+    "task" TEXT NOT NULL,
+    "created_at" INTEGER NOT NULL
+)
+
+trigger doc_items_ad on doc_items
+CREATE TRIGGER doc_items_ad AFTER DELETE ON doc_items BEGIN
+    INSERT INTO doc_items_fts (doc_items_fts, rowid, path, docs) VALUES ('delete', old.id, old.path, old.docs);
+END
+
+trigger doc_items_ai on doc_items
+CREATE TRIGGER doc_items_ai AFTER INSERT ON doc_items BEGIN
+    INSERT INTO doc_items_fts (rowid, path, docs) VALUES (new.id, new.path, new.docs);
+END
+
+trigger doc_items_au on doc_items
+CREATE TRIGGER doc_items_au AFTER UPDATE ON doc_items BEGIN
+    INSERT INTO doc_items_fts (doc_items_fts, rowid, path, docs) VALUES ('delete', old.id, old.path, old.docs);
+    INSERT INTO doc_items_fts (rowid, path, docs) VALUES (new.id, new.path, new.docs);
+END
+
+trigger notes_ad on notes
+CREATE TRIGGER notes_ad AFTER DELETE ON notes BEGIN
+    INSERT INTO notes_fts (notes_fts, rowid, title, body) VALUES ('delete', old.id, old.title, old.body);
+END
+
+trigger notes_ai on notes
+CREATE TRIGGER notes_ai AFTER INSERT ON notes BEGIN
+    INSERT INTO notes_fts (rowid, title, body) VALUES (new.id, new.title, new.body);
+END
+
+trigger notes_au on notes
+CREATE TRIGGER notes_au AFTER UPDATE ON notes BEGIN
+    INSERT INTO notes_fts (notes_fts, rowid, title, body) VALUES ('delete', old.id, old.title, old.body);
+    INSERT INTO notes_fts (rowid, title, body) VALUES (new.id, new.title, new.body);
+END
+
+trigger observations_ad on observations
+CREATE TRIGGER observations_ad AFTER DELETE ON observations BEGIN
+    INSERT INTO observations_fts (observations_fts, rowid, title, narrative) VALUES ('delete', old.id, old.title, old.narrative);
+END
+
+trigger observations_ai on observations
+CREATE TRIGGER observations_ai AFTER INSERT ON observations BEGIN
+    INSERT INTO observations_fts (rowid, title, narrative) VALUES (new.id, new.title, new.narrative);
+END
+
+trigger observations_au on observations
+CREATE TRIGGER observations_au AFTER UPDATE ON observations BEGIN
+    INSERT INTO observations_fts (observations_fts, rowid, title, narrative) VALUES ('delete', old.id, old.title, old.narrative);
+    INSERT INTO observations_fts (rowid, title, narrative) VALUES (new.id, new.title, new.narrative);
+END
+
+trigger symbols_ad on symbols
+CREATE TRIGGER symbols_ad AFTER DELETE ON symbols WHEN old.is_def = 1 AND old.name != '' BEGIN
+    INSERT INTO symbols_fts (symbols_fts, rowid, name, signature, doc) VALUES ('delete', old.id, old.name, old.signature, old.doc);
+END
+
+trigger symbols_ai on symbols
+CREATE TRIGGER symbols_ai AFTER INSERT ON symbols WHEN new.is_def = 1 AND new.name != '' BEGIN
+    INSERT INTO symbols_fts (rowid, name, signature, doc) VALUES (new.id, new.name, new.signature, new.doc);
+END
+
+trigger symbols_au on symbols
+CREATE TRIGGER symbols_au AFTER UPDATE ON symbols BEGIN
+    INSERT INTO symbols_fts (symbols_fts, rowid, name, signature, doc)
+    SELECT 'delete', old.id, old.name, old.signature, old.doc WHERE old.is_def = 1 AND old.name != '';
+    INSERT INTO symbols_fts (rowid, name, signature, doc)
+    SELECT new.id, new.name, new.signature, new.doc WHERE new.is_def = 1 AND new.name != '';
+END
+
