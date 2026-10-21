@@ -13,7 +13,6 @@
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
     <PackageVersion Include="xunit.v3.aot.mtp-v2" Version="4.0.2" />
     <PackageVersion Include="Verify.XunitV3" Version="33.3.4" />
-    <PackageVersion Include="CsCheck" Version="4.9.1" />
     <PackageVersion Include="WireMock.Net" Version="2.19.0" />
     <PackageVersion Include="Porta.Pty" Version="2.2.3" />
     <PackageVersion Include="CliWrap" Version="3.10.5" />
