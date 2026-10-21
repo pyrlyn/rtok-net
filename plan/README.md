@@ -149,6 +149,19 @@ evidence in T51's `done.md`:
 - Tiered L0/L1/L2 archive context: **deferred**. The archive ships without tiers. Reopen as
   a task behind `plugins.archive.tiers` when a real-session Measurement beats the plain archive.
 
+N20. **Logging: Serilog in `rtok`, nothing in `rtok-hook`.** The creator decided this. Every
+log line in `rtok` (CLI, resident `hook --serve`, `mcp`, `proxy`, `web`, demon) goes through
+one Serilog pipeline, set up in `Rtok.Log` from the `[log]` section in code (no
+`Serilog.Settings.Configuration`: it uses reflection and is not AOT-clean). The rotating file
+sink is a small `ILogEventSink` over Pyrlyn.RotatingLog (T12.10), which keeps the catalog's
+`.N` files, the `errors.log` copy and lock-safe appends from several processes;
+Serilog.Sinks.File is not used, because its size rolling names files `_001` and is not
+lock-safe across processes. The `to_db` logs row is another sink, and `RTOK_LOG` debug output
+goes to stderr through Serilog.Sinks.Console. Libraries that take an `ILogger` (EF Core,
+ASP.NET Core, the MCP SDK) join the same pipeline through Serilog.Extensions.Logging.
+`rtok-hook` does not log at all (N6): it passes its lines to the resident, and drops them
+when the resident is down.
+
 ## Measured on this machine (2026-10-21, M3 Max, SDK 10.0.402)
 
 | Probe | Size | Start-to-exit |
@@ -171,6 +184,7 @@ Linux and Windows are not measured yet; T4 does that.
 | Regex | `[GeneratedRegex]`; `NonBacktracking` for user patterns | |
 | CLI parsing | ConsoleAppFramework 5.7.x (source generator, `PrivateAssets=all`) | N9 |
 | Console output, prompts, progress | Spectre.Console | N10 |
+| Logging | Serilog 4, Serilog.Sinks.Console, Serilog.Extensions.Logging; file sink over Pyrlyn.RotatingLog | N20; `rtok` only, never `rtok-hook` |
 | TUI | Terminal.Gui v2 | AOT publish is clean; interactive AOT behaviour unverified |
 | Store | Microsoft.EntityFrameworkCore.Sqlite 10 + SQLitePCLRaw (e_sqlite3 with FTS5) | N7 |
 | TOML | Tomlyn 2 (source-gen serializer; syntax tree for comment-preserving edits) | lossless round-trip to verify on a golden corpus |
@@ -211,7 +225,7 @@ Each one lives in `packages/<Name>/` and gets its own task (T12.x, T5, T33).
 | Pyrlyn.Trash | move to the OS trash on macOS, Linux and Windows |
 | Pyrlyn.OperationIcons | verb-to-icon table and icon gutter |
 | Pyrlyn.Config.Layered | TOML layers (defaults, user, project, `.env`, env, flags) with per-key provenance |
-| Pyrlyn.RotatingLog | small rotating file log usable from the hook path |
+| Pyrlyn.RotatingLog | `.N` rotating file log, lock-safe across processes; the file sink behind Serilog (N20) |
 | Pyrlyn.CommandLine.Docs | command model from ConsoleAppFramework `--help` output; roff man pages and static shell completions from it |
 
 ## Solution layout
