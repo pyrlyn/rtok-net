@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 4
-readiness: 0%
-agent:
+readiness: 5%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T30. Measure: transcripts, `rtok stats`, `rtok bench`, tokenizers
@@ -42,3 +42,13 @@ Ports: rtok closed T1.1, T1.2, T1.3, T1.5, T9.1, T49.1, T49.2, T53.1, T55.7, T58
 Fuzz: `transcript-jsonl` in `tests/Rtok.Fuzz`: each transcript reader over any JSONL never throws and gives non-negative token sums.
 
 Check: The replay bench reaches rtok's floor (76 %) on the shared fixture, and stats goldens match.
+
+Plan:
+1. New `src/Rtok.Measure` (Measure layer) and `tests/Rtok.Measure.Tests`. Reuse T38's walker (`LogFiles`), JSON helpers, Codex and OpenCode readers and `UsageCost` from `Rtok.Agents` (made public), not copies.
+2. Port rtok's measure modules: the transcript parser (records, counters, compactions), sub-agents, image tokens, the dictionary row, the stats report (folds, table, JSON), baselines, cache health, the Bash family, the p95 reservoir.
+3. A Cursor reader over `state.vscdb` (`cursorDiskKV` bubbles with `tokenCount`); rtok had none.
+4. `--calibrate`: `count_tokens` over sampled text per class, fit chars/token, write `[estimator]`; any failure leaves it unchanged.
+5. o200k (Microsoft.ML.Tokenizers) in the tests only, for fixture counts; the Release binary stays without the vocabulary.
+6. `rtok bench`: tasks TOML, configs A/B, runs through `ProgressRunner` with null stdin, a timeout and an 8 MiB cap; mean tokens and cost per config.
+7. CLI `rtok stats` and `rtok bench` with docs and goldens; fuzz target `transcript-jsonl` with a corpus.
+8. Rows that need other lanes' plugins (cmd filter kinds, read deny reasons and outline, archive clip, proxy lanes, checkpoint notes) and the replay bench (hook, MCP, cmd and read surfaces) get a seam now and are wired when T17, T19, T9, T29, T22 and T13/T15 land.
