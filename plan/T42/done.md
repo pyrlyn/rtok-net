@@ -50,8 +50,8 @@ Checked:
   and markdownlint green.
 
 Notes for later tasks:
-- T15 (MCP server): `IPlugin` has no call method, so the server calls `DocsService` directly,
-  as rtok's `mcp.rs` called its docs functions. No SDK change was made here.
+- T15 (MCP server): superseded by the follow-up below; the server dispatches through
+  `IPlugin.CallTool`.
 - T22 and any other FTS reader: EF's query precompiler (NativeAOT) refuses anonymous types,
   nested types and member-init projections, and drops variables captured inside a join's
   inner query (`KeyNotFoundException` at run time). What works: a keyless entity on the FTS
@@ -63,3 +63,10 @@ Notes for later tasks:
 - rtok's error said `not in Cargo.lock`; with two lockfiles it is `not in a lockfile: <name>`.
 
 Commit: `T42: docs plugin: offline dependency docs`.
+
+Follow-up (the creator approved the SDK member): `DocsPlugin.CallTool` answers `docs_resolve`,
+`docs_query` and `docs_get` through a `DocsService` the host hands in. The cwd is the dispatch's,
+else the process's. A missing argument, an unknown id or a host with no service throws, so it
+becomes a tool error. `IPlugin.CallTool` itself came with T24. `MemoryHost.Cwd` lets a test name
+the dispatch directory. `DocsCallToolTests` covers each tool, the missing arguments, another
+plugin's tool (`null`) and a host with no service. Commit: `T42: docs plugin answers CallTool`.

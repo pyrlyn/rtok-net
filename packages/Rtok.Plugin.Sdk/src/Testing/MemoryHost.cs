@@ -40,6 +40,9 @@ public sealed class MemoryHost : ICapabilities
     /// <inheritdoc/>
     public string Session => "memory";
 
+    /// <inheritdoc/>
+    public string? Cwd { get; init; }
+
     /// <summary>Every <see cref="Measurement"/> recorded so far, in order.</summary>
     public IReadOnlyList<Measurement> Recorded()
     {

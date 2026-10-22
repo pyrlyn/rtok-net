@@ -12,6 +12,7 @@ The MCP server is the second agent-facing surface and carries every plugin's too
 
 Done when:
 - `rtok mcp` serves stdio with the ModelContextProtocol C# SDK. Tools come from the plugins plus `expand`; each description is at most 60 tokens; `readOnlyHint` is set where it applies; the `[mcp] tools` allow-list is honoured; one calls row is written per `tools/call`.
+- `tools/call` dispatches through `IPlugin.CallTool`: the first non-null answer is the result, `null` means "not my tool", and a throw is an `isError` result. The server builds `DocsPlugin` with a `DocsService` over its store and home.
 - Protocol details match rtok byte for byte: the `protocolVersion` echo, error codes and messages, `isError` on tool errors, validation of required parameters, and argument aliases. If the SDK cannot do this, the server is a hand-written JSON-RPC server instead.
 - `rtok mcp --http`:
   - bound to 127.0.0.1:8791;

@@ -84,7 +84,7 @@ internal sealed class DocsHarness : IDisposable
         Directory.CreateDirectory(Workspace);
         Store = RtokStore.Open(new StoreOptions(_dir.Combine("home", "rtok.db")));
         Home = _dir.Combine("home");
-        Host = new MemoryHost(configJson);
+        Host = new MemoryHost(configJson) { Cwd = Workspace };
         Cx = new Ctx(Host);
         Service = new DocsService(Store, DocsPlugin.Config(Cx), Home);
         Upstream = WireMockServer.Start();

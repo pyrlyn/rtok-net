@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `IPlugin.CallTool` answers a call of the plugin's own MCP tools.
+- `MemoryHost.Cwd` sets the dispatch's working directory, so a `CallTool` test can name one.
 
 ## 0.2.0
 
