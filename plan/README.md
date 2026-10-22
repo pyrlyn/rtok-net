@@ -325,7 +325,7 @@ conflict on rebase: keep both sides.
 | Lane | Area | Order |
 | --- | --- | --- |
 | L1 | tests, plugin contract, core, cmd/memory plugins | T2, T5, T6, T53, T17, T17.1, T18, T18.1, T22, T23, T22.1 |
-| L2 | store, archive, logs, proxy | T8, T10, T9, T27, T29, T28, T54, T50 |
+| L2 | store, archive, logs, proxy | T8, T10, T9, T27, T29, T28, T54, T60, T50 |
 | L3 | packages layout, config, CLI shell, operator web and TUI | T12, T12.9, T7, T12.6, T11, T43, T44, T44.2, T45 |
 | L4 | hook latency, hooks, resident, MCP, agents | T4, T13, T14, T15, T16, T37, T46, T49, T44.1, T52 |
 | L5 | tree-sitter, read, graph, Windows | T12.5, T24, T19, T25, T26, T24.1, T48 |
