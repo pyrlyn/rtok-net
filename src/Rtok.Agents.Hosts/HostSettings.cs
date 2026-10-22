@@ -12,6 +12,7 @@ namespace Rtok.Agents.Hosts;
 /// <param name="HookTimeoutS">The timeout written into each hook entry, in seconds (<c>setup.hook_timeout_s</c>).</param>
 /// <param name="Proxy">Install also points the host's model base URL at rtok's proxy (<c>--proxy</c>).</param>
 /// <param name="ProxyUrl">rtok's proxy as clients dial it (<c>[proxy] bind</c> and <c>port</c>).</param>
+/// <param name="Warn">Takes a warning line as it happens (stderr); null drops it.</param>
 public sealed record HostSettings(
     bool DryRun = false,
     bool Yes = false,
@@ -21,5 +22,6 @@ public sealed record HostSettings(
     Prompt? Ask = null,
     long HookTimeoutS = 5,
     bool Proxy = false,
-    string ProxyUrl = "http://127.0.0.1:8790"
+    string ProxyUrl = "http://127.0.0.1:8790",
+    Action<string>? Warn = null
 );

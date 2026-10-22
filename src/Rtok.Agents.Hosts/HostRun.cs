@@ -3,14 +3,16 @@ using Rtok.Agent.Sdk;
 using Rtok.Agents.Hosts.Hooks;
 using Rtok.Agents.Hosts.Mcp;
 using Rtok.Agents.Hosts.Proxy;
+using Rtok.Agents.Hosts.Restart;
 using Rtok.Mcp.Install;
 
 namespace Rtok.Agents.Hosts;
 
 /// <summary>
 /// <c>rtok agents install|update|uninstall|list|info</c> over the host table: one block per app
-/// (rtok <c>agents::run</c>, <c>agents::block</c>). Only the modules built so far take part: hooks,
-/// MCP and the proxy base URL now; plugin and restart come with T35.5 and T35.6.
+/// (rtok <c>agents::run</c>, <c>agents::block</c>), with a running desktop app closed around the
+/// write. Only the modules built so far take part: hooks, MCP and the proxy base URL now; the
+/// plugin comes with T35.5.
 /// </summary>
 /// <param name="ctx">The home, disk, binary and switches of this run.</param>
 public sealed class HostRun(HostContext ctx)
@@ -28,7 +30,11 @@ public sealed class HostRun(HostContext ctx)
         NotInstalled,
     }
 
-    /// <summary>Installs, updates or removes rtok in the hosts asked for and reports each app.</summary>
+    /// <summary>
+    /// Installs, updates or removes rtok in the hosts asked for and reports each app. A desktop
+    /// app that runs and whose config would change is closed first and reopened after, unless
+    /// <see cref="HostRequest.NoRestart"/>; every host is dry-run before any app is closed.
+    /// </summary>
     /// <exception cref="AgentsException">A host is unknown, or (install, update) none of a host's wanted apps is here.</exception>
     /// <exception cref="IOException">A host file cannot be read.</exception>
     /// <exception cref="InvalidDataException">A host file does not parse, or rtok's entry cannot be put in or taken out.</exception>
@@ -47,6 +53,23 @@ public sealed class HostRun(HostContext ctx)
                 throw new AgentsException($"{string.Join(", ", absent)} is not installed");
             }
         }
+        var restart = request.NoRestart
+            ? DesktopRestart.None(ctx)
+            : DesktopRestart.Plan(ctx, hosts, h => WouldChange(h, request));
+        var notes = restart.Close();
+        try
+        {
+            return notes + Write(hosts, request);
+        }
+        finally
+        {
+            restart.Reopen();
+        }
+    }
+
+    /// <summary>The run itself: every host's apps, then the backups made and the blocks.</summary>
+    private string Write(IReadOnlyList<AgentHost> hosts, HostRequest request)
+    {
         var settings = ctx.Settings;
         var backups =
             !settings.DryRun && settings.Backup ? new BackupRun(settings.BackupFiles) : null;
@@ -147,8 +170,23 @@ public sealed class HostRun(HostContext ctx)
         ];
     }
 
-    /// <summary>Applies one host to each wanted app and appends their blocks; true when something changed.</summary>
-    private bool ApplyHost(AgentHost host, HostRequest request, Apply apply, StringBuilder text)
+    /// <summary>Whether <paramref name="host"/> would change: a dry run that backs up, asks and prints nothing.</summary>
+    private bool WouldChange(AgentHost host, HostRequest request) =>
+        ApplyHost(
+            host,
+            request,
+            new Apply
+            {
+                DryRun = true,
+                Backup = false,
+                BackupFiles = ctx.Settings.BackupFiles,
+                Yes = ctx.Settings.Yes,
+            },
+            null
+        );
+
+    /// <summary>Applies one host to each wanted app and appends their blocks to <paramref name="text"/> (none when null); true when something changed.</summary>
+    private bool ApplyHost(AgentHost host, HostRequest request, Apply apply, StringBuilder? text)
     {
         string? done = null;
         var any = false;
@@ -158,12 +196,12 @@ public sealed class HostRun(HostContext ctx)
             any = true;
             if (request.Mode != McpMode.Remove && !ctx.Probe.Present(v))
             {
-                text.Append(Block(host, v, Outcome.NotFound));
+                text?.Append(Block(host, v, Outcome.NotFound));
                 continue;
             }
             if (done is not null && host.Shared)
             {
-                text.Append(Block(host, v, Outcome.Shared));
+                text?.Append(Block(host, v, Outcome.Shared));
                 continue;
             }
             var mcp = new McpModule(host, v, ctx);
@@ -176,14 +214,10 @@ public sealed class HostRun(HostContext ctx)
                 && !proxy.Installed()
             )
             {
-                text.Append(Block(host, v, Outcome.NotInstalled));
+                text?.Append(Block(host, v, Outcome.NotInstalled));
                 continue;
             }
-            var replace =
-                request.Replace
-                && request.Mode == McpMode.Install
-                && host.Id is "claude"
-                && hooks.Files.Count > 0;
+            var replace = Replaces(host, request, hooks);
             var wanted = proxy.Wanted(request.Mode);
             IReadOnlyList<string> reports = replace
                 ? [ClaudeReplace.Run(ctx, apply, hooks.Files[0].Path)]
@@ -197,18 +231,29 @@ public sealed class HostRun(HostContext ctx)
             changed |= reports.Any(r =>
                 !string.Equals(r, Apply.NoChanges, StringComparison.Ordinal)
             );
+            if (text is null)
+            {
+                continue;
+            }
             text.Append(Block(host, v, Outcome.Applied, request.Mode, reports));
-            if (request.Mode != McpMode.Remove && !replace && !ctx.Settings.DryRun)
+            if (request.Mode != McpMode.Remove && !replace && !apply.DryRun)
             {
                 ReadBack(text, host, v, hooks, mcp, wanted ? proxy : null);
             }
         }
         if (!any)
         {
-            text.Append("skip ").Append(host.Id).Append(": not selected\n");
+            text?.Append("skip ").Append(host.Id).Append(": not selected\n");
         }
         return changed;
     }
+
+    /// <summary>Whether this is <c>--replace</c>: an install on Claude Code, which has a hooks file.</summary>
+    private static bool Replaces(AgentHost host, HostRequest request, HooksModule hooks) =>
+        request.Replace
+        && request.Mode == McpMode.Install
+        && host.Id is "claude"
+        && hooks.Files.Count > 0;
 
     /// <summary>Warns about each module an install should have left on this app and did not.</summary>
     private void ReadBack(

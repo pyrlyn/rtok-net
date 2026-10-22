@@ -16,12 +16,12 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     $options = @{
         '' = @('-h', '--help', '--version')
         'agents info' = @('--json', '--config', '-h', '--help', '--version')
-        'agents install' = @('--dry-run', '--yes', '--mcp', '--proxy', '--cli', '--gui', '--desktop', '--all', '--replace', '--config', '-h', '--help', '--version')
+        'agents install' = @('--dry-run', '--yes', '--mcp', '--proxy', '--cli', '--gui', '--desktop', '--all', '--replace', '--no-restart', '--config', '-h', '--help', '--version')
         'agents junk clear' = @('--yes', '--include', '--kind', '--agent', '--older-than', '--trash', '--session-days', '--min-size', '--json', '--config', '-h', '--help', '--version')
         'agents junk list' = @('--json', '--bytes', '--all', '--items', '--sort', '--min-size', '--config', '-h', '--help', '--version')
         'agents list' = @('--json', '--config', '-h', '--help', '--version')
-        'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
-        'agents update' = @('--dry-run', '--proxy', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
+        'agents uninstall' = @('--dry-run', '--yes', '--no-restart', '--config', '-h', '--help', '--version')
+        'agents update' = @('--dry-run', '--proxy', '--cli', '--gui', '--desktop', '--all', '--no-restart', '--config', '-h', '--help', '--version')
         'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
         'batch fetch' = @('--provider', '--url', '--config', '-h', '--help', '--version')
         'batch status' = @('--provider', '--url', '--config', '-h', '--help', '--version')
@@ -212,6 +212,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents install|--desktop' = 'Only the desktop apps.'
         'agents install|--all' = 'Every app of the host (the default without --cli or --desktop).'
         'agents install|--replace' = 'Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).'
+        'agents install|--no-restart' = 'Skip closing/reopening a running desktop app around the write.'
         'agents install|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'agents install|-h' = 'Show help.'
         'agents install|--help' = 'Show help.'
@@ -248,6 +249,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents list|--version' = 'Show version.'
         'agents uninstall|--dry-run' = 'Print what would change; write nothing.'
         'agents uninstall|--yes' = 'Remove entries you changed without asking.'
+        'agents uninstall|--no-restart' = 'Skip closing/reopening a running desktop app around the write.'
         'agents uninstall|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'agents uninstall|-h' = 'Show help.'
         'agents uninstall|--help' = 'Show help.'
@@ -258,6 +260,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents update|--gui' = 'Only the desktop apps.'
         'agents update|--desktop' = 'Only the desktop apps.'
         'agents update|--all' = 'Every app of the host (the default without --cli or --desktop).'
+        'agents update|--no-restart' = 'Skip closing/reopening a running desktop app around the write.'
         'agents update|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'agents update|-h' = 'Show help.'
         'agents update|--help' = 'Show help.'

@@ -31,14 +31,15 @@ public sealed class HostProbe(HostEnvironment env, IFileSystem fs, HostCommand r
     public string? AppPath(HostVariant variant)
     {
         ArgumentNullException.ThrowIfNull(variant);
-        foreach (var app in variant.Apps)
-        {
-            if (Installed(App(app)) is { } found)
-            {
-                return found;
-            }
-        }
-        return variant.Bins.Select(FindOnPath).FirstOrDefault(p => p is not null);
+        return InstalledApps(variant).FirstOrDefault()
+            ?? variant.Bins.Select(FindOnPath).FirstOrDefault(p => p is not null);
+    }
+
+    /// <summary>Each of <paramref name="variant"/>'s desktop bundles or binaries that exists, in table order.</summary>
+    public IEnumerable<string> InstalledApps(HostVariant variant)
+    {
+        ArgumentNullException.ThrowIfNull(variant);
+        return variant.Apps.Select(a => Installed(App(a))).OfType<string>();
     }
 
     /// <summary>Whether the app is installed.</summary>

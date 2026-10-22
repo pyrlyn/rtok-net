@@ -9,13 +9,15 @@ namespace Rtok.Agents.Hosts;
 /// <param name="Desktop">Only the desktop apps (<c>--desktop</c>).</param>
 /// <param name="All">Every app (<c>--all</c>); also the default when neither of the others is given.</param>
 /// <param name="Replace">Install on Claude Code takes out the token hooks of the tools rtok replaces instead (<c>--replace</c>); elsewhere it is a plain install.</param>
+/// <param name="NoRestart">Leave a running desktop app alone around the write (<c>--no-restart</c>).</param>
 public sealed record HostRequest(
     IReadOnlyList<string> Hosts,
     McpMode Mode,
     bool Cli = false,
     bool Desktop = false,
     bool All = false,
-    bool Replace = false
+    bool Replace = false,
+    bool NoRestart = false
 )
 {
     /// <summary>Whether an app of <paramref name="kind"/> takes part: remove reaches every app.</summary>

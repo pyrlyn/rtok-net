@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using Rtok.Agents.Hosts.Restart;
 using Rtok.Mcp.Install;
 
 namespace Rtok.Agents.Hosts;
@@ -15,6 +16,8 @@ public sealed class HostContext
     /// <param name="paths">MCP files the user moved, keyed <c>&lt;host&gt;.&lt;surface&gt;</c> (<see cref="Mcp.SetupPaths"/>).</param>
     /// <param name="hookPaths">Hook files the user moved, keyed the same way (<see cref="Mcp.SetupPaths.HooksOf"/>).</param>
     /// <param name="proxyPaths">Proxy files the user moved, keyed the same way (<see cref="Mcp.SetupPaths.ProxyOf"/>).</param>
+    /// <param name="apps">The desktop apps that run, closed and reopened around a write; by default none runs.</param>
+    /// <param name="quitWait">How long a closing app is waited for; 30 s by default.</param>
     public HostContext(
         HostEnvironment env,
         McpDisk disk,
@@ -23,9 +26,13 @@ public sealed class HostContext
         HostSettings settings,
         IReadOnlyDictionary<string, string>? paths = null,
         IReadOnlyDictionary<string, string>? hookPaths = null,
-        IReadOnlyDictionary<string, string>? proxyPaths = null
+        IReadOnlyDictionary<string, string>? proxyPaths = null,
+        IAppProcesses? apps = null,
+        TimeSpan? quitWait = null
     )
     {
+        Apps = apps ?? NoAppProcesses.Instance;
+        QuitWait = quitWait ?? TimeSpan.FromSeconds(30);
         HookPaths = hookPaths ?? new Dictionary<string, string>(StringComparer.Ordinal);
         ProxyPaths = proxyPaths ?? new Dictionary<string, string>(StringComparer.Ordinal);
         ArgumentNullException.ThrowIfNull(env);
@@ -78,6 +85,12 @@ public sealed class HostContext
 
     /// <summary>Proxy files the user moved, keyed <c>&lt;host&gt;.&lt;surface&gt;</c>.</summary>
     public IReadOnlyDictionary<string, string> ProxyPaths { get; }
+
+    /// <summary>The desktop apps that run, closed and reopened around a write.</summary>
+    public IAppProcesses Apps { get; }
+
+    /// <summary>How long a closing app is waited for before it is left to the user.</summary>
+    public TimeSpan QuitWait { get; }
 
     /// <summary>The file <paramref name="moved"/> holds for <paramref name="key"/>, else <paramref name="fallback"/> expanded.</summary>
     public string PathOf(IReadOnlyDictionary<string, string> moved, string key, string fallback) =>

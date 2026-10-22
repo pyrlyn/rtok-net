@@ -125,6 +125,15 @@
         },
         {
           "names": [
+            "--no-restart"
+          ],
+          "type": null,
+          "description": "Skip closing/reopening a running desktop app around the write.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
             "--config"
           ],
           "type": "string?",
@@ -360,6 +369,15 @@
         },
         {
           "names": [
+            "--no-restart"
+          ],
+          "type": null,
+          "description": "Skip closing/reopening a running desktop app around the write.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
             "--config"
           ],
           "type": "string?",
@@ -423,6 +441,15 @@
           ],
           "type": null,
           "description": "Every app of the host (the default without --cli or --desktop).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--no-restart"
+          ],
+          "type": null,
+          "description": "Skip closing/reopening a running desktop app around the write.",
           "default": null,
           "required": false
         },

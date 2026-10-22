@@ -5,7 +5,6 @@
     <InternalsVisibleTo Include="rtok-fuzz" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CliWrap" />
     <PackageReference Include="SharpYaml" />
     <PackageReference Include="TestableIO.System.IO.Abstractions" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
@@ -16,5 +15,6 @@
     <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <ProjectReference Include="../Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
+    <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
   </ItemGroup>
 </Project>

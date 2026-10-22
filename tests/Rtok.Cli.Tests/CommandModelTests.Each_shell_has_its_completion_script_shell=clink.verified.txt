@@ -612,7 +612,7 @@ node_10:nofiles()
 
 -- rtok agents update
 local node_9 = clink.argmatcher()
-node_9:addflags({ "--dry-run", "--proxy", "--cli", "--gui", "--desktop", "--all", "--config" .. value, "-h", "--help", "--version" })
+node_9:addflags({ "--dry-run", "--proxy", "--cli", "--gui", "--desktop", "--all", "--no-restart", "--config" .. value, "-h", "--help", "--version" })
 node_9:adddescriptions({
     ["--dry-run"] = "Print what would change; write nothing.",
     ["--proxy"] = "Also point the model base URL at rtok's proxy (kept where it already is).",
@@ -620,6 +620,7 @@ node_9:adddescriptions({
     ["--gui"] = "Only the desktop apps.",
     ["--desktop"] = "Only the desktop apps.",
     ["--all"] = "Every app of the host (the default without --cli or --desktop).",
+    ["--no-restart"] = "Skip closing/reopening a running desktop app around the write.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -628,10 +629,11 @@ node_9:adddescriptions({
 
 -- rtok agents uninstall
 local node_8 = clink.argmatcher()
-node_8:addflags({ "--dry-run", "--yes", "--config" .. value, "-h", "--help", "--version" })
+node_8:addflags({ "--dry-run", "--yes", "--no-restart", "--config" .. value, "-h", "--help", "--version" })
 node_8:adddescriptions({
     ["--dry-run"] = "Print what would change; write nothing.",
     ["--yes"] = "Remove entries you changed without asking.",
+    ["--no-restart"] = "Skip closing/reopening a running desktop app around the write.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -698,7 +700,7 @@ node_4:nofiles()
 
 -- rtok agents install
 local node_3 = clink.argmatcher()
-node_3:addflags({ "--dry-run", "--yes", "--mcp", "--proxy", "--cli", "--gui", "--desktop", "--all", "--replace", "--config" .. value, "-h", "--help", "--version" })
+node_3:addflags({ "--dry-run", "--yes", "--mcp", "--proxy", "--cli", "--gui", "--desktop", "--all", "--replace", "--no-restart", "--config" .. value, "-h", "--help", "--version" })
 node_3:adddescriptions({
     ["--dry-run"] = "Print what would change; write nothing.",
     ["--yes"] = "Answer yes to every question.",
@@ -709,6 +711,7 @@ node_3:adddescriptions({
     ["--desktop"] = "Only the desktop apps.",
     ["--all"] = "Every app of the host (the default without --cli or --desktop).",
     ["--replace"] = "Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).",
+    ["--no-restart"] = "Skip closing/reopening a running desktop app around the write.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",

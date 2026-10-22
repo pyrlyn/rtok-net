@@ -2,6 +2,7 @@ using System.IO.Abstractions;
 using Pyrlyn.Config.Layered;
 using Rtok.Agent.Sdk;
 using Rtok.Agents.Hosts.Mcp;
+using Rtok.Agents.Hosts.Restart;
 using Rtok.Config;
 using Rtok.Mcp.Install;
 
@@ -15,8 +16,10 @@ public static class HostContexts
     /// hook and proxy files the user moved.</summary>
     /// <param name="loaded">The loaded config.</param>
     /// <param name="ask">Asks the user; null where nobody can answer.</param>
+    /// <param name="warn">Takes each warning line as it happens; null drops them.</param>
     /// <returns>The context.</returns>
-    public static HostContext Of(LoadedConfig loaded, Prompt? ask)
+    /// <remarks>A sandboxed run (<see cref="HostEnvironment.SandboxVariable"/>) sees no app running, so none is closed.</remarks>
+    public static HostContext Of(LoadedConfig loaded, Prompt? ask, Action<string>? warn = null)
     {
         ArgumentNullException.ThrowIfNull(loaded);
         var setup = loaded.Config.Setup;
@@ -36,17 +39,20 @@ public static class HostContexts
             ask,
             (long)Math.Min(setup.HookTimeoutS, long.MaxValue),
             setup.Proxy,
-            ProxyUrls.Root(loaded.Config.Proxy)
+            ProxyUrls.Root(loaded.Config.Proxy),
+            warn
         );
+        var env = HostEnvironment.Current();
         return new HostContext(
-            HostEnvironment.Current(),
+            env,
             new McpDisk(fs, HostFile.Write, HostFile.Delete),
             HostCommands.Run,
             RtokBinary.Current,
             settings,
             SetupPaths.Of(UserSet, fs),
             SetupPaths.HooksOf(UserSet, fs),
-            SetupPaths.ProxyOf(UserSet, fs)
+            SetupPaths.ProxyOf(UserSet, fs),
+            env.Sandboxed ? null : new AppProcesses(env.Os)
         );
     }
 }

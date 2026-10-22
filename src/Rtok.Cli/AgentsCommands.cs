@@ -55,6 +55,7 @@ internal sealed partial class AgentsCommands
     /// <param name="cli">Only the CLI apps.</param>
     /// <param name="desktop">--gui, Only the desktop apps.</param>
     /// <param name="all">Every app of the host (the default without --cli or --desktop).</param>
+    /// <param name="noRestart">Skip closing/reopening a running desktop app around the write.</param>
     /// <param name="replace">Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("install")]
@@ -68,6 +69,7 @@ internal sealed partial class AgentsCommands
         bool desktop = false,
         bool all = false,
         bool replace = false,
+        bool noRestart = false,
         string? config = null
     ) =>
         Apply(
@@ -83,19 +85,22 @@ internal sealed partial class AgentsCommands
                 ("setup.mcp", mcp, "--mcp"),
                 ("setup.proxy", proxy, "--proxy")
             ),
-            replace
+            replace,
+            noRestart
         );
 
     /// <summary>Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.</summary>
     /// <param name="host">The hosts, comma-separated.</param>
     /// <param name="dryRun">Print what would change; write nothing.</param>
     /// <param name="yes">Remove entries you changed without asking.</param>
+    /// <param name="noRestart">Skip closing/reopening a running desktop app around the write.</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("uninstall")]
     public int Uninstall(
         [Argument] string host,
         bool dryRun = false,
         bool yes = false,
+        bool noRestart = false,
         string? config = null
     ) =>
         Apply(
@@ -105,7 +110,8 @@ internal sealed partial class AgentsCommands
             desktop: false,
             all: true,
             config,
-            Flags(("setup.dry_run", dryRun, "--dry-run"), ("setup.yes", yes, "--yes"))
+            Flags(("setup.dry_run", dryRun, "--dry-run"), ("setup.yes", yes, "--yes")),
+            noRestart: noRestart
         );
 
     /// <summary>Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).</summary>
@@ -115,6 +121,7 @@ internal sealed partial class AgentsCommands
     /// <param name="cli">Only the CLI apps.</param>
     /// <param name="desktop">--gui, Only the desktop apps.</param>
     /// <param name="all">Every app of the host (the default without --cli or --desktop).</param>
+    /// <param name="noRestart">Skip closing/reopening a running desktop app around the write.</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("update")]
     public int Update(
@@ -124,6 +131,7 @@ internal sealed partial class AgentsCommands
         bool cli = false,
         bool desktop = false,
         bool all = false,
+        bool noRestart = false,
         string? config = null
     ) =>
         Run(() =>
@@ -141,7 +149,11 @@ internal sealed partial class AgentsCommands
                 );
                 return;
             }
-            _stdout.Write(run.Run(new HostRequest(hosts, McpMode.Update, cli, desktop, all)));
+            _stdout.Write(
+                run.Run(
+                    new HostRequest(hosts, McpMode.Update, cli, desktop, all, NoRestart: noRestart)
+                )
+            );
         });
 
     /// <summary>Every host rtok knows: whether its apps are here, and what of rtok each one has.</summary>
@@ -183,13 +195,24 @@ internal sealed partial class AgentsCommands
         bool all,
         string? config,
         IReadOnlyList<ConfigFlag> flags,
-        bool replace = false
+        bool replace = false,
+        bool noRestart = false
     ) =>
         Run(() =>
         {
             var run = new HostRun(Context(Load(config, flags)));
             _stdout.Write(
-                run.Run(new HostRequest(AgentHosts.Parse(host), mode, cli, desktop, all, replace))
+                run.Run(
+                    new HostRequest(
+                        AgentHosts.Parse(host),
+                        mode,
+                        cli,
+                        desktop,
+                        all,
+                        replace,
+                        noRestart
+                    )
+                )
             );
         });
 
@@ -225,7 +248,7 @@ internal sealed partial class AgentsCommands
     }
 
     private HostContext Context(LoadedConfig loaded) =>
-        HostContexts.Of(loaded, Console.IsInputRedirected ? null : Ask);
+        HostContexts.Of(loaded, Console.IsInputRedirected ? null : Ask, _stderr.WriteLine);
 
     private bool Ask(string question, bool defaultYes)
     {

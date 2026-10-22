@@ -1,13 +1,14 @@
-using CliWrap;
-using CliWrap.Buffered;
+using System.ComponentModel;
+using System.Text;
+using Rtok.Process;
 
 namespace Rtok.Agents.Hosts;
 
-/// <summary>The real <see cref="HostCommand"/>, until T11's ProgressRunner owns every process.</summary>
+/// <summary>The real <see cref="HostCommand"/>, on ProgressRunner.</summary>
 public static class HostCommands
 {
     /// <summary>
-    /// Runs the program through CliWrap; a Windows <c>.cmd</c> or <c>.bat</c> shim (npm-installed
+    /// Runs the program with no indicator; a Windows <c>.cmd</c> or <c>.bat</c> shim (npm-installed
     /// CLIs) goes through <c>cmd.exe</c>.
     /// </summary>
     public static (string Stdout, string Stderr)? Run(
@@ -18,30 +19,19 @@ public static class HostCommands
     {
         ArgumentNullException.ThrowIfNull(program);
         ArgumentNullException.ThrowIfNull(args);
-        var shim =
-            OperatingSystem.IsWindows()
-            && Path.GetExtension(program).ToUpperInvariant() is ".CMD" or ".BAT";
-        var command = shim
-            ? Cli.Wrap(Environment.GetEnvironmentVariable("ComSpec") ?? "cmd.exe")
-                .WithArguments(["/d", "/s", "/c", program, .. args])
-            : Cli.Wrap(program).WithArguments(args);
-        using var cancel = new CancellationTokenSource(timeout);
         try
         {
-            var result = command
-                .WithValidation(CommandResultValidation.None)
-                .WithStandardInputPipe(PipeSource.Null)
-                .ExecuteBufferedAsync(cancel.Token)
+            var result = ProgressRunner
+                .Quiet(program, args)
+                .WindowsShim()
+                .Timeout(timeout)
+                .RunAsync()
                 .GetAwaiter()
                 .GetResult();
-            return (result.StandardOutput, result.StandardError);
+            return (Encoding.UTF8.GetString(result.Stdout), Encoding.UTF8.GetString(result.Stderr));
         }
         catch (Exception e)
-            when (e
-                    is OperationCanceledException
-                        or System.ComponentModel.Win32Exception
-                        or InvalidOperationException
-            )
+            when (e is TimeoutException or Win32Exception or InvalidOperationException)
         {
             return null;
         }
