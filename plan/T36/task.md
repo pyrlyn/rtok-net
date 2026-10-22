@@ -1,7 +1,7 @@
 ---
 status: todo
 priority: P1
-complexity: 3
+complexity: 4
 readiness: 0%
 agent:
 ---
