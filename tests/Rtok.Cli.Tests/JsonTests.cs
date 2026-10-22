@@ -13,6 +13,8 @@ public sealed class JsonTests
         ["agents usage"] = ["--tz", "UTC"],
         ["agents list"] = [],
         ["agents info"] = ["claude"],
+        ["agents junk list"] = [],
+        ["agents junk clear"] = [],
         ["config show"] = [],
         ["config get"] = ["proxy.port"],
         ["doctor"] = [],

@@ -4,7 +4,8 @@
 _rtok_children() {
     case $1 in
         '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins proxy run stats task wrap' ;;
-        'agents') echo 'info install list uninstall update usage' ;;
+        'agents') echo 'info install junk list uninstall update usage' ;;
+        'agents junk') echo 'clear list' ;;
         'config') echo 'get init path set show validate' ;;
         'docs') echo 'fetch' ;;
         'logs') echo 'export watch' ;;
@@ -17,6 +18,8 @@ _rtok_options() {
         '') echo '-h --help --version' ;;
         'agents info') echo '--json --config -h --help --version' ;;
         'agents install') echo '--dry-run --yes --mcp --cli --gui --desktop --all --config -h --help --version' ;;
+        'agents junk clear') echo '--yes --include --kind --agent --older-than --trash --session-days --min-size --json --config -h --help --version' ;;
+        'agents junk list') echo '--json --bytes --all --items --sort --min-size --config -h --help --version' ;;
         'agents list') echo '--json --config -h --help --version' ;;
         'agents uninstall') echo '--dry-run --yes --config -h --help --version' ;;
         'agents update') echo '--dry-run --cli --gui --desktop --all --config -h --help --version' ;;
@@ -65,6 +68,8 @@ _rtok_values() {
     case $1 in
         'agents info') echo '--config' ;;
         'agents install') echo '--config' ;;
+        'agents junk clear') echo '--include --kind --agent --older-than --session-days --min-size --config' ;;
+        'agents junk list') echo '--items --sort --min-size --config' ;;
         'agents list') echo '--config' ;;
         'agents uninstall') echo '--config' ;;
         'agents update') echo '--config' ;;

@@ -2,52 +2,54 @@
 Usage: [command] [-h|--help] [--version]
 
 Commands:
-  agents info         One or more hosts in detail: apps, files, and each module's state.
-  agents install      Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
-  agents list         Every host rtok knows: whether its apps are here, and what of rtok each one has.
-  agents uninstall    Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.
-  agents update       Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).
-  agents usage        Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
+  agents info          One or more hosts in detail: apps, files, and each module's state.
+  agents install       Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
+  agents junk clear    Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.
+  agents junk list     Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.
+  agents list          Every host rtok knows: whether its apps are here, and what of rtok each one has.
+  agents uninstall     Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.
+  agents update        Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).
+  agents usage         Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
      Prices come from [stats.prices]; a model without one counts in the tokens and is left out
      of the cost (--unpriced names those).
-  bench               Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.
-  completions         Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
-  config get          Print the effective value of one key or table.
-  config init         Write the reference config file (every key commented out at its default) and print its path.
-  config path         Print the path of the user config file.
-  config set          Set a key in the user config file, keeping its comments; the result is checked first.
-  config show         Print every effective key and value; secrets are redacted.
-  config validate     Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
-  docs fetch          Download a dependency's docs at its lockfile-pinned version and index them for docs_query.
+  bench                Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.
+  completions          Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
+  config get           Print the effective value of one key or table.
+  config init          Write the reference config file (every key commented out at its default) and print its path.
+  config path          Print the path of the user config file.
+  config set           Set a key in the user config file, keeping its comments; the result is checked first.
+  config show          Print every effective key and value; secrets are redacted.
+  config validate      Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
+  docs fetch           Download a dependency's docs at its lockfile-pinned version and index them for docs_query.
      Cargo.lock crates come from docs.rs, packages.lock.json packages from nuget.org.
-  doctor              Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.
-  expand              Print an archived original byte for byte, or the lines, grep hits or context you ask for.
-  filter              Filter stdin as the output of a command, without running it.
-  hook                Run one hook event from stdin, or serve hooks as this home's resident.
-  logs                Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
-  logs export         Print the same lines as rtok logs without numbers or colour.
-  logs watch          Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
-  man                 Print the man page (roff), or write every page with --dir.
-  plugins             List plugins: id, kind, enabled, surfaces.
-  proxy               Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
-  run                 Run a shell command, archive its output and print it filtered; exits with the command's code.
-  stats               Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
-  task claim          Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
-  task conflict       Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.
-  task create         Create a task under the next free id and print the id.
-  task dep            Record that this task waits on another. A cycle is refused and nothing is written.
-  task export         Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.
-  task init           Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.
-  task list           The plan: open and in-progress tasks, subtasks under their parent.
-  task next           The first ready task: free or stale, not blocked; a leaf when nothing is blocked.
-  task parallel       Mark a task safe to run beside any other task.
-  task priority       Set priority from 0 (highest) to 4. 2 is the default and is not stored.
-  task ready          Tasks that can be claimed, highest priority first.
-  task release        Clear the assignee and set the task open. Only the holder, unless --force.
-  task show           One task: title, status, parent, subtasks, link and description.
-  task status         Print a task's status, or set it; done and closed move it out of the plan.
-  task sync           Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
-  wrap                Run a command with its API base URLs on the proxy, starting one when none answers.
+  doctor               Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.
+  expand               Print an archived original byte for byte, or the lines, grep hits or context you ask for.
+  filter               Filter stdin as the output of a command, without running it.
+  hook                 Run one hook event from stdin, or serve hooks as this home's resident.
+  logs                 Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
+  logs export          Print the same lines as rtok logs without numbers or colour.
+  logs watch           Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
+  man                  Print the man page (roff), or write every page with --dir.
+  plugins              List plugins: id, kind, enabled, surfaces.
+  proxy                Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
+  run                  Run a shell command, archive its output and print it filtered; exits with the command's code.
+  stats                Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
+  task claim           Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
+  task conflict        Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.
+  task create          Create a task under the next free id and print the id.
+  task dep             Record that this task waits on another. A cycle is refused and nothing is written.
+  task export          Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.
+  task init            Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.
+  task list            The plan: open and in-progress tasks, subtasks under their parent.
+  task next            The first ready task: free or stale, not blocked; a leaf when nothing is blocked.
+  task parallel        Mark a task safe to run beside any other task.
+  task priority        Set priority from 0 (highest) to 4. 2 is the default and is not stored.
+  task ready           Tasks that can be claimed, highest priority first.
+  task release         Clear the assignee and set the task open. Only the holder, unless --force.
+  task show            One task: title, status, parent, subtasks, link and description.
+  task status          Print a task's status, or set it; done and closed move it out of the plan.
+  task sync            Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
+  wrap                 Run a command with its API base URLs on the proxy, starting one when none answers.
 
 $ rtok agents info --help
 Usage: agents info [arguments...] [options...] [-h|--help] [--version]
@@ -77,6 +79,37 @@ Options:
   --gui, --desktop      Only the desktop apps.
   --all                 Every app of the host (the default without --cli or --desktop).
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents junk clear --help
+Usage: agents junk clear [options...] [-h|--help] [--version]
+
+Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.
+
+Options:
+  --yes                     Remove; without it nothing changes.
+  --include <string?>       review: also the review kinds (logs, deps, backups, index, stale-worktrees). [Default: null]
+  --kind <string?>          Only these kinds, comma-separated: cache,temp. sessions only when named. [Default: null]
+  --agent <string?>         Only these agents, comma-separated: rtok or host ids. [Default: null]
+  --older-than <string?>    Only items whose newest file is at least this old: 7d, 12h. [Default: null]
+  --trash                   Move to the OS trash instead of removing.
+  --session-days <uint?>    Sessions older than this many days are junk (agents.junk.stale_session_days). [Default: null]
+  --min-size <string?>      Only items at least this big: 10M, 512K, 4096. [Default: null]
+  --json                    One JSON document.
+  --config <string?>        The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok agents junk list --help
+Usage: agents junk list [options...] [-h|--help] [--version]
+
+Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.
+
+Options:
+  --json                  One JSON document.
+  --bytes                 Exact byte counts instead of KB, MB and GB.
+  --all                   Also the hosts that are not installed.
+  --items <string?>       Items shown per kind: a count, all, or 0 for totals only (default 10). [Default: null]
+  --sort <string?>        Item order: size (the default), last-used or path. [Default: null]
+  --min-size <string?>    Only items at least this big: 10M, 512K, 4096. [Default: null]
+  --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok agents list --help
 Usage: agents list [options...] [-h|--help] [--version]

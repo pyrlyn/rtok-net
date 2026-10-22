@@ -1,0 +1,14 @@
+﻿claude
+  {home}/.claude  data  16384
+  {home}/.claude/paste-cache  cache  16384
+    cache (safe): 1 items, 16384
+  host retention: cleanupPeriodDays = 30 (default)
+  Freed by `clear`: 16384
+  Freed with `--include review`: 16384
+rtok
+  Freed by `clear`: 0
+  Freed with `--include review`: 0
+total
+  Folders: 16384
+  Freed by `clear`: 16384
+  Freed with `--include review`: 16384

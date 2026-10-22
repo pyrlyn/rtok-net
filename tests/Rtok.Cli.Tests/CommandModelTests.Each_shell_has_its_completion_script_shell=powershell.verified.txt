@@ -5,7 +5,8 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
         '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'proxy', 'run', 'stats', 'task', 'wrap')
-        'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
+        'agents' = @('info', 'install', 'junk', 'list', 'uninstall', 'update', 'usage')
+        'agents junk' = @('clear', 'list')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
         'logs' = @('export', 'watch')
@@ -15,6 +16,8 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '' = @('-h', '--help', '--version')
         'agents info' = @('--json', '--config', '-h', '--help', '--version')
         'agents install' = @('--dry-run', '--yes', '--mcp', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
+        'agents junk clear' = @('--yes', '--include', '--kind', '--agent', '--older-than', '--trash', '--session-days', '--min-size', '--json', '--config', '-h', '--help', '--version')
+        'agents junk list' = @('--json', '--bytes', '--all', '--items', '--sort', '--min-size', '--config', '-h', '--help', '--version')
         'agents list' = @('--json', '--config', '-h', '--help', '--version')
         'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
         'agents update' = @('--dry-run', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
@@ -60,6 +63,17 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     $values = @(
         'agents info|--config'
         'agents install|--config'
+        'agents junk clear|--include'
+        'agents junk clear|--kind'
+        'agents junk clear|--agent'
+        'agents junk clear|--older-than'
+        'agents junk clear|--session-days'
+        'agents junk clear|--min-size'
+        'agents junk clear|--config'
+        'agents junk list|--items'
+        'agents junk list|--sort'
+        'agents junk list|--min-size'
+        'agents junk list|--config'
         'agents list|--config'
         'agents uninstall|--config'
         'agents update|--config'
@@ -176,6 +190,31 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents install|-h' = 'Show help.'
         'agents install|--help' = 'Show help.'
         'agents install|--version' = 'Show version.'
+        'agents junk|clear' = 'Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.'
+        'agents junk|list' = 'Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.'
+        'agents junk clear|--yes' = 'Remove; without it nothing changes.'
+        'agents junk clear|--include' = 'review: also the review kinds (logs, deps, backups, index, stale-worktrees).'
+        'agents junk clear|--kind' = 'Only these kinds, comma-separated: cache,temp. sessions only when named.'
+        'agents junk clear|--agent' = 'Only these agents, comma-separated: rtok or host ids.'
+        'agents junk clear|--older-than' = 'Only items whose newest file is at least this old: 7d, 12h.'
+        'agents junk clear|--trash' = 'Move to the OS trash instead of removing.'
+        'agents junk clear|--session-days' = 'Sessions older than this many days are junk (agents.junk.stale_session_days).'
+        'agents junk clear|--min-size' = 'Only items at least this big: 10M, 512K, 4096.'
+        'agents junk clear|--json' = 'One JSON document.'
+        'agents junk clear|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents junk clear|-h' = 'Show help.'
+        'agents junk clear|--help' = 'Show help.'
+        'agents junk clear|--version' = 'Show version.'
+        'agents junk list|--json' = 'One JSON document.'
+        'agents junk list|--bytes' = 'Exact byte counts instead of KB, MB and GB.'
+        'agents junk list|--all' = 'Also the hosts that are not installed.'
+        'agents junk list|--items' = 'Items shown per kind: a count, all, or 0 for totals only (default 10).'
+        'agents junk list|--sort' = 'Item order: size (the default), last-used or path.'
+        'agents junk list|--min-size' = 'Only items at least this big: 10M, 512K, 4096.'
+        'agents junk list|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'agents junk list|-h' = 'Show help.'
+        'agents junk list|--help' = 'Show help.'
+        'agents junk list|--version' = 'Show version.'
         'agents list|--json' = 'Print JSON.'
         'agents list|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
         'agents list|-h' = 'Show help.'

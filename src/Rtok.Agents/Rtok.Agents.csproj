@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- The agents rtok works with, as the app layer sees them: `rtok agents usage` (plan T38). -->
+  <!-- The agents rtok works with, as the app layer sees them: `rtok agents usage` (plan T38), `rtok agents junk` (T39). -->
   <PropertyGroup>
     <RootNamespace>Rtok.Agents</RootNamespace>
   </PropertyGroup>
@@ -17,5 +17,8 @@
     <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Ignore/src/Pyrlyn.Ignore.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Trash/src/Pyrlyn.Trash.csproj" />
+    <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
   </ItemGroup>
 </Project>

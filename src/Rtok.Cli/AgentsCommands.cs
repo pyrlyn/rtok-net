@@ -15,7 +15,7 @@ using Tomlyn.Model;
 namespace Rtok.Cli;
 
 /// <summary>The agents rtok works with: install rtok into their hosts, report what each one has, and what they used.</summary>
-internal sealed class AgentsCommands
+internal sealed partial class AgentsCommands
 {
     private readonly TextWriter _stdout = Console.Out;
     private readonly TextWriter _stderr = Console.Error;

@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P3
 complexity: 3
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T39. Agent junk cleanup: `rtok agents junk`
@@ -26,6 +26,14 @@ Tests:
 - `Rtok.Agents.Tests` integration: sizes count allocated blocks, a hard link once and a folder shared by two agents once (Unix).
 - `Rtok.Agents.Tests` unit: `[agents.junk]` keys are range-checked, and `RTOK_AGENTS_JUNK_STALE_SESSION_DAYS` overrides `stale_session_days`.
 - `Rtok.Cli.Tests` Verify: `rtok agents junk list` text (OSC 8 links, 1-decimal units at 1KB=1024) and `--json` with `agents[]{name,id?,folders[]{path,size_bytes,kinds[]},freed_default_bytes,freed_review_bytes},totals`.
+
+Plan:
+
+1. `Pyrlyn.FsKit`: `FsTree.Ages` (newest file mtime, incomplete reads, `CACHEDIR.TAG` roots, nested checkouts skipped) and `CacheDirTag`, so T40's `worktree clean` reuses the same idle walk.
+2. `src/Rtok.Agents/Junk`: the §22 host map and roots, items with evidence and kept reasons, the kinds (cache, temp, logs, build, deps, locks, backups, swap, snapshots, index, crash-dumps, sessions, stale-worktrees, rtok's log and archive), the report, the list text and JSON, then clear's plan, re-check and apply. Seams: hosts (installed, markers, process names), a running probe, a trash, the store, the clock, the zone; agent worktrees and stale-worktree items come in as inputs for T40 to fill.
+3. `src/Rtok.Cli`: `agents junk list|clear` with the catalog flags, `--session-days` as a config flag, exit 0/1/2.
+4. Tests in `Rtok.Agents.Tests` (fake homes in temp dirs) and Verify goldens in `Rtok.Cli.Tests`; regenerate `docs/cli/commands.json`.
+5. Gates: Release build with `-warnaserror`, `dotnet test`, csharpier, markdownlint.
 
 Spec: catalog B17 in [docs/port/catalog.md](../../docs/port/catalog.md).
 

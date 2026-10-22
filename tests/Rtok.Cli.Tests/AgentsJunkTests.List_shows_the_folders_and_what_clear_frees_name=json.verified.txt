@@ -1,0 +1,75 @@
+﻿{
+  "agents": [
+    {
+      "name": "Claude Code",
+      "id": "claude",
+      "installed": true,
+      "folders": [
+        {
+          "path": "{home}/.claude",
+          "role": "data",
+          "size_bytes": 16384,
+          "documented": true,
+          "kinds": []
+        },
+        {
+          "path": "{home}/.claude/paste-cache",
+          "role": "cache",
+          "size_bytes": 16384,
+          "documented": true,
+          "kinds": [
+            {
+              "kind": "cache",
+              "class": "safe",
+              "size_bytes": 16384,
+              "items": 1,
+              "paths_sample": [
+                "{home}/.claude/paste-cache"
+              ]
+            }
+          ]
+        }
+      ],
+      "total_bytes": 16384,
+      "kinds": [
+        {
+          "kind": "cache",
+          "class": "safe",
+          "items": 1,
+          "size_bytes": 16384
+        }
+      ],
+      "notes": [
+        "host retention: cleanupPeriodDays = 30 (default)"
+      ],
+      "freed_default_bytes": 16384,
+      "freed_review_bytes": 16384,
+      "items": [
+        {
+          "kind": "cache",
+          "class": "safe",
+          "path": "{home}/.claude/paste-cache",
+          "size_bytes": 16384,
+          "last_used": 1767323045,
+          "reason": "cache (research.md §22)",
+          "will_clear": true
+        }
+      ]
+    },
+    {
+      "name": "rtok",
+      "installed": true,
+      "folders": [],
+      "total_bytes": 0,
+      "kinds": [],
+      "freed_default_bytes": 0,
+      "freed_review_bytes": 0,
+      "items": []
+    }
+  ],
+  "totals": {
+    "folders_bytes": 16384,
+    "freed_default_bytes": 16384,
+    "freed_review_bytes": 16384
+  }
+}

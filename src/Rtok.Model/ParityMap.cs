@@ -14,6 +14,9 @@ public static class ParityMap
         {
             ["agents info"] = new(Page.Hosts, Page.Hosts),
             ["agents list"] = new(Page.Hosts, Page.Hosts),
+            // An agent's junk sits with its host; `clear`'s dry run is the same breakdown.
+            ["agents junk list"] = new(Page.Hosts, Page.Hosts),
+            ["agents junk clear"] = new(Page.Hosts, Page.Hosts),
             ["agents usage"] = new(Page.Usage, Page.Usage),
             ["config get"] = new(Page.Config, Page.Config),
             ["config show"] = new(Page.Config, Page.Config),

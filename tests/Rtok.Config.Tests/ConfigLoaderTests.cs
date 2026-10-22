@@ -55,6 +55,19 @@ public sealed class ConfigLoaderTests
     }
 
     [Fact]
+    public void The_env_and_the_session_days_flag_set_stale_session_days()
+    {
+        using var box = new Sandbox();
+        box.Env["RTOK_AGENTS_JUNK_STALE_SESSION_DAYS"] = "7";
+
+        Assert.Equal(7u, box.Load().Config.Agents.Junk.StaleSessionDays);
+
+        box.Flags.Add(new ConfigFlag("agents.junk.stale_session_days", 3L, "--session-days"));
+
+        Assert.Equal(3u, box.Load().Config.Agents.Junk.StaleSessionDays);
+    }
+
+    [Fact]
     public void The_nearest_env_file_wins_over_the_one_in_the_rtok_home()
     {
         using var box = new Sandbox();

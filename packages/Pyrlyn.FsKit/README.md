@@ -1,7 +1,7 @@
 # Pyrlyn.FsKit
 
 Atomic writes through symlink chains, path identity without verbatim prefixes, `Contain`, file
-identity and tree disk usage. AOT-clean; native calls go through `LibraryImport`.
+identity, tree disk usage and ages, and `CACHEDIR.TAG` caches. AOT-clean; native calls go through `LibraryImport`.
 
 ## Install
 
@@ -36,6 +36,11 @@ bool sameFile = FileIdentity.Same(a, b);
 
 // Allocated bytes: hard links once, APFS clones once, symlinks never followed.
 TreeUsage usage = FsTree.Usage(cacheDir, TimeSpan.FromSeconds(2));
+
+// The newest file mtime and the tagged caches below, each with its own newest; a nested
+// checkout (a folder holding .git) is skipped, a link counts its own time.
+TreeAges ages = FsTree.Ages(dataDir, TimeSpan.FromSeconds(10));
+bool tagged = CacheDirTag.IsCacheDir(dir); // "Signature: 8a477f59…" at the start of CACHEDIR.TAG
 ```
 
 ## Platforms

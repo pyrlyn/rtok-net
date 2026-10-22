@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>0.2.0</Version>
-    <Description>Atomic writes through symlink chains, path identity without verbatim prefixes, contain(), file identity and tree disk usage.</Description>
-    <PackageTags>filesystem;atomic-write;symlink;realpath;disk-usage;hardlink</PackageTags>
+    <Version>0.3.0</Version>
+    <Description>Atomic writes through symlink chains, path identity without verbatim prefixes, contain(), file identity, tree disk usage and ages, and CACHEDIR.TAG caches.</Description>
+    <PackageTags>filesystem;atomic-write;symlink;realpath;disk-usage;hardlink;cachedir</PackageTags>
     <!-- LibraryImport over stat buffers and paths. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

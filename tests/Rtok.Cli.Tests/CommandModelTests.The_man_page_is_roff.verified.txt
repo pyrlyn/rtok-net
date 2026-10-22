@@ -20,6 +20,14 @@ See \fBrtok\-agents\-info\fR(1).
 Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
 See \fBrtok\-agents\-install\fR(1).
 .TP
+\fBagents junk clear\fR
+Remove agent junk, each item checked again first: a dry run unless \-\-yes; exit 1 when some stays.
+See \fBrtok\-agents\-junk\-clear\fR(1).
+.TP
+\fBagents junk list\fR
+Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read\-only.
+See \fBrtok\-agents\-junk\-list\fR(1).
+.TP
 \fBagents list\fR
 Every host rtok knows: whether its apps are here, and what of rtok each one has.
 See \fBrtok\-agents\-list\fR(1).

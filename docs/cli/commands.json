@@ -117,6 +117,175 @@
       ]
     },
     {
+      "path": "agents junk clear",
+      "aliases": [],
+      "description": "Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--yes"
+          ],
+          "type": null,
+          "description": "Remove; without it nothing changes.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--include"
+          ],
+          "type": "string?",
+          "description": "review: also the review kinds (logs, deps, backups, index, stale-worktrees).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--kind"
+          ],
+          "type": "string?",
+          "description": "Only these kinds, comma-separated: cache,temp. sessions only when named.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--agent"
+          ],
+          "type": "string?",
+          "description": "Only these agents, comma-separated: rtok or host ids.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--older-than"
+          ],
+          "type": "string?",
+          "description": "Only items whose newest file is at least this old: 7d, 12h.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--trash"
+          ],
+          "type": null,
+          "description": "Move to the OS trash instead of removing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--session-days"
+          ],
+          "type": "uint?",
+          "description": "Sessions older than this many days are junk (agents.junk.stale_session_days).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--min-size"
+          ],
+          "type": "string?",
+          "description": "Only items at least this big: 10M, 512K, 4096.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "One JSON document.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "agents junk list",
+      "aliases": [],
+      "description": "Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "One JSON document.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--bytes"
+          ],
+          "type": null,
+          "description": "Exact byte counts instead of KB, MB and GB.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--all"
+          ],
+          "type": null,
+          "description": "Also the hosts that are not installed.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--items"
+          ],
+          "type": "string?",
+          "description": "Items shown per kind: a count, all, or 0 for totals only (default 10).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--sort"
+          ],
+          "type": "string?",
+          "description": "Item order: size (the default), last-used or path.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--min-size"
+          ],
+          "type": "string?",
+          "description": "Only items at least this big: 10M, 512K, 4096.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "agents list",
       "aliases": [],
       "description": "Every host rtok knows: whether its apps are here, and what of rtok each one has.",

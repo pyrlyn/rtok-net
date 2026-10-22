@@ -51,6 +51,16 @@ public sealed class FlagCoverageTests
         "doctor.yes", // confirms that one fix
         "doctor.stat", // how one fix prints its diff
         "doctor.only", // which problems one fix removes
+        "junk.yes", // `agents junk clear`: remove this time instead of a dry run
+        "junk.trash", // where this one clear puts what it removes
+        "junk.include", // which junk this one clear selects
+        "junk.kind",
+        "junk.agent",
+        "junk.older_than",
+        "junk.min_size", // which items one list or clear shows
+        "junk.items", // how one `agents junk list` prints
+        "junk.sort",
+        "junk.bytes",
     };
 
     [Fact]
@@ -99,6 +109,7 @@ public sealed class FlagCoverageTests
     [InlineData("bench", "compare", "bench.baseline")]
     [InlineData("agents install", "dry-run", "setup.dry_run")]
     [InlineData("agents junk clear", "yes", "junk.yes")]
+    [InlineData("agents junk clear", "session-days", "agents.junk.stale_session_days")]
     [InlineData("agents usage", "host", "agents.usage.hosts")]
     [InlineData("agents usage", "monthly", "agents.usage.period")]
     [InlineData("agents usage", "since", "agents.usage.since")]
@@ -142,7 +153,10 @@ public sealed class FlagCoverageTests
         return path switch
         {
             // `agents junk` has its own table, never `[setup]`, whose `yes` confirms another action.
-            ["agents", "junk", ..] => $"junk.{name}",
+            // `--session-days` overlays `[agents.junk] stale_session_days`.
+            ["agents", "junk", ..] => name is "session_days"
+                ? "agents.junk.stale_session_days"
+                : $"junk.{name}",
             // `agents usage` has `[agents.usage]`: `--host` is the `hosts` list, `--daily` and
             // `--monthly` both set `period`.
             ["agents", "usage"] => name switch
