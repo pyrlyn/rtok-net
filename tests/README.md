@@ -64,3 +64,12 @@ dotnet run --project tests/Rtok.Fuzz -c Release -- --list
   unwired, or a `Fuzz:` line names a target `FuzzTargets` lacks.
 
 These tools set `RtokJitOnly`: they never publish with AOT.
+
+## Fast local runs
+
+`python3 eng/test.py` runs only the JIT test projects affected by your changes since
+`origin/main` (commits, staged, unstaged and untracked files), using the same
+`eng/affected-tests.sh` rules as CI on pull requests. `--all` runs everything, `--dry-run`
+lists the projects, `--no-build` skips the build, and arguments after `--` go to `dotnet test`.
+Test modules run in parallel (Microsoft Testing Platform), and `xunit.runner.json` at the root
+parallelizes test classes inside each module (aggressive, 2x cores).

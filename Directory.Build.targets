@@ -51,4 +51,16 @@
       <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">unknown</SourceRevisionId>
     </PropertyGroup>
   </Target>
+
+  <!-- Parallel tests (one runner config for every test project): xUnit runs test collections
+       on 2x the cores with the aggressive algorithm; dotnet test (MTP) already runs one
+       process per test module, in parallel. -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <Content
+      Include="$(MSBuildThisFileDirectory)xunit.runner.json"
+      Link="xunit.runner.json"
+      CopyToOutputDirectory="PreserveNewest"
+      Visible="false"
+    />
+  </ItemGroup>
 </Project>
