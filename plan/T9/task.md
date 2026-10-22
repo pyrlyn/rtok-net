@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 3
-readiness: 0%
-agent:
+readiness: 10%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T9. Archive and expand: lossless originals with short ids
@@ -36,3 +36,11 @@ Ports: rtok closed T3.5, T36.20, T45.3, T55.11, T67.1, T67.2, T189, T475; open T
 Fuzz: `expand-range` in `tests/Rtok.Fuzz`: line-range and id-prefix strings never throw, the 25 logged spellings parse, and an archived body expands back byte-identical.
 
 Check: A CsCheck property test shows that every shortening path expands back byte-identical (CRLF, non-UTF-8, empty bodies), and all 25 range strings parse.
+
+Plan:
+1. Rtok.Plugin.Sdk: `ArchiveIds.Short` (8 hex) as the one place every trailer takes its id from; `InjectBudget`'s `dropped:post_tool` marker uses it.
+2. Rtok.Store: archive files sharded as `<archive_dir>/<id[0..2]>/<id>` (written temp + rename, as now). `RtokStore.Archive.cs`: `PutArchive(session, body, agentId)`, `GetArchive`, `ArchiveIdsWithPrefix` (a range compare, no LIKE), decisions (`PutArchiveDecision`, `ArchiveDecision`, `LivePointer`) and `FreezeRecorded` (freeze plus the expand Measurement in one immediate transaction).
+3. Rtok.Archive (new, foundation): `LineRange` (rtok's parser plus the T522 spellings), `ExpandLines` (`--lines`, `--grep`, `--context`, `[expand] max_lines`), `Expander`: the one expand handler (id, lines, grep, context → bytes or error) that the CLI calls now and MCP calls in T15.
+4. Rtok.Cli: `rtok expand <id> [--lines a-b] [--grep re] [--context N] [--config]`, command model and snapshots regenerated.
+5. Tests: `tests/Rtok.Archive.Tests` (store, CsCheck round trip, ids, the 25 T522 strings, range properties, freeze), `Rtok.Cli.Tests` Verify, the new store methods in `Rtok.AotTests/StoreTests`, fuzz target `expand-range`.
+6. The MCP Verify moves to T15 (creator's decision): one line in `plan/T15/task.md`.
