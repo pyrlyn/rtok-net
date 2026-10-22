@@ -8,7 +8,7 @@ agent:
 
 # T35.2. More agent hosts
 
-Popular agents rtok does not install into yet each get a sub-task (rtok T413).
+Popular agents rtok does not install into yet each get a sub-task (rtok T413). The creator approved T35.2.1 to T35.2.8, one per host, and T35.2.9 for the hosts rtok cannot install into.
 
 Done when each new host has:
 - a research row with sources;
