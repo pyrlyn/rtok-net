@@ -1,0 +1,13 @@
+﻿unreadable-config cursor ~/.cursor/hooks.json  cannot read ~/.cursor/hooks.json: 'n' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2. false false false
+stale-plugin claude ~/.claude/plugins/installed_plugins.json plugins.old@market[0] `old@market` is enabled but its install directory ~/gone-plugin is gone false false false
+broken-hook claude ~/.claude/settings.json hooks.PreToolUse[0].hooks[0] `gone-tool` not on PATH true true false
+suspect-hook claude ~/.claude/settings.json hooks.Stop[0].hooks[0] ~/hooks/plain.sh is not executable: run `chmod +x ~/hooks/plain.sh` false false false
+unverified-hook claude ~/.claude/settings.json hooks.Stop[1].hooks[0] shell operators: cannot be checked without running it false false false
+duplicate-hook claude ~/.claude/settings.json hooks.PostToolUse[0].hooks[0] runs 2 times; keep this copy (user file) false false true
+duplicate-hook claude ~/.claude/settings.local.json hooks.PostToolUse[0].hooks[0] runs 2 times; an extra copy true true false
+duplicate-mcp claude ~/.claude.json mcpServers.docs runs 2 times; an extra copy true true false
+duplicate-mcp claude ~/proj/.mcp.json mcpServers.docs-copy runs 2 times; keep this copy (shared project file) false false true
+conflicting-mcp claude ~/.claude.json mcpServers.pkg same package at 2 versions, not duplicates; this one is 1 false false false
+conflicting-mcp claude ~/proj/.mcp.json mcpServers.pkg-next same package at 2 versions, not duplicates; this one is 2 false false false
+own-mcp claude ~/.claude.json mcpServers.rtok rtok is configured 2 times; information only; this is the entry install writes, kept false false true
+own-mcp claude ~/proj/.mcp.json mcpServers.rtok rtok is configured 2 times; information only: the host uses the shared project file entry named `rtok` and merges the rest false false false

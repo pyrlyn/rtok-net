@@ -39,6 +39,11 @@ public sealed class FlagCoverageTests
         "expand.lines", // `expand`: the view of one archive; [expand] max_lines caps them all
         "expand.grep",
         "expand.context",
+        "doctor.agent", // which host's problems one report shows
+        "doctor.fix", // edits the files once instead of reporting
+        "doctor.yes", // confirms that one fix
+        "doctor.stat", // how one fix prints its diff
+        "doctor.only", // which problems one fix removes
     };
 
     [Fact]

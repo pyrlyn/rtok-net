@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 4
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T32. Doctor: checks, duplicates and `--fix`
@@ -39,3 +39,10 @@ Ports: rtok closed T1.4, T7.2, T42, T59.7, T61.3, T123, T171, T173, T331, T331.1
 Fuzz: `doctor-config` in `tests/Rtok.Fuzz`: any host JSON, JSONC or TOML config gives findings or a parse error, and `--fix` leaves bytes outside the fixed entries unchanged.
 
 Check: Property tests show `--fix` leaves bytes outside the fixed entries unchanged, and goldens match for each problem kind.
+
+Plan:
+1. Spec from rtok's doctor sources (paths, shapes, strings, goldens).
+2. `src/Rtok.Doctor` (AOT-clean library): a host scan over `Rtok.Agents.Hosts` paths (Claude settings, plugins, `~/.claude.json`, `.mcp.json`, Codex/Kimi TOML hooks), then the findings (hooks, MCP servers and tokens, base-URL chain, instruction, skills and overlaps audits, broken hooks without running anything, duplicates with keep, exposure), and a fix plan with a token, applied through Pyrlyn.Jsonc and the TOML editor with `_backup` generations.
+3. `rtok doctor` in Rtok.Cli: text, `--json`, `--agent`, `--instructions`, `--fix`, `--yes`, `--only`, `--dry-run`, exit 1 when a selected fix fails.
+4. Tests as listed (`Rtok.Doctor.Tests` on MemFs homes, CsCheck byte keeping, Cli Verify goldens) and the `doctor-config` fuzz target.
+5. Gates, `done.md`, merge.

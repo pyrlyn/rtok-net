@@ -109,7 +109,9 @@ public sealed class HostRun(HostContext ctx)
     }
 
     /// <summary>One row per app of <paramref name="hosts"/>: <c>agents list --json</c> and <c>agents info --json</c>.</summary>
-    public IReadOnlyList<AgentListRow> Rows(IReadOnlyList<AgentHost> hosts)
+    /// <param name="hosts">The hosts.</param>
+    /// <param name="versions">Ask each present app its <c>--version</c>; <c>rtok doctor</c> starts no process and passes false.</param>
+    public IReadOnlyList<AgentListRow> Rows(IReadOnlyList<AgentHost> hosts, bool versions = true)
     {
         ArgumentNullException.ThrowIfNull(hosts);
         return
@@ -126,7 +128,7 @@ public sealed class HostRun(HostContext ctx)
                         v.Name,
                         present,
                         app,
-                        present ? ctx.Probe.Version(v) : null,
+                        present && versions ? ctx.Probe.Version(v) : null,
                         [.. mcp.Files.Distinct(StringComparer.Ordinal)],
                         present ? Modules(h, v, mcp) : [],
                         present ? mcp.Rows() : []

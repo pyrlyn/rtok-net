@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Tomlyn;
 using Tomlyn.Helpers;
@@ -135,6 +136,25 @@ public static partial class TomlText
                 $"no TOML form for {value.GetType().Name}",
                 nameof(value)
             ),
+        };
+
+    /// <summary>A parsed value as JSON: tables become objects, arrays and arrays of tables arrays; dates become their text.</summary>
+    /// <param name="value">A value from <see cref="Parse"/>.</param>
+    /// <returns>The JSON node; null for null.</returns>
+    public static JsonNode? ToJson(object? value) =>
+        value switch
+        {
+            TomlTable t => new JsonObject(
+                t.Select(kv => KeyValuePair.Create(kv.Key, ToJson(kv.Value)))
+            ),
+            TomlTableArray a => new JsonArray([.. a.Select(ToJson)]),
+            TomlArray a => new JsonArray([.. a.Select(ToJson)]),
+            string s => s,
+            bool b => b,
+            long l => l,
+            double d => d,
+            null => null,
+            _ => value.ToString(),
         };
 
     /// <summary>

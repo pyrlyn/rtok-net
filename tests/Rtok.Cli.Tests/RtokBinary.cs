@@ -29,18 +29,21 @@ internal static class RtokBinary
     /// <summary>
     /// Runs rtok with these arguments, its home and the user home in an empty directory so no
     /// real config is read, agent hosts probed only under that home so no real agent is found
-    /// or run, and returns its exit code and both streams.
+    /// or run, and returns its exit code and both streams. It runs in <paramref name="workingDirectory"/>
+    /// when given.
     /// </summary>
     internal static (int Code, string Stdout, string Stderr) Exec(
         IReadOnlyList<string> args,
         IReadOnlyDictionary<string, string?>? environment = null,
-        string? stdin = null
+        string? stdin = null,
+        string? workingDirectory = null
     )
     {
         var result = CliWrap
             .Cli.Wrap(Path)
             .WithArguments(args)
             .WithStandardInputPipe(stdin is null ? PipeSource.Null : PipeSource.FromString(stdin))
+            .WithWorkingDirectory(workingDirectory ?? Environment.CurrentDirectory)
             .WithEnvironmentVariables(env =>
             {
                 env.Set("HOME", Home.Path)

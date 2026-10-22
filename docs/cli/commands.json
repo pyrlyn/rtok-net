@@ -639,6 +639,95 @@
       ]
     },
     {
+      "path": "doctor",
+      "aliases": [],
+      "description": "Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--agent"
+          ],
+          "type": "string?",
+          "description": "Only this host's problems (claude, codex, …).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--instructions"
+          ],
+          "type": null,
+          "description": "Also audit the instruction files and what plugins inject at SessionStart.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--fix"
+          ],
+          "type": null,
+          "description": "Remove broken hooks and the extra copies of duplicates; a dry run without --yes.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--yes"
+          ],
+          "type": null,
+          "description": "With --fix, write the edits (each file backed up first).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "With --fix, print the diffs and write nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--stat"
+          ],
+          "type": null,
+          "description": "With --fix, print stat lines instead of diffs.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--only"
+          ],
+          "type": "string?",
+          "description": "With --fix, only these problems, comma-separated: broken-hooks, duplicate-hooks, duplicate-mcp.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "expand",
       "aliases": [],
       "description": "Print an archived original byte for byte, or the lines, grep hits or context you ask for.",

@@ -45,6 +45,7 @@ app.Add<PluginsCommands>();
 app.Add("run", RunCommands.RunAsync);
 app.Add("filter", RunCommands.Filter);
 app.Add<ShellCommands>();
+app.Add("doctor", DoctorCommand.Run);
 app.Add("logs", LogsCommands.Show);
 app.Add("logs export", LogsCommands.Export);
 app.Add("logs watch", LogsCommands.Watch);

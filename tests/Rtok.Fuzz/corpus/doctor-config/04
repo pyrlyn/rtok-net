@@ -1,0 +1,16 @@
+model = "o3"
+
+# servers
+[mcp_servers.fuzz]
+command = "/home/u/bin/fmt"
+args = ["serve"]
+
+[mcp_servers.again]
+command = "/home/u/bin/fmt"
+args = ["serve"]
+
+[mcp_servers.again.env]
+KEY = "v"
+
+[[hooks.PreToolUse]]
+matcher = "Bash"

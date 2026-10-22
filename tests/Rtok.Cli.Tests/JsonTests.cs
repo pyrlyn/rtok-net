@@ -15,6 +15,7 @@ public sealed class JsonTests
         ["agents info"] = ["claude"],
         ["config show"] = [],
         ["config get"] = ["proxy.port"],
+        ["doctor"] = [],
         ["plugins"] = [],
         ["logs"] = [],
         ["logs export"] = [],

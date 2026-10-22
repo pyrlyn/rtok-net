@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "fuzz": {"command": "/home/u/bin/fmt", "args": ["serve"]},
+    "web": {"type": "http", "url": "http://127.0.0.1:8080/mcp"}
+  }
+}

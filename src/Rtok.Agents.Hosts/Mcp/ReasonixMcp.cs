@@ -28,7 +28,7 @@ internal sealed class ReasonixMcp(string path) : McpFile("reasonix", path)
         };
 
     public override JsonNode? Entry(string text) =>
-        Plugins(text)?.FirstOrDefault(IsOurs) is { } table ? TomlServers.Json(table) : null;
+        Plugins(text)?.FirstOrDefault(IsOurs) is { } table ? TomlText.ToJson(table) : null;
 
     /// <summary>A table named <c>rtok</c> is kept as it is, whoever wrote it.</summary>
     public override bool Current(JsonNode have, string command) => true;

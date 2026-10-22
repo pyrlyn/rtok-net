@@ -17,6 +17,7 @@ public static class ParityMap
             ["agents usage"] = new(Page.Usage, Page.Usage),
             ["config get"] = new(Page.Config, Page.Config),
             ["config show"] = new(Page.Config, Page.Config),
+            ["doctor"] = new(Page.Doctor, Page.Doctor),
             ["logs"] = new(Page.Logs, Page.Logs),
             ["logs export"] = new(Page.Logs, Page.Logs),
             ["plugins"] = new(Page.Plugins, Page.Plugins),

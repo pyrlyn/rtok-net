@@ -1,0 +1,1 @@
+{"numStartups": 3, "mcpServers": {"fuzz": {"command": "/home/u/bin/fmt", "args": ["serve"]}, "other": {"type": "stdio", "command": "fmt", "args": [], "env": {"TOKEN": "x"}}}, "projects": {"/home/u/proj": {"mcpServers": {"fuzz": {"command": "/home/u/bin/fmt", "args": ["serve"]}}}}}

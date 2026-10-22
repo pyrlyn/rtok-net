@@ -45,7 +45,7 @@ internal static class FuzzTargets
         new("lane-classify", "T29", null),
         new("transcript-jsonl", "T30", TranscriptJsonl.Run),
         new("report-html", "T31", null),
-        new("doctor-config", "T32", null),
+        new("doctor-config", "T32", DoctorConfig.Run),
         new("agents-install", "T35", AgentsInstall.Run),
         new("agent-message", "T37", null),
         new("usage-logs", "T38", UsageLogs.Run),

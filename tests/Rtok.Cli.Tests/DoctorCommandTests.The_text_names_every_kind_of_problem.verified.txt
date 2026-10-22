@@ -1,0 +1,43 @@
+﻿hooks 5
+  PostToolUse 2
+    Edit 2
+  PreToolUse 1
+    Bash 1
+  Stop 2
+hooks check
+  broken claude PreToolUse[Bash] `gone-tool --x`: `gone-tool` not on PATH (can be cleaned up)
+    ~/.claude/settings.json hooks.PreToolUse[0].hooks[0]
+  suspect claude Stop `~/hooks/plain.sh`: ~/hooks/plain.sh is not executable: run `chmod +x ~/hooks/plain.sh`
+    ~/.claude/settings.json hooks.Stop[0].hooks[0]
+  cannot verify claude Stop `jq . | head`: shell operators: cannot be checked without running it
+    ~/.claude/settings.json hooks.Stop[1].hooks[0]
+  stale plugin claude `old@market` is enabled but its install directory ~/gone-plugin is gone
+  unreadable cursor cannot read ~/.cursor/hooks.json: 'n' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2.
+duplicate hooks
+  claude PostToolUse [Edit] `echo done`: runs 2 times
+    keep  ~/.claude/settings.json hooks.PostToolUse[0].hooks[0]
+    extra ~/.claude/settings.local.json hooks.PostToolUse[0].hooks[0]
+duplicate mcp servers
+  claude `/no/such/docs`: runs 2 times
+    extra ~/.claude.json mcpServers.docs
+    keep  ~/proj/.mcp.json mcpServers.docs-copy
+  claude `/no/such/npx @acme/pkg@1`: same package at 2 versions, not duplicates
+    other ~/.claude.json mcpServers.pkg
+    other ~/proj/.mcp.json mcpServers.pkg-next
+  claude `{rtok} mcp`: rtok is configured 2 times
+    keep  ~/.claude.json mcpServers.rtok
+    info  ~/proj/.mcp.json mcpServers.rtok
+mcp
+  docs (0 tools, ~0 desc tokens) /no/such/docs
+  docs-copy (0 tools, ~0 desc tokens) /no/such/docs
+  pkg (0 tools, ~0 desc tokens) /no/such/npx @acme/pkg@1
+  pkg-next (0 tools, ~0 desc tokens) /no/such/npx @acme/pkg@2
+  rtok (0 tools, ~0 desc tokens) {rtok} mcp
+proxy none
+proxy openai none
+BASH_MAX_OUTPUT_LENGTH (unset)
+autoCompactWindow (unset)
+overlaps
+  duplicate: Claude Code auto-memory (on by default) and memory recall both carry facts — rtok side: [plugins.memory] enabled = false
+  duplicate: Cursor Dynamic Context prunes old context too — rtok side: [plugins.archive] enabled = false
+3 problems can be fixed: run rtok doctor --fix

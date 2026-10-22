@@ -4,7 +4,7 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats')
+        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
@@ -27,6 +27,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config show' = @('--sources', '--json', '--config', '-h', '--help', '--version')
         'config validate' = @('--config', '-h', '--help', '--version')
         'docs fetch' = @('--config', '-h', '--help', '--version')
+        'doctor' = @('--json', '--agent', '--instructions', '--fix', '--yes', '--dry-run', '--stat', '--only', '--config', '-h', '--help', '--version')
         'expand' = @('--lines', '--grep', '--context', '--config', '-h', '--help', '--version')
         'filter' = @('--stdin', '--cmd', '--archive', '--no-ref', '--config', '-h', '--help', '--version')
         'hook' = @('--host', '--serve', '-h', '--help', '--version')
@@ -63,6 +64,9 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config show|--config'
         'config validate|--config'
         'docs fetch|--config'
+        'doctor|--agent'
+        'doctor|--only'
+        'doctor|--config'
         'expand|--lines'
         'expand|--grep'
         'expand|--context'
@@ -88,6 +92,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     $hints = @{
         '|bench' = 'Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.'
         '|completions' = 'Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).'
+        '|doctor' = 'Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.'
         '|expand' = 'Print an archived original byte for byte, or the lines, grep hits or context you ask for.'
         '|filter' = 'Filter stdin as the output of a command, without running it.'
         '|hook' = 'Run one hook event from stdin, or serve hooks as this home''s resident.'
@@ -210,6 +215,18 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'docs fetch|-h' = 'Show help.'
         'docs fetch|--help' = 'Show help.'
         'docs fetch|--version' = 'Show version.'
+        'doctor|--json' = 'Print JSON.'
+        'doctor|--agent' = 'Only this host''s problems (claude, codex, …).'
+        'doctor|--instructions' = 'Also audit the instruction files and what plugins inject at SessionStart.'
+        'doctor|--fix' = 'Remove broken hooks and the extra copies of duplicates; a dry run without --yes.'
+        'doctor|--yes' = 'With --fix, write the edits (each file backed up first).'
+        'doctor|--dry-run' = 'With --fix, print the diffs and write nothing.'
+        'doctor|--stat' = 'With --fix, print stat lines instead of diffs.'
+        'doctor|--only' = 'With --fix, only these problems, comma-separated: broken-hooks, duplicate-hooks, duplicate-mcp.'
+        'doctor|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'doctor|-h' = 'Show help.'
+        'doctor|--help' = 'Show help.'
+        'doctor|--version' = 'Show version.'
         'expand|--lines' = 'Only lines a-b, 1-based and inclusive.'
         'expand|--grep' = 'Only lines matching this regex, printed N:line.'
         'expand|--context' = 'Lines of context around each --grep hit.'

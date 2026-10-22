@@ -25,6 +25,7 @@
     <ProjectReference Include="../../src/Rtok.Archive/Rtok.Archive.csproj" />
     <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../../src/Rtok.Doctor/Rtok.Doctor.csproj" />
     <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <ProjectReference Include="../../src/Rtok.Log/Rtok.Log.csproj" />
     <ProjectReference Include="../../src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
@@ -32,6 +33,7 @@
     <ProjectReference Include="../../src/Rtok.Plugins.Docs/Rtok.Plugins.Docs.csproj" />
     <ProjectReference Include="../../src/Rtok.Measure/Rtok.Measure.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Inject/Rtok.Plugins.Inject.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Fuzz.Tests" />

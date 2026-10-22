@@ -3,7 +3,7 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents bench completions config docs expand filter hook logs man plugins run stats' ;;
+        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins run stats' ;;
         'agents') echo 'info install list uninstall update usage' ;;
         'config') echo 'get init path set show validate' ;;
         'docs') echo 'fetch' ;;
@@ -29,6 +29,7 @@ _rtok_options() {
         'config show') echo '--sources --json --config -h --help --version' ;;
         'config validate') echo '--config -h --help --version' ;;
         'docs fetch') echo '--config -h --help --version' ;;
+        'doctor') echo '--json --agent --instructions --fix --yes --dry-run --stat --only --config -h --help --version' ;;
         'expand') echo '--lines --grep --context --config -h --help --version' ;;
         'filter') echo '--stdin --cmd --archive --no-ref --config -h --help --version' ;;
         'hook') echo '--host --serve -h --help --version' ;;
@@ -58,6 +59,7 @@ _rtok_values() {
         'config show') echo '--config' ;;
         'config validate') echo '--config' ;;
         'docs fetch') echo '--config' ;;
+        'doctor') echo '--agent --only --config' ;;
         'expand') echo '--lines --grep --context --config' ;;
         'filter') echo '--cmd --config' ;;
         'hook') echo '--host' ;;

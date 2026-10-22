@@ -24,7 +24,7 @@ internal static class TomlServers
                 return null;
             }
         }
-        return node is TomlTable table ? (JsonObject)Json(table)! : null;
+        return node is TomlTable table ? (JsonObject)TomlText.ToJson(table)! : null;
     }
 
     /// <summary>The text with rtok's table in place of whatever spelled the entry before, or appended.</summary>
@@ -246,22 +246,6 @@ internal static class TomlServers
         var nl = text.IndexOf('\n', at);
         return nl < 0 ? text.Length : nl + 1;
     }
-
-    internal static JsonNode? Json(object? value) =>
-        value switch
-        {
-            TomlTable t => new JsonObject(
-                t.Select(kv => KeyValuePair.Create(kv.Key, Json(kv.Value)))
-            ),
-            TomlTableArray a => new JsonArray([.. a.Select(Json)]),
-            TomlArray a => new JsonArray([.. a.Select(Json)]),
-            string s => s,
-            bool b => b,
-            long l => l,
-            double d => d,
-            null => null,
-            _ => value.ToString(),
-        };
 
     private static object Value(JsonNode node) =>
         node switch
