@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 4
 readiness: 0%
-agent:
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T35.3. Agent hosts: hooks module
@@ -25,3 +25,10 @@ Spec: catalog A19, catalog B3 in [docs/port/catalog.md](../../docs/port/catalog.
 Ports: the hook part of T35's list.
 
 Check: The T35 install-matrix test covers the hooks module for every host with hook events, with at most one rtok hook per event per surface after installing twice.
+
+Plan:
+1. Spec from rtok's hook install per host (shapes, events, ownership, stale/current, `--replace`) and T13's event table.
+2. A hooks module in `Rtok.Agents.Hosts` beside the MCP one: per-shape writers (Claude-style JSON, Gemini, Copilot, Cursor, Codex/Kimi/CodeWhale TOML, Cline links), edits through Pyrlyn.Jsonc and the TOML editor, rtok's entries only.
+3. Install, update and uninstall print `+`, `~ <event> <cmd>`, `- <event>` or NO_CHANGES; `--replace`; `agents list|info` module state.
+4. Tests: install-matrix extension (at most one rtok hook per event per surface), stale/current/dropped units, Windows absolute `rtok.exe`.
+5. Gates, `done.md`, merge.
