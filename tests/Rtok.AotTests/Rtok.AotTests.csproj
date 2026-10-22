@@ -35,6 +35,13 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Rtok.Archive/Rtok.Archive.csproj" />
   </ItemGroup>
+  <!-- The graph plugin (T24) over the store, through the linked grammars. -->
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj" />
+    <!-- LibGit2Sharp on NativeAOT: Discover versus GitRepository. -->
+    <ProjectReference Include="../../src/Rtok.Git/Rtok.Git.csproj" />
+    <Compile Include="../Rtok.Plugins.Graph.Tests/StoreHost.cs" Link="Graph/StoreHost.cs" />
+  </ItemGroup>
   <Import Project="../../packages/Pyrlyn.TreeSitter/src/build/Pyrlyn.TreeSitter.targets" />
   <Import Project="../../src/Rtok.Store/StoreHost.targets" />
 </Project>

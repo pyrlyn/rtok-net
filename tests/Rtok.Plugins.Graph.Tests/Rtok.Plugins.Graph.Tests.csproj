@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The graph plugin (T24) against a real store in a temp directory. -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+    <PackageReference Include="Verify.XunitV3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj" />
+    <!-- TestGit builds the repositories with the git CLI. -->
+    <ProjectReference Include="../../src/Rtok.Process/Rtok.Process.csproj" />
+    <ProjectReference Include="../../src/Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

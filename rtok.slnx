@@ -83,6 +83,9 @@
     <Project Path="src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
     <Project Path="src/Rtok.Hooks/Rtok.Hooks.csproj" />
     <Project Path="src/Rtok.Process/Rtok.Process.csproj" />
+    <Project Path="src/Rtok.Git/Rtok.Git.csproj" />
+    <Project Path="src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj" />
+    <Project Path="src/Rtok.Plugins.Read/Rtok.Plugins.Read.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.Agents.Tests/Rtok.Agents.Tests.csproj" />
@@ -104,6 +107,9 @@
     <Project Path="tests/Rtok.Plugins.Inject.Tests/Rtok.Plugins.Inject.Tests.csproj" />
     <Project Path="tests/Rtok.Model.Tests/Rtok.Model.Tests.csproj" />
     <Project Path="tests/Rtok.Process.Tests/Rtok.Process.Tests.csproj" />
+    <Project Path="tests/Rtok.Git.Tests/Rtok.Git.Tests.csproj" />
+    <Project Path="tests/Rtok.Plugins.Graph.Tests/Rtok.Plugins.Graph.Tests.csproj" />
+    <Project Path="tests/Rtok.Plugins.Read.Tests/Rtok.Plugins.Read.Tests.csproj" />
     <Project Path="tests/Rtok.SamplePlugin/Rtok.SamplePlugin.csproj" />
     <Project Path="tests/Rtok.Smoke/Rtok.Smoke.csproj" />
     <Project Path="tests/Rtok.Store.Tests/Rtok.Store.Tests.csproj" />

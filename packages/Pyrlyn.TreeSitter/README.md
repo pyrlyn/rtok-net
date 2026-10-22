@@ -44,7 +44,9 @@ them into one static library (NativeAOT) and one shared library (JIT) per RID.
 
 `Grammar.All` composes each tags query the way rtok's outline does: the grammar's upstream
 `tags.scm` (and `locals.scm`), then rtok's own patterns (`Queries/<grammar>/extra.scm`,
-`import.scm`; kotlin and c_sharp have no upstream tags query, so theirs is rtok's).
+`import.scm`; kotlin and c_sharp have no upstream tags query, so theirs is rtok's). rtok's
+c_sharp query has definitions only; `c_sharp/extra.scm` adds records, structs, enums and the
+call and type references the graph index needs.
 
 ## Native library
 

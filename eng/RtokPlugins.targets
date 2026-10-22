@@ -13,6 +13,8 @@
     <_RtokAllPlugins Condition="'$(RtokPlugins)' == '' or '$(RtokPlugins)' == 'all'"
       >true</_RtokAllPlugins>
     <_RtokPluginIds>,$(RtokPlugins.Replace(' ', '').Replace(';', ',')),</_RtokPluginIds>
+    <_RtokGraph Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',graph,'))"
+      >true</_RtokGraph>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,12 +33,23 @@
       Type="Rtok.Plugins.Docs.DocsPlugin"
       Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',docs,'))"
     />
+    <RtokPlugin
+      Include="$(MSBuildThisFileDirectory)../src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj"
+      Type="Rtok.Plugins.Graph.GraphPlugin"
+      Condition="'$(_RtokGraph)' == 'true'"
+    />
   </ItemGroup>
 
   <!-- The CLI's run and filter commands call the cmd plugin only when it is linked. -->
   <PropertyGroup Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',cmd,'))">
     <DefineConstants>$(DefineConstants);RTOK_PLUGIN_CMD</DefineConstants>
   </PropertyGroup>
+
+  <!-- graph parses with Pyrlyn.TreeSitter, whose static library a NativeAOT publish links. -->
+  <Import
+    Project="$(MSBuildThisFileDirectory)../packages/Pyrlyn.TreeSitter/src/build/Pyrlyn.TreeSitter.targets"
+    Condition="'$(_RtokGraph)' == 'true'"
+  />
 
   <Import Project="$(RtokPluginsFile)" Condition="'$(RtokPluginsFile)' != ''" />
 

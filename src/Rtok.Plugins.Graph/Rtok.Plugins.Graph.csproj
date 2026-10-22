@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Ignore/src/Pyrlyn.Ignore.csproj" />
+    <!-- GraphSection is the [plugins.graph] schema. -->
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Plugins.Read/Rtok.Plugins.Read.csproj" />
+    <!-- HEAD and the log for the head line and co-change (N21). -->
+    <ProjectReference Include="../Rtok.Git/Rtok.Git.csproj" />
+    <InternalsVisibleTo Include="Rtok.Plugins.Graph.Tests" />
+  </ItemGroup>
+</Project>

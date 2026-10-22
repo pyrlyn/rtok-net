@@ -1,0 +1,593 @@
+{
+  "note": [
+    "T24 ground truth for the graph index, ported from rtok's tests/fixtures/graph_truth.toml.",
+    "Hand-picked from this repository's C# and labelled from a plain-text scan (class, record, struct,",
+    "interface, enum and method declarations for definitions; the name before (, <, ., ',', ')', ';'",
+    "or a variable, or after 'new ', ': ' or '[' for references; comment lines and string literals",
+    "dropped, nameof(...) not counted), never from the tags index this file scores.",
+    "Names that are also a property or field elsewhere (ArchiveId, Manifest, DashboardPage) are left out: a hit there would not prove anything.",
+    "defs is complete: every file that defines the name, so precision is computable. refs is a",
+    "must-appear subset. No line numbers. Other lanes move code under the labels: a label whose",
+    "file no longer mentions the name is skipped, a definition in a file no label names is not judged,",
+    "and more than a tenth of labels gone stale fails Most_labels_are_still_backed_by_the_tree;",
+    "relabel then and say why here. Repaired once: ConfigFile.cs stopped using AtomicFile, RtokStore",
+    "gained the Reads and Usage partial files."
+  ],
+  "symbols": [
+    {
+      "name": "ImportSpec",
+      "defs": [
+        "src/Rtok.Plugins.Read/ImportSpec.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Read/Outline.cs",
+        "tests/Rtok.Plugins.Read.Tests/OutlineTests.cs"
+      ]
+    },
+    {
+      "name": "LlmsLink",
+      "defs": [
+        "src/Rtok.Plugins.Read/LlmsLink.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Read/Markdown.cs"
+      ]
+    },
+    {
+      "name": "TextLines",
+      "defs": [
+        "src/Rtok.Plugins.Read/TextLines.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Ambiguity.cs",
+        "src/Rtok.Plugins.Graph/Bodies.cs",
+        "src/Rtok.Plugins.Graph/Cap.cs",
+        "src/Rtok.Plugins.Graph/Extraction.cs",
+        "src/Rtok.Plugins.Read/Markdown.cs",
+        "src/Rtok.Plugins.Read/Outline.cs",
+        "tests/Rtok.Plugins.Read.Tests/OutlineTests.cs"
+      ]
+    },
+    {
+      "name": "ConfigFileException",
+      "defs": [
+        "packages/Pyrlyn.Config.Layered/src/ConfigFileException.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.Config.Layered/src/DotEnv.cs",
+        "packages/Pyrlyn.Config.Layered/src/TomlEditor.cs",
+        "packages/Pyrlyn.Config.Layered/src/TomlText.cs",
+        "packages/Pyrlyn.Config.Layered/tests/LayeredConfigTests.cs",
+        "packages/Pyrlyn.Config.Layered/tests/TomlEditorTests.cs",
+        "src/Rtok.Config/ConfigFile.cs",
+        "src/Rtok.Config/ConfigLoader.cs",
+        "src/Rtok.Mcp.Install/TomlServers.cs"
+      ]
+    },
+    {
+      "name": "ArchiveDecision",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/ArchiveDecision.cs",
+        "src/Rtok.Store.Model/Entities/ArchiveDecision.cs"
+      ],
+      "refs": [
+        "packages/Rtok.Plugin.Sdk/src/IArchive.cs",
+        "packages/Rtok.Plugin.Sdk/src/Testing/MemoryHost.cs",
+        "src/Rtok.Store.Model/RtokDbContext.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs",
+        "tests/Rtok.Store.Tests/RetentionTests.cs"
+      ]
+    },
+    {
+      "name": "StoreOptions",
+      "defs": [
+        "src/Rtok.Store/StoreOptions.cs"
+      ],
+      "refs": [
+        "src/Rtok.Store/MigrationRunner.cs",
+        "src/Rtok.Store/RtokStore.Retention.cs",
+        "src/Rtok.Store/RtokStore.cs",
+        "tests/Rtok.AotTests/StoreTests.cs",
+        "tests/Rtok.Store.Tests/CallIoTests.cs",
+        "tests/Rtok.Store.Tests/StoreHarness.cs"
+      ]
+    },
+    {
+      "name": "TempDir",
+      "defs": [
+        "tests/Rtok.Testing/TempDir.cs"
+      ],
+      "refs": [
+        "tests/Rtok.Cli.Tests/CommandModelTests.cs",
+        "tests/Rtok.Cli.Tests/CompletionInstallerTests.cs",
+        "tests/Rtok.Cli.Tests/ExitCodeTests.cs",
+        "tests/Rtok.Config.Tests/ProjectRootTests.cs",
+        "tests/Rtok.Config.Tests/ReferenceConfigTests.cs",
+        "tests/Rtok.Config.Tests/Sandbox.cs",
+        "tests/Rtok.Hooks.Tests/HookClientLinkTests.cs",
+        "tests/Rtok.Hooks.Tests/HookEnvTests.cs",
+        "tests/Rtok.Hooks.Tests/HookResidentTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphHarness.cs",
+        "tests/Rtok.Plugins.Graph.Tests/IndexerTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/MatcherTests.cs",
+        "tests/Rtok.Smoke/HookTests.cs",
+        "tests/Rtok.Store.Tests/RetentionTests.cs",
+        "tests/Rtok.Store.Tests/StoreHarness.cs",
+        "tests/Rtok.Testing.Tests/TempDirTests.cs",
+        "tests/Rtok.Testing/HookSandbox.cs"
+      ]
+    },
+    {
+      "name": "GraphRoot",
+      "defs": [
+        "src/Rtok.Plugins.Graph/GraphRoot.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphCall.cs",
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "src/Rtok.Plugins.Graph/Matcher.cs",
+        "src/Rtok.Plugins.Graph/Stale.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphHarness.cs",
+        "tests/Rtok.Plugins.Graph.Tests/IndexerTests.cs"
+      ]
+    },
+    {
+      "name": "GraphFilter",
+      "defs": [
+        "src/Rtok.Plugins.Graph/GraphFilter.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/ExploreAnswer.cs",
+        "src/Rtok.Plugins.Graph/GraphCall.cs",
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "tests/Rtok.Plugins.Graph.Tests/BlastTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/ExploreAnswerTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphToolsTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/SnapshotTests.cs"
+      ]
+    },
+    {
+      "name": "WatchEvent",
+      "defs": [
+        "src/Rtok.Plugins.Graph/WatchEvent.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "src/Rtok.Plugins.Graph/WatchState.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs"
+      ]
+    },
+    {
+      "name": "TagHit",
+      "defs": [
+        "src/Rtok.Plugins.Read/TagHit.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Extraction.cs",
+        "src/Rtok.Plugins.Read/Outline.cs"
+      ]
+    },
+    {
+      "name": "ConfigLoader",
+      "defs": [
+        "src/Rtok.Config/ConfigLoader.cs"
+      ],
+      "refs": [
+        "src/Rtok.Cli/Ui/Lines.cs",
+        "src/Rtok.Config/ConfigCli.cs",
+        "src/Rtok.Config/ConfigFile.cs",
+        "tests/Rtok.Config.Tests/ConfigLoaderTests.cs",
+        "tests/Rtok.Config.Tests/ConfigValidatorTests.cs",
+        "tests/Rtok.Config.Tests/ReferenceConfigTests.cs",
+        "tests/Rtok.Config.Tests/Sandbox.cs"
+      ]
+    },
+    {
+      "name": "ConfigValidator",
+      "defs": [
+        "src/Rtok.Config/ConfigValidator.cs"
+      ],
+      "refs": [
+        "src/Rtok.Config/ConfigLoader.cs"
+      ]
+    },
+    {
+      "name": "AtomicFile",
+      "defs": [
+        "packages/Pyrlyn.FsKit/src/AtomicFile.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.FsKit/tests/AtomicFileTests.cs",
+        "packages/Rtok.Agent.Sdk/src/HostFile.cs",
+        "src/Rtok.Cli/Shell/CompletionInstaller.cs"
+      ]
+    },
+    {
+      "name": "RepoWalker",
+      "defs": [
+        "packages/Pyrlyn.Ignore/src/RepoWalker.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.Ignore/tests/RepoWalkerTests.cs",
+        "packages/Pyrlyn.Ignore/tests/Scratch.cs",
+        "src/Rtok.Plugins.Graph/Matcher.cs"
+      ]
+    },
+    {
+      "name": "HookEndpoint",
+      "defs": [
+        "src/Rtok.Hook.Contracts/HookEndpoint.cs"
+      ],
+      "refs": [
+        "src/Rtok.Cli/HookCommand.cs",
+        "src/Rtok.Hook.Contracts/HookBacklog.cs",
+        "src/Rtok.Hook.Contracts/HookClient.cs",
+        "src/Rtok.Hook.Contracts/HookEndpoint.cs",
+        "src/Rtok.Hook/Fallback.cs",
+        "src/Rtok.Hook/Program.cs",
+        "src/Rtok.Hooks/HookResident.cs",
+        "tests/Rtok.Hooks.Tests/HookEnvTests.cs",
+        "tests/Rtok.Hooks.Tests/HookResidentTests.cs",
+        "tests/Rtok.Smoke/FakeResident.cs",
+        "tests/Rtok.Smoke/HookTests.cs",
+        "tests/Rtok.Testing/HookSandbox.cs"
+      ]
+    },
+    {
+      "name": "TagsContext",
+      "defs": [
+        "packages/Pyrlyn.TreeSitter/src/Tags/TagsContext.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.TreeSitter/tests/TagsGolden.cs",
+        "packages/Pyrlyn.TreeSitter/tests/TagsTests.cs",
+        "src/Rtok.Plugins.Read/Outline.cs"
+      ]
+    },
+    {
+      "name": "GitRepo",
+      "defs": [
+        "packages/Pyrlyn.Ignore/src/GitRepo.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.Ignore/src/GitRepo.cs",
+        "packages/Pyrlyn.Ignore/src/RepoWalker.cs"
+      ]
+    },
+    {
+      "name": "ConfigBinder",
+      "defs": [
+        "src/Rtok.Config/ConfigBinder.cs"
+      ],
+      "refs": [
+        "src/Rtok.Config/ConfigLoader.cs"
+      ]
+    },
+    {
+      "name": "ExitCodeFilter",
+      "defs": [
+        "src/Rtok.Cli/Shell/ExitCodeFilter.cs"
+      ],
+      "refs": [
+        "src/Rtok.Cli/Program.cs"
+      ]
+    },
+    {
+      "name": "Blast",
+      "defs": [
+        "src/Rtok.Plugins.Graph/Blast.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "tests/Rtok.Plugins.Graph.Tests/BlastTests.cs"
+      ]
+    },
+    {
+      "name": "Cochange",
+      "defs": [
+        "src/Rtok.Plugins.Graph/Cochange.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "tests/Rtok.Plugins.Graph.Tests/CochangeTests.cs"
+      ]
+    },
+    {
+      "name": "Matcher",
+      "defs": [
+        "src/Rtok.Plugins.Graph/Matcher.cs",
+        "tests/Rtok.Plugins.Graph.Tests/MatcherTests.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "src/Rtok.Plugins.Graph/WatchState.cs",
+        "tests/Rtok.Plugins.Graph.Tests/MatcherTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs"
+      ]
+    },
+    {
+      "name": "Indexer",
+      "defs": [
+        "src/Rtok.Plugins.Graph/Indexer.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Bodies.cs",
+        "src/Rtok.Plugins.Graph/Cap.cs",
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "src/Rtok.Plugins.Graph/Stale.cs",
+        "src/Rtok.Plugins.Graph/WatchState.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphHarness.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphToolsTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/IndexerTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs"
+      ]
+    },
+    {
+      "name": "Outline",
+      "defs": [
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "src/Rtok.Plugins.Read/Outline.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Extraction.cs",
+        "src/Rtok.Plugins.Graph/FileOutline.cs",
+        "src/Rtok.Plugins.Graph/GraphCall.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "src/Rtok.Plugins.Graph/Matcher.cs",
+        "src/Rtok.Plugins.Read/Markdown.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphToolsTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/MatcherTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/SnapshotTests.cs",
+        "tests/Rtok.Plugins.Read.Tests/OutlineTests.cs"
+      ]
+    },
+    {
+      "name": "ProgressRunner",
+      "defs": [
+        "src/Rtok.Process/ProgressRunner.cs"
+      ],
+      "refs": [
+        "tests/Rtok.Process.Tests/IndicatorTests.cs",
+        "tests/Rtok.Process.Tests/ProgressRunnerTests.cs"
+      ]
+    },
+    {
+      "name": "Measurement",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/Measurement.cs",
+        "src/Rtok.Store.Model/Entities/Measurement.cs"
+      ],
+      "refs": [
+        "packages/Rtok.Plugin.Sdk/src/IHost.cs",
+        "packages/Rtok.Plugin.Sdk/src/IPlugin.cs",
+        "packages/Rtok.Plugin.Sdk/src/Testing/MemoryHost.cs",
+        "src/Rtok.Core/InjectBudget.cs",
+        "src/Rtok.Plugins.Graph/Blast.cs",
+        "src/Rtok.Plugins.Graph/Cap.cs",
+        "src/Rtok.Store.Model/RtokDbContext.cs",
+        "src/Rtok.Store/RtokStore.State.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs",
+        "tests/Rtok.SamplePlugin/Shrink.cs"
+      ]
+    },
+    {
+      "name": "FsPath",
+      "defs": [
+        "packages/Pyrlyn.FsKit/src/FsPath.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.FsKit/src/AtomicFile.cs",
+        "packages/Pyrlyn.FsKit/src/FileIdentity.cs",
+        "packages/Pyrlyn.FsKit/tests/FsPathTests.cs",
+        "packages/Pyrlyn.FsKit/tests/Scratch.cs",
+        "packages/Pyrlyn.Ignore/src/RepoWalker.cs",
+        "packages/Pyrlyn.Ignore/tests/Scratch.cs",
+        "packages/Pyrlyn.Trash/src/FreeDesktopTrash.cs",
+        "packages/Rtok.Agent.Sdk/tests/Scratch.cs",
+        "src/Rtok.Config/ProjectRoot.cs",
+        "src/Rtok.Hooks/HookClientLink.cs",
+        "src/Rtok.Plugins.Graph/GraphPlugin.cs",
+        "src/Rtok.Plugins.Graph/GraphRoot.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "tests/Rtok.Hooks.Tests/HookClientLinkTests.cs"
+      ]
+    },
+    {
+      "name": "RtokStore",
+      "defs": [
+        "src/Rtok.Store/RtokStore.CallIo.cs",
+        "src/Rtok.Store/RtokStore.Calls.cs",
+        "src/Rtok.Store/RtokStore.Reads.cs",
+        "src/Rtok.Store/RtokStore.Retention.cs",
+        "src/Rtok.Store/RtokStore.Sessions.cs",
+        "src/Rtok.Store/RtokStore.State.cs",
+        "src/Rtok.Store/RtokStore.SymbolQueries.cs",
+        "src/Rtok.Store/RtokStore.SymbolSearch.cs",
+        "src/Rtok.Store/RtokStore.SymbolWalks.cs",
+        "src/Rtok.Store/RtokStore.Symbols.cs",
+        "src/Rtok.Store/RtokStore.Usage.cs",
+        "src/Rtok.Store/RtokStore.cs"
+      ],
+      "refs": [
+        "src/Rtok.Store/RtokStore.Retention.cs",
+        "src/Rtok.Store/RtokStore.cs",
+        "tests/Rtok.AotTests/StoreTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphHarness.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs",
+        "tests/Rtok.Store.Tests/RetentionTests.cs",
+        "tests/Rtok.Store.Tests/StoreHarness.cs",
+        "tests/Rtok.Store.Tests/SymbolsTests.cs"
+      ]
+    },
+    {
+      "name": "Abbreviate",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/ArchiveId.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Cap.cs",
+        "tests/Rtok.Plugins.Graph.Tests/PropertyTests.cs"
+      ]
+    },
+    {
+      "name": "TryCheck",
+      "defs": [
+        "src/Rtok.Plugins.Graph/GraphRoot.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "src/Rtok.Plugins.Graph/GraphWatch.cs"
+      ]
+    },
+    {
+      "name": "MarkSymbolsStale",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/ISymbols.cs",
+        "packages/Rtok.Plugin.Sdk/src/Testing/MemoryHost.cs",
+        "src/Rtok.Store/RtokStore.Symbols.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphPlugin.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "tests/Rtok.AotTests/StoreTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/IndexerTests.cs",
+        "tests/Rtok.Store.Tests/SymbolsTests.cs"
+      ]
+    },
+    {
+      "name": "ReplaceSymbolFiles",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/ISymbols.cs",
+        "packages/Rtok.Plugin.Sdk/src/Testing/MemoryHost.cs",
+        "src/Rtok.Store/RtokStore.Symbols.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/Indexer.cs",
+        "src/Rtok.Store/RtokStore.Symbols.cs",
+        "tests/Rtok.AotTests/StoreTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs",
+        "tests/Rtok.Store.Tests/SymbolsTests.cs"
+      ]
+    },
+    {
+      "name": "Canon",
+      "defs": [
+        "packages/Pyrlyn.FsKit/src/FsPath.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.FsKit/src/AtomicFile.cs",
+        "packages/Pyrlyn.FsKit/src/FsPath.cs",
+        "packages/Pyrlyn.FsKit/tests/FsPathTests.cs",
+        "src/Rtok.Plugins.Graph/GraphPlugin.cs",
+        "src/Rtok.Plugins.Graph/GraphRoot.cs"
+      ]
+    },
+    {
+      "name": "Absorb",
+      "defs": [
+        "src/Rtok.Plugins.Graph/WatchState.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs"
+      ]
+    },
+    {
+      "name": "Settle",
+      "defs": [
+        "src/Rtok.Plugins.Graph/WatchState.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphWatch.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs"
+      ]
+    },
+    {
+      "name": "GenerateTags",
+      "defs": [
+        "packages/Pyrlyn.TreeSitter/src/Tags/TagsContext.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.TreeSitter/tests/TagsGolden.cs",
+        "packages/Pyrlyn.TreeSitter/tests/TagsTests.cs",
+        "src/Rtok.Plugins.Read/Outline.cs"
+      ]
+    },
+    {
+      "name": "SymbolDefs",
+      "defs": [
+        "packages/Rtok.Plugin.Sdk/src/ISymbols.cs",
+        "packages/Rtok.Plugin.Sdk/src/Testing/MemoryHost.cs",
+        "src/Rtok.Store/RtokStore.SymbolQueries.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphTools.cs",
+        "src/Rtok.Plugins.Graph/Resolve.cs",
+        "src/Rtok.Store/RtokStore.SymbolWalks.cs",
+        "tests/Rtok.AotTests/StoreTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/GraphHarness.cs",
+        "tests/Rtok.Plugins.Graph.Tests/IndexerTests.cs",
+        "tests/Rtok.Plugins.Graph.Tests/StoreHost.cs",
+        "tests/Rtok.Plugins.Graph.Tests/WatchTests.cs",
+        "tests/Rtok.Store.Tests/SymbolsTests.cs"
+      ]
+    },
+    {
+      "name": "IndexedHead",
+      "defs": [
+        "src/Rtok.Plugins.Graph/IndexedHead.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphCall.cs",
+        "src/Rtok.Plugins.Graph/Indexer.cs"
+      ]
+    },
+    {
+      "name": "StalePrefix",
+      "defs": [
+        "src/Rtok.Plugins.Graph/IndexedHead.cs"
+      ],
+      "refs": [
+        "src/Rtok.Plugins.Graph/GraphCall.cs"
+      ]
+    },
+    {
+      "name": "TagsConfiguration",
+      "defs": [
+        "packages/Pyrlyn.TreeSitter/src/Tags/TagsConfiguration.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.TreeSitter/src/Grammar.cs",
+        "packages/Pyrlyn.TreeSitter/src/Tags/TagsContext.cs",
+        "packages/Pyrlyn.TreeSitter/tests/TagsTests.cs"
+      ]
+    },
+    {
+      "name": "QueryCursor",
+      "defs": [
+        "packages/Pyrlyn.TreeSitter/src/QueryCursor.cs"
+      ],
+      "refs": [
+        "packages/Pyrlyn.TreeSitter/src/Tags/TagsContext.cs",
+        "packages/Pyrlyn.TreeSitter/tests/QueryTests.cs"
+      ]
+    },
+    {
+      "name": "PluginState",
+      "defs": [
+        "src/Rtok.Store.Model/Entities/PluginState.cs"
+      ],
+      "refs": [
+        "src/Rtok.Store.Model/RtokDbContext.cs",
+        "src/Rtok.Store/RtokStore.State.cs"
+      ]
+    }
+  ]
+}

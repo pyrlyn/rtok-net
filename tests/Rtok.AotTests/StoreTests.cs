@@ -50,6 +50,80 @@ public sealed class StoreTests : IDisposable
         Assert.NotNull(again.HostId("codex"));
     }
 
+    // The symbol index is plain SQL on the store's connection (T24): every ISymbols method once.
+    [Fact]
+    public void Every_symbol_method_runs()
+    {
+        using var store = RtokStore.Open(Options);
+        WriteSymbols(store);
+
+        Assert.Equal(6, store.SymbolCount("/r"));
+        Assert.Equal(3, store.SymbolFileCount("/r"));
+        Assert.Equal(2, store.GetSymbolStat("/r", "c.rs")?.Mtime);
+        Assert.Equal(3, store.SymbolStats("/r").Count);
+        Assert.Equal(
+            ("fp", 5L, "{}"),
+            (store.ExtractorFingerprint("/r"), store.SymbolIndexedAt("/r"), store.FileRankGet("/r"))
+        );
+        Assert.Single(store.SymbolDefs("/r", "mid"));
+        Assert.Single(store.SymbolRefGroups("/r", "mid"));
+        Assert.Single(store.SymbolCallees("/r", "mid"));
+        Assert.Equal(2, store.SymbolImpact("/r", "leaf", 4).Count);
+        Assert.Equal(["leaf → mid → top"], store.SymbolPaths("/r", "leaf", "top", 4));
+        Assert.Single(store.SymbolDeadCandidates("/r"));
+        Assert.Single(store.SymbolReferencedNames("/r", ["mid", "top"]));
+        Assert.Single(store.SymbolNamePrefix("/r", "le", 5));
+        Assert.Equal(2, store.SymbolFileDefs("/r", "a.rs").Count);
+        Assert.Single(store.SymbolImports("/r", "c.rs"));
+        Assert.Single(store.SymbolImporters("/r", "mid"));
+        Assert.Empty(store.SymbolImportFollow("/r", "mid"));
+        Assert.Empty(store.SymbolImportedDefs("/r", "mid"));
+        Assert.Equal((1L, 3L), store.SymbolNameFreq("/r", "mid"));
+        Assert.Equal(3, store.SymbolTopRefs("/r", 5).Count);
+        Assert.Equal(5, store.SymbolFileScan("/r").Count);
+        Assert.NotNull(store.GetSymbolSpan("/r", "a.rs", "mid", "function", 2));
+        Assert.Equal("mid", Assert.Single(store.SymbolFts("/r", "mid", 5)).Name);
+        Assert.Empty(store.SymbolPending("/r", _dir.FullName));
+        store.MarkSymbolsStale("/r/c.rs");
+        Assert.Equal(["c.rs"], store.SymbolPending("/r", _dir.FullName));
+        Assert.Equal(
+            3,
+            store.DeleteSymbolsMissing("/r", new HashSet<string>(StringComparer.Ordinal) { "b.rs" })
+        );
+    }
+
+    private static void WriteSymbols(RtokStore store)
+    {
+        static Rtok.Plugin.Sdk.SymbolRow Row(string name, int line, bool def, string scope = "") =>
+            new(name, "function", line, def, line, scope) { Signature = $"fn {name}()" };
+        store.ReplaceSymbolFiles(
+            "/r",
+            [
+                new(
+                    "a.rs",
+                    "1",
+                    1,
+                    1,
+                    [Row("leaf", 1, true), Row("mid", 2, true), Row("leaf", 3, false, "mid")]
+                ),
+                new("b.rs", "2", 1, 1, [Row("top", 1, true), Row("mid", 2, false, "top")]),
+            ]
+        );
+        store.ReplaceSymbols(
+            "/r",
+            "c.rs",
+            "3",
+            1,
+            1,
+            [new("mid", "import", 1, false, 1, "crate::a::mid")]
+        );
+        store.TouchSymbols("/r", "c.rs", 2, 2);
+        store.SetExtractorFingerprint("/r", "fp");
+        store.TouchSymbolIndexedAt("/r", 5);
+        store.FileRankPut("/r", "{}");
+        store.RebuildSymbolIdf("/r");
+    }
+
     private static (long Call, long Child, long Hook) WriteCalls(RtokStore store)
     {
         var claude = store.HostId("claude");

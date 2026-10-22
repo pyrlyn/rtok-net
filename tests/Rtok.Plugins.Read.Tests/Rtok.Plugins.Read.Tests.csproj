@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Plugins.Read/Rtok.Plugins.Read.csproj" />
+  </ItemGroup>
+</Project>

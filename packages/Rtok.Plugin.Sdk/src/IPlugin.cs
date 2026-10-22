@@ -44,6 +44,11 @@ public interface IPlugin
     /// <summary>Tools this plugin adds to <c>rtok mcp</c>.</summary>
     IReadOnlyList<ToolDef> McpTools => [];
 
+    /// <summary>Answer a call of one of <see cref="McpTools"/>: the text of the result, or
+    /// <see langword="null"/> when <paramref name="name"/> is not this plugin's tool. A failure
+    /// is thrown; the host answers it as a tool error.</summary>
+    string? CallTool(string name, System.Text.Json.JsonElement arguments, Ctx cx) => null;
+
     /// <summary>Rewrite the tool results of a provider request passing the proxy; one
     /// <see cref="Measurement"/> per change.</summary>
     IReadOnlyList<Measurement> ProxyFilter(WireRequest request, Ctx cx) => [];

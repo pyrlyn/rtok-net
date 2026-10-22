@@ -1,0 +1,54 @@
+﻿## symbol area
+src/shape.rs::area#function@7 src/shape.rs:7 function
+pub fn area(p: &Point) -> i32 {
+    scale(p.x)
+}
+calls: Point, scale
+
+
+## symbol Point kind=class
+src/shape.rs::Point#class@2 src/shape.rs:2 class
+pub struct Point {
+    x: i32,
+}
+
+
+## callers scale
+src/shape.rs  area ×1 (L8)
+
+
+## impact scale depth=4
+1  src/shape.rs  area
+2  src/main.rs  main
+2  src/main.rs  report
+
+
+## impact main to=scale
+main → report → area → scale
+
+
+## outline src/shape.rs
+pub Point 2
+pub area 7
+fn scale 11
+
+## explore how does report reach scale
+= report
+src/main.rs::report#function@7 src/main.rs:7 function
+fn report() {
+    let p = Point { x: 1 };
+    area(&p);
+}
+calls: Point, area
+= scale
+src/shape.rs::scale#function@11 src/shape.rs:11 function
+fn scale(v: i32) -> i32 {
+    v * 2
+}
+paths:
+scale → area → report
+impact:
+report ← 1
+scale ← 1
+
+

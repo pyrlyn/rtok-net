@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Git/Rtok.Git.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+</Project>

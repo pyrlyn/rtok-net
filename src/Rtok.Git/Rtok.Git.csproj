@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Repository reads through LibGit2Sharp (plan/README.md N21); never on the hook path. -->
+  <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" />
+  </ItemGroup>
+</Project>

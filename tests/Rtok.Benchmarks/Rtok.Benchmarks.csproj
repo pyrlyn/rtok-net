@@ -10,5 +10,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../../src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj" />
+    <ProjectReference Include="../../src/Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The graph tests' host over a real store; there is no production host before T15. -->
+    <Compile Include="../Rtok.Plugins.Graph.Tests/StoreHost.cs" Link="StoreHost.cs" />
   </ItemGroup>
 </Project>

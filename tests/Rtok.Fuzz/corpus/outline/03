@@ -1,0 +1,16 @@
+import React from "react";
+
+interface Props {
+  title: string;
+}
+
+export function Header(props: Props) {
+  const label = format(props.title);
+  return <h1 className="title">{label}</h1>;
+}
+
+class Panel extends React.Component<Props> {
+  render() {
+    return <Header title={this.props.title} />;
+  }
+}

@@ -13,4 +13,31 @@ namespace Demo
 
         public double Area() => Math.PI * Radius * Radius;
     }
+
+    public record Square(double Side) : IShape
+    {
+        public double Area() => Side * Side;
+    }
+
+    public struct Point
+    {
+        public Unit Unit;
+    }
+
+    public enum Unit
+    {
+        Metre,
+    }
+
+    [Serializable]
+    public static class Shapes
+    {
+        public static List<IShape> All(Point origin)
+        {
+            var shapes = new List<IShape> { new Circle(), Make<Square>() };
+            Log(shapes.Count);
+            Console.WriteLine(origin.Unit);
+            return shapes;
+        }
+    }
 }

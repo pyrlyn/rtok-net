@@ -37,7 +37,7 @@ internal static class FuzzTargets
         new("mem-text", "T22", null),
         new("extractor-reply", "T22.1", null),
         new("checkpoint", "T23", null),
-        new("outline", "T24", null),
+        new("outline", "T24", Outline.Run),
         new("lsp-frame", "T24.1", null),
         new("manifest-refs", "T25", null),
         new("proxy-wire", "T27", null),

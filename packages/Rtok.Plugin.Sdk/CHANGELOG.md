@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `IPlugin.CallTool` answers a call of the plugin's own MCP tools.
+
 ## 0.2.0
 
 - `ArchiveIds.Abbreviate`: the 8-hex printed form of an archive id, for every trailer and pointer.

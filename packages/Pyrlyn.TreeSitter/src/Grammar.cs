@@ -106,7 +106,7 @@ public sealed class Grammar
                 "c_sharp",
                 Language.CSharp,
                 ["cs", "csharp", "c_sharp"],
-                Read("c_sharp/tags.scm"),
+                Read("c_sharp/tags.scm") + Read("c_sharp/extra.scm"),
                 ""
             ),
             new(

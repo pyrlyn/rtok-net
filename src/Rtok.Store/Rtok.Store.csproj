@@ -23,6 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <!-- The store is the host's ISymbols. -->
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
     <!-- Built first and run below; never referenced at run time. -->
     <ProjectReference
       Include="../../eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj"

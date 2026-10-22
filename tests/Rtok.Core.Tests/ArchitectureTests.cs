@@ -21,6 +21,7 @@ public sealed class ArchitectureTests
             "Rtok.Archive",
             "Rtok.Log",
             "Rtok.Process",
+            "Rtok.Git",
         ],
         [
             "Rtok.Plugins.*",

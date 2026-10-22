@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.TreeSitter/src/Pyrlyn.TreeSitter.csproj" />
+    <InternalsVisibleTo Include="Rtok.Plugins.Read.Tests" />
+  </ItemGroup>
+</Project>

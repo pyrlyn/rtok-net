@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 5
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T24. graph plugin: tags index and code-navigation tools
@@ -41,3 +41,29 @@ Ports: rtok closed T8.1, T8.2, T8.3, T8.4, T8.5, T8.6, T8.7, T8.13, T8.15, T8.16
 Fuzz: `outline` in `tests/Rtok.Fuzz`: any source bytes through each grammar's tags query give ranges inside the file and no native crash.
 
 Check: The labelled truth test reaches recall ≥ 0.92, and the warm re-index of an unchanged 3000-file fixture takes under 0.1 s.
+
+## Plan
+
+Scope: rtok's `plugins/graph` index, walk, watch and the five tools (`mod.rs`, `index.rs`,
+`walk.rs`, `watch.rs`, `cochange.rs`, `resolve.rs`, `blast.rs`, `tally.rs`, `jobs.rs`,
+`status.rs`) and `plugins/read/outline.rs`. Projects, links, diff, export, health and
+`affected` are T25; the repo map is T26; LSP and text backends are T24.1.
+
+1. `src/Rtok.Plugins.Read/Outline`: rtok's tag hits (imports expanded, byte spans) and the
+   map/signatures render over `Pyrlyn.TreeSitter`; the graph plugin and T19 share it, as in rtok.
+2. `src/Rtok.Plugins.Graph`: `Matcher` over `Pyrlyn.Ignore` (include/exclude/extensions,
+   nested worktrees skipped, `/` and `$HOME` refused); the indexer (stat gate, sha only when
+   the stat differs, extractor fingerprint, parse on workers with one writer, batches of 200
+   files through `ISymbols.ReplaceSymbolFiles`, scope, doc, content hash).
+3. Tools `symbol`, `callers`, `outline`, `impact`, `explore` with filters, caps and archive
+   ids, the staleness line, ambiguity marks, name resolution (imported > same dir > IDF),
+   co-change from `git log -n300`, the impact budget.
+4. Auto-index and watch on `FileSystemWatcher`: 250 ms debounce, pending cap, full walk on
+   overflow.
+5. `ISymbols` on the store: T8 landed first, so `RtokStore` implements it directly in plain
+   SQL on its connection (rtok-store `symbols.rs`; walks, FTS5 and aggregates the EF query
+   precompiler cannot take), with rtok's store tests ported to `Rtok.Store.Tests` and one
+   AOT pass over every method. No in-memory port: one logic, one place.
+6. Tests ported from rtok (`graph/*` unit tests, `graph_truth.rs` recall >= 0.92,
+   `graph_contract.rs`), warm re-index of a 3000-file fixture under 0.1 s.
+

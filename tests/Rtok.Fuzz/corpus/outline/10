@@ -1,0 +1,15 @@
+	package demo
+
+import kotlin.math.max
+
+class Account(val owner: String) {
+    fun balance(): Int = max(0, 1)
+}
+
+object Registry {
+    fun find(name: String): Account? = null
+}
+
+fun main() {
+    println(Registry.find("x"))
+}

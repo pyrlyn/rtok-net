@@ -231,6 +231,18 @@ public sealed partial class RtokStore : IDisposable
 
         public RtokDbContext Db => _store._db;
 
+        /// <summary>A raw command on the store's connection, inside this scope's transaction or
+        /// the open batch's: the symbol queries are SQL, not LINQ (recursive walks, FTS5,
+        /// aggregates the query precompiler cannot take).</summary>
+        public SqliteCommand Command(string sql)
+        {
+            var command = _store._connection.CreateCommand();
+            command.CommandText = sql;
+            command.Transaction =
+                (_transaction ?? _store._batch)?.GetDbTransaction() as SqliteTransaction;
+            return command;
+        }
+
         public void Commit()
         {
             if (_nested is { } nested)
