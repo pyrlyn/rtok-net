@@ -11,9 +11,10 @@ agent:
 The dashboard is the operator's main view; it is a Blazor WebAssembly app served by the AOT `rtok` (N13). This task lays the host, the protocol and the client shell; the pages follow in T44.2.
 
 Done when:
-- `rtok web [--port]` serves `/health`, `/ws` and the embedded `Rtok.Web.Client` publish output: fingerprinted, precompressed, fallback to `index.html`, CSP with `'wasm-unsafe-eval'` and nothing looser.
+- `rtok web [--port]` serves `/health`, `/ws` and the embedded `Rtok.Web.Client` publish output: fingerprinted, precompressed, fallback to `index.html`, CSP with `'wasm-unsafe-eval'` and `style-src-attr 'unsafe-inline'` (N13) and nothing looser.
 - `Rtok.Web.Contracts` holds the `/ws` messages from the catalog and their STJ context; host and client both use it, and the catalog messages work.
-- `Rtok.Web.Client` is a standalone Blazor WebAssembly app, trimmed, that references only `Rtok.Web.Contracts`: layout, routing, theme toggle, a `/ws` client with loading, offline and Reconnect states, and the overview page.
+- `Rtok.Web.Client` is a standalone Blazor WebAssembly app, trimmed, that references only `Rtok.Web.Contracts` and Radzen.Blazor (N13): `RadzenLayout` shell with sidebar and routing, theme toggle through Radzen's `ThemeService`, a `/ws` client with loading, offline and Reconnect states, and the overview page.
+- Radzen: one light and one dark free theme are embedded, the other theme files are left out of the bundle; `Rtok.Web.Contracts` is a trimmer root, since Radzen grids bind columns by property name.
 - `Rtok.Web` publishes the client in an MSBuild target before compile and embeds it; the Release `rtok` stays NativeAOT with no new warnings.
 - Security: Origin and Host checks, plus a per-run random token in the URL, required on `/ws` (rtok S2). A non-loopback `web.host` without the token is refused.
 
@@ -32,6 +33,8 @@ Tests:
 - `Rtok.Web.Tests` unit: a CallBatch carries every ended call id, so a call past the display cap is never shown as interrupted.
 - `Rtok.Web.Tests` unit: every `/ws` message type round-trips through the shared STJ context, and the client and host use that one context (no second copy of a message type).
 - `Rtok.Web.Client.Tests` bUnit: the shell shows loading, then the overview from a snapshot, then offline with Reconnect when the socket drops.
+- `Rtok.Web.Client.Tests` bUnit: the theme toggle switches the Radzen theme and keeps `rtok-theme` in localStorage.
+- `Rtok.Web.Tests` integration: the embedded client holds exactly two Radzen theme files, and the CSP has no `style-src` source beyond `'self'` and no `script-src` source beyond `'self' 'wasm-unsafe-eval'`.
 - `Rtok.Core.Tests` arch: `Rtok.Web.Client` references only `Rtok.Web.Contracts`, and `Rtok.Web.Contracts` references nothing in `src/`.
 - `Rtok.Smoke` smoke: the published `rtok web --port 0` serves `/health`, the client `index.html` with its CSP, `_framework/blazor.webassembly.js`, and a `/ws` snapshot with the token.
 

@@ -143,9 +143,14 @@ pages and UX contracts (catalog A24) are rebuilt as a standalone Blazor WebAssem
 host stays Kestrel minimal API + `/ws` in the AOT `rtok`, and serves the client's published
 static files (fingerprinted, precompressed) as embedded resources. The `/ws` messages live
 once, in C#, in `Rtok.Web.Contracts` with its STJ context, shared by host and client: no
-JSON Schema or TypeScript codegen. ECharts and Three.js stay, vendored and called through
-JS interop; no npm. The costs: a bigger first download than the React bundle, and
-`'wasm-unsafe-eval'` in the CSP.
+JSON Schema or TypeScript codegen. The UI is built on **Radzen.Blazor** (MIT): layout,
+navigation, data grids, dialogs, notifications, charts, sparklines and the light/dark theme;
+no hand-rolled widget where a Radzen one fits. ECharts stays only for what RadzenChart
+lacks (the graph view), Three.js for the 3D projects overview, both vendored and called
+through JS interop; no npm. The costs: a bigger first download than the React bundle
+(Radzen adds about 0.45 MB brotli), `'wasm-unsafe-eval'` and
+`style-src-attr 'unsafe-inline'` in the CSP (Radzen sets inline style attributes;
+`<style>` and scripts stay `'self'`).
 
 N14. **rtok's design rules still apply**, unless a task here says otherwise:
 - Hooks fail open: exit 0, unmodified, within 10 ms.
