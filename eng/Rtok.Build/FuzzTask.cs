@@ -77,9 +77,22 @@ public sealed class FuzzTask : AsyncFrostingTask<BuildContext>
         if (Directory.Exists(bin))
             Directory.Delete(bin, recursive: true);
         var project = Path.Combine(context.Root, "tests/Rtok.Fuzz");
+        // Publishing reaches the referenced executables (Rtok.Cli), which would turn on
+        // PublishAot in Release and then need a RID (NETSDK1191); the whole graph stays JIT.
         await context.RunAsync(
             "dotnet",
-            ["publish", project, "-c", "Release", "-o", bin, "--nologo", "-v", "quiet"]
+            [
+                "publish",
+                project,
+                "-c",
+                "Release",
+                "-p:RtokJitOnly=true",
+                "-o",
+                bin,
+                "--nologo",
+                "-v",
+                "quiet",
+            ]
         );
         var manifest = Path.Combine(context.Root, ".config/dotnet-tools.json");
         await context.CaptureAsync("dotnet", ["tool", "restore", "--tool-manifest", manifest]);
