@@ -11,6 +11,12 @@
     <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource
+      Include="compress-prompt.toml"
+      LogicalName="Rtok.Proxy.compress-prompt.toml"
+    />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Proxy.Tests" />
     <InternalsVisibleTo Include="rtok-fuzz" />
   </ItemGroup>

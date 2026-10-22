@@ -12,6 +12,9 @@ Commands:
   agents usage         Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
      Prices come from [stats.prices]; a model without one counts in the tokens and is left out
      of the cost (--unpriced names those).
+  batch fetch          Write the results of a finished batch to a new file.
+  batch status         Print the provider's current state of a batch.
+  batch submit         Create a batch from a JSONL file of provider-shaped requests; prints the batch object.
   bench                Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.
   completions          Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
   config get           Print the effective value of one key or table.
@@ -169,6 +172,46 @@ Options:
   --unpriced            List the models without a price instead of the tables.
   --json                One JSON document.
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok batch fetch --help
+Usage: batch fetch [arguments...] [options...] [-h|--help] [--version]
+
+Write the results of a finished batch to a new file.
+
+Arguments:
+  [0] <string>    Batch id (msgbatch_… is Anthropic, batch_… OpenAI).
+  [1] <string>    File to create; an existing file is never overwritten.
+
+Options:
+  --provider <string?>    anthropic or openai; default: from the id. [Default: null]
+  --url <string?>         Proxy base URL; default: [proxy] bind and port. [Default: null]
+  --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok batch status --help
+Usage: batch status [arguments...] [options...] [-h|--help] [--version]
+
+Print the provider's current state of a batch.
+
+Arguments:
+  [0] <string>    Batch id (msgbatch_… is Anthropic, batch_… OpenAI).
+
+Options:
+  --provider <string?>    anthropic or openai; default: from the id. [Default: null]
+  --url <string?>         Proxy base URL; default: [proxy] bind and port. [Default: null]
+  --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok batch submit --help
+Usage: batch submit [arguments...] [options...] [-h|--help] [--version]
+
+Create a batch from a JSONL file of provider-shaped requests; prints the batch object.
+
+Arguments:
+  [0] <string>    One request per line (Anthropic: custom_id + params; OpenAI: custom_id, method, url, body).
+
+Options:
+  --provider <string?>    anthropic or openai; default: anthropic. [Default: null]
+  --url <string?>         Proxy base URL; default: [proxy] bind and port. [Default: null]
+  --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok bench --help
 Usage: bench [options...] [-h|--help] [--version]

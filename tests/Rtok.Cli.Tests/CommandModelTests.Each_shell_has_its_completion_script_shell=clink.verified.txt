@@ -4,9 +4,9 @@
 local value = clink.argmatcher():addarg(clink.filematches)
 
 -- rtok wrap
-local node_51 = clink.argmatcher()
-node_51:addflags({ "--config" .. value, "-h", "--help", "--version" })
-node_51:adddescriptions({
+local node_55 = clink.argmatcher()
+node_55:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_55:adddescriptions({
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -14,9 +14,9 @@ node_51:adddescriptions({
 })
 
 -- rtok web
-local node_50 = clink.argmatcher()
-node_50:addflags({ "--host" .. value, "--port" .. value, "--no-token", "--config" .. value, "-h", "--help", "--version" })
-node_50:adddescriptions({
+local node_54 = clink.argmatcher()
+node_54:addflags({ "--host" .. value, "--port" .. value, "--no-token", "--config" .. value, "-h", "--help", "--version" })
+node_54:adddescriptions({
     ["--host"] = "The address to bind, an IP or localhost; [web] host when omitted.",
     ["--port"] = "The port, 0 for any free one; [web] port when omitted.",
     ["--no-token"] = "Serve /ws without the token; refused unless the host is loopback.",
@@ -25,9 +25,57 @@ node_50:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_50:nofiles()
+node_54:nofiles()
 
 -- rtok task sync
+local node_53 = clink.argmatcher()
+node_53:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_53:adddescriptions({
+    ["--json"] = "JSON instead of the text.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+node_53:nofiles()
+
+-- rtok task status
+local node_52 = clink.argmatcher()
+node_52:addflags({ "--force", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_52:adddescriptions({
+    ["--force"] = "Finish a parent even though subtasks are still open.",
+    ["--json"] = "Print the task as JSON.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok task show
+local node_51 = clink.argmatcher()
+node_51:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_51:adddescriptions({
+    ["--json"] = "JSON instead of the text.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok task release
+local node_50 = clink.argmatcher()
+node_50:addflags({ "--agent" .. value, "--force", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_50:adddescriptions({
+    ["--agent"] = "The rtok agent id; defaults to RTOK_AGENT_ID.",
+    ["--force"] = "Release a task held by someone else.",
+    ["--json"] = "Print the task as JSON.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok task ready
 local node_49 = clink.argmatcher()
 node_49:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
 node_49:adddescriptions({
@@ -39,58 +87,10 @@ node_49:adddescriptions({
 })
 node_49:nofiles()
 
--- rtok task status
-local node_48 = clink.argmatcher()
-node_48:addflags({ "--force", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_48:adddescriptions({
-    ["--force"] = "Finish a parent even though subtasks are still open.",
-    ["--json"] = "Print the task as JSON.",
-    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
-    ["-h"] = "Show help.",
-    ["--help"] = "Show help.",
-    ["--version"] = "Show version.",
-})
-
--- rtok task show
-local node_47 = clink.argmatcher()
-node_47:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_47:adddescriptions({
-    ["--json"] = "JSON instead of the text.",
-    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
-    ["-h"] = "Show help.",
-    ["--help"] = "Show help.",
-    ["--version"] = "Show version.",
-})
-
--- rtok task release
-local node_46 = clink.argmatcher()
-node_46:addflags({ "--agent" .. value, "--force", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_46:adddescriptions({
-    ["--agent"] = "The rtok agent id; defaults to RTOK_AGENT_ID.",
-    ["--force"] = "Release a task held by someone else.",
-    ["--json"] = "Print the task as JSON.",
-    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
-    ["-h"] = "Show help.",
-    ["--help"] = "Show help.",
-    ["--version"] = "Show version.",
-})
-
--- rtok task ready
-local node_45 = clink.argmatcher()
-node_45:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_45:adddescriptions({
-    ["--json"] = "JSON instead of the text.",
-    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
-    ["-h"] = "Show help.",
-    ["--help"] = "Show help.",
-    ["--version"] = "Show version.",
-})
-node_45:nofiles()
-
 -- rtok task priority
-local node_44 = clink.argmatcher()
-node_44:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_44:adddescriptions({
+local node_48 = clink.argmatcher()
+node_48:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_48:adddescriptions({
     ["--json"] = "Print the task as JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
@@ -99,9 +99,9 @@ node_44:adddescriptions({
 })
 
 -- rtok task parallel
-local node_43 = clink.argmatcher()
-node_43:addflags({ "--off", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_43:adddescriptions({
+local node_47 = clink.argmatcher()
+node_47:addflags({ "--off", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_47:adddescriptions({
     ["--off"] = "Take the mark off instead.",
     ["--json"] = "Print the task as JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -111,21 +111,21 @@ node_43:adddescriptions({
 })
 
 -- rtok task next
-local node_42 = clink.argmatcher()
-node_42:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_42:adddescriptions({
+local node_46 = clink.argmatcher()
+node_46:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_46:adddescriptions({
     ["--json"] = "JSON instead of the text.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_42:nofiles()
+node_46:nofiles()
 
 -- rtok task list
-local node_41 = clink.argmatcher()
-node_41:addflags({ "--status" .. value, "--all", "--parent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_41:adddescriptions({
+local node_45 = clink.argmatcher()
+node_45:addflags({ "--status" .. value, "--all", "--parent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_45:adddescriptions({
     ["--status"] = "Only these statuses (comma-separated: open, in-progress, done, closed).",
     ["--all"] = "Done and closed tasks too.",
     ["--parent"] = "Only the subtasks of this task.",
@@ -135,12 +135,12 @@ node_41:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_41:nofiles()
+node_45:nofiles()
 
 -- rtok task init
-local node_40 = clink.argmatcher()
-node_40:addflags({ "--adapter" .. value, "--prefix" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_40:adddescriptions({
+local node_44 = clink.argmatcher()
+node_44:addflags({ "--adapter" .. value, "--prefix" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_44:adddescriptions({
     ["--adapter"] = "disk, github or gitlab (default: disk, or what the file already says).",
     ["--prefix"] = "Task id prefix, 1–8 ASCII letters (default: the project name's first letter).",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -148,12 +148,12 @@ node_40:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_40:nofiles()
+node_44:nofiles()
 
 -- rtok task export
-local node_39 = clink.argmatcher()
-node_39:addflags({ "--dry-run", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_39:adddescriptions({
+local node_43 = clink.argmatcher()
+node_43:addflags({ "--dry-run", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_43:adddescriptions({
     ["--dry-run"] = "Print the planned creates, updates and closes and send nothing.",
     ["--json"] = "JSON instead of the text.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -163,9 +163,9 @@ node_39:adddescriptions({
 })
 
 -- rtok task dep
-local node_38 = clink.argmatcher()
-node_38:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_38:adddescriptions({
+local node_42 = clink.argmatcher()
+node_42:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_42:adddescriptions({
     ["--json"] = "Print the task as JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
@@ -174,9 +174,9 @@ node_38:adddescriptions({
 })
 
 -- rtok task create
-local node_37 = clink.argmatcher()
-node_37:addflags({ "-d" .. value, "--description" .. value, "--body-file" .. value, "--parent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_37:adddescriptions({
+local node_41 = clink.argmatcher()
+node_41:addflags({ "-d" .. value, "--description" .. value, "--body-file" .. value, "--parent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_41:adddescriptions({
     ["-d"] = "Description: why the task exists and what done means.",
     ["--description"] = "Description: why the task exists and what done means.",
     ["--body-file"] = "Read the description from this file (- for stdin).",
@@ -189,9 +189,9 @@ node_37:adddescriptions({
 })
 
 -- rtok task conflict
-local node_36 = clink.argmatcher()
-node_36:addflags({ "--remove", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_36:adddescriptions({
+local node_40 = clink.argmatcher()
+node_40:addflags({ "--remove", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_40:adddescriptions({
     ["--remove"] = "Take the conflict off instead.",
     ["--json"] = "Print the task as JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -201,9 +201,9 @@ node_36:adddescriptions({
 })
 
 -- rtok task claim
-local node_35 = clink.argmatcher()
-node_35:addflags({ "--agent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_35:adddescriptions({
+local node_39 = clink.argmatcher()
+node_39:addflags({ "--agent" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_39:adddescriptions({
     ["--agent"] = "The rtok agent id; defaults to RTOK_AGENT_ID.",
     ["--json"] = "Print the task as JSON, with changed.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -213,9 +213,9 @@ node_35:adddescriptions({
 })
 
 -- rtok task
-local node_34 = clink.argmatcher()
-node_34:addarg({ "claim" .. node_35, "conflict" .. node_36, "create" .. node_37, "dep" .. node_38, "export" .. node_39, "init" .. node_40, "list" .. node_41, "next" .. node_42, "parallel" .. node_43, "priority" .. node_44, "ready" .. node_45, "release" .. node_46, "show" .. node_47, "status" .. node_48, "sync" .. node_49 })
-node_34:adddescriptions({
+local node_38 = clink.argmatcher()
+node_38:addarg({ "claim" .. node_39, "conflict" .. node_40, "create" .. node_41, "dep" .. node_42, "export" .. node_43, "init" .. node_44, "list" .. node_45, "next" .. node_46, "parallel" .. node_47, "priority" .. node_48, "ready" .. node_49, "release" .. node_50, "show" .. node_51, "status" .. node_52, "sync" .. node_53 })
+node_38:adddescriptions({
     ["claim"] = "Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.",
     ["conflict"] = "Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.",
     ["create"] = "Create a task under the next free id and print the id.",
@@ -232,12 +232,12 @@ node_34:adddescriptions({
     ["status"] = "Print a task's status, or set it; done and closed move it out of the plan.",
     ["sync"] = "Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.",
 })
-node_34:nofiles()
+node_38:nofiles()
 
 -- rtok stats
-local node_33 = clink.argmatcher()
-node_33:addflags({ "--since" .. value, "--json", "--plugin" .. value, "--save-baseline" .. value, "--compare" .. value, "--calibrate", "--cache", "--price", "--config" .. value, "-h", "--help", "--version" })
-node_33:adddescriptions({
+local node_37 = clink.argmatcher()
+node_37:addflags({ "--since" .. value, "--json", "--plugin" .. value, "--save-baseline" .. value, "--compare" .. value, "--calibrate", "--cache", "--price", "--config" .. value, "-h", "--help", "--version" })
+node_37:adddescriptions({
     ["--since"] = "The window: 30d, 12h; [stats] since when omitted.",
     ["--json"] = "Print the report as JSON.",
     ["--plugin"] = "One plugin: a catalogue plugin's own page, or the report for its rows.",
@@ -251,12 +251,12 @@ node_33:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_33:nofiles()
+node_37:nofiles()
 
 -- rtok run
-local node_32 = clink.argmatcher()
-node_32:addflags({ "--agent" .. value, "--no-ref", "--config" .. value, "-h", "--help", "--version" })
-node_32:adddescriptions({
+local node_36 = clink.argmatcher()
+node_36:addflags({ "--agent" .. value, "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_36:adddescriptions({
     ["--agent"] = "Sub-agent id from PreToolUse; scopes the dedup pointer.",
     ["--no-ref"] = "Do not print the reference line after a cut.",
     ["--config"] = "The config file to load instead of the user's.",
@@ -266,9 +266,9 @@ node_32:adddescriptions({
 })
 
 -- rtok proxy
-local node_31 = clink.argmatcher()
-node_31:addflags({ "--port" .. value, "--upstream" .. value, "--mode" .. value, "--dry-run", "--config" .. value, "-h", "--help", "--version" })
-node_31:adddescriptions({
+local node_35 = clink.argmatcher()
+node_35:addflags({ "--port" .. value, "--upstream" .. value, "--mode" .. value, "--dry-run", "--config" .. value, "-h", "--help", "--version" })
+node_35:adddescriptions({
     ["--port"] = "Listen on this port instead of [proxy] port.",
     ["--upstream"] = "Forward to this URL instead of [proxy] upstream.",
     ["--mode"] = "passthrough or compress, instead of [proxy] mode.",
@@ -278,46 +278,46 @@ node_31:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_31:nofiles()
+node_35:nofiles()
 
 -- rtok plugins
-local node_30 = clink.argmatcher()
-node_30:addflags({ "--json", "-h", "--help", "--version" })
-node_30:adddescriptions({
+local node_34 = clink.argmatcher()
+node_34:addflags({ "--json", "-h", "--help", "--version" })
+node_34:adddescriptions({
     ["--json"] = "Print JSON.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_30:nofiles()
+node_34:nofiles()
 
 -- rtok man
-local node_29 = clink.argmatcher()
-node_29:addflags({ "--dir" .. value, "-h", "--help", "--version" })
-node_29:adddescriptions({
+local node_33 = clink.argmatcher()
+node_33:addflags({ "--dir" .. value, "-h", "--help", "--version" })
+node_33:adddescriptions({
     ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_29:nofiles()
+node_33:nofiles()
 
 -- rtok logs watch
-local node_28 = clink.argmatcher()
-node_28:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_28:adddescriptions({
+local node_32 = clink.argmatcher()
+node_32:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_32:adddescriptions({
     ["--lines"] = "How many lines the screen keeps; [log] lines when omitted.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_28:nofiles()
+node_32:nofiles()
 
 -- rtok logs export
-local node_27 = clink.argmatcher()
-node_27:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_27:adddescriptions({
+local node_31 = clink.argmatcher()
+node_31:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_31:adddescriptions({
     ["--lines"] = "How many lines; [log] lines when omitted.",
     ["--json"] = "Print the lines as a JSON array, newest first.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -325,13 +325,13 @@ node_27:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_27:nofiles()
+node_31:nofiles()
 
 -- rtok logs
-local node_26 = clink.argmatcher()
-node_26:addarg({ "export" .. node_27, "watch" .. node_28 })
-node_26:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_26:adddescriptions({
+local node_30 = clink.argmatcher()
+node_30:addarg({ "export" .. node_31, "watch" .. node_32 })
+node_30:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_30:adddescriptions({
     ["export"] = "Print the same lines as rtok logs without numbers or colour.",
     ["watch"] = "Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.",
     ["--lines"] = "How many lines; [log] lines when omitted.",
@@ -341,12 +341,12 @@ node_26:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_26:nofiles()
+node_30:nofiles()
 
 -- rtok hook
-local node_25 = clink.argmatcher()
-node_25:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
-node_25:adddescriptions({
+local node_29 = clink.argmatcher()
+node_29:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
+node_29:adddescriptions({
     ["--host"] = "The host id, when the host is not inferred from the payload.",
     ["--serve"] = "Run the resident hook server that rtok-hook talks to.",
     ["-h"] = "Show help.",
@@ -355,9 +355,9 @@ node_25:adddescriptions({
 })
 
 -- rtok filter
-local node_24 = clink.argmatcher()
-node_24:addflags({ "--stdin", "--cmd" .. value, "--archive", "--no-ref", "--config" .. value, "-h", "--help", "--version" })
-node_24:adddescriptions({
+local node_28 = clink.argmatcher()
+node_28:addflags({ "--stdin", "--cmd" .. value, "--archive", "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_28:adddescriptions({
     ["--stdin"] = "Read the payload from stdin (OpenCode tool.execute.after).",
     ["--cmd"] = "Command family hint (git status, cargo test, …).",
     ["--archive"] = "Archive stdin and print the expand trailer (same path as run).",
@@ -367,12 +367,12 @@ node_24:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_24:nofiles()
+node_28:nofiles()
 
 -- rtok expand
-local node_23 = clink.argmatcher()
-node_23:addflags({ "--lines" .. value, "--grep" .. value, "--context" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_23:adddescriptions({
+local node_27 = clink.argmatcher()
+node_27:addflags({ "--lines" .. value, "--grep" .. value, "--context" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_27:adddescriptions({
     ["--lines"] = "Only lines a-b, 1-based and inclusive.",
     ["--grep"] = "Only lines matching this regex, printed N:line.",
     ["--context"] = "Lines of context around each --grep hit.",
@@ -383,9 +383,9 @@ node_23:adddescriptions({
 })
 
 -- rtok doctor
-local node_22 = clink.argmatcher()
-node_22:addflags({ "--json", "--agent" .. value, "--instructions", "--fix", "--yes", "--dry-run", "--stat", "--only" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_22:adddescriptions({
+local node_26 = clink.argmatcher()
+node_26:addflags({ "--json", "--agent" .. value, "--instructions", "--fix", "--yes", "--dry-run", "--stat", "--only" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_26:adddescriptions({
     ["--json"] = "Print JSON.",
     ["--agent"] = "Only this host's problems (claude, codex, …).",
     ["--instructions"] = "Also audit the instruction files and what plugins inject at SessionStart.",
@@ -399,12 +399,12 @@ node_22:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_22:nofiles()
+node_26:nofiles()
 
 -- rtok docs fetch
-local node_21 = clink.argmatcher()
-node_21:addflags({ "--config" .. value, "-h", "--help", "--version" })
-node_21:adddescriptions({
+local node_25 = clink.argmatcher()
+node_25:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_25:adddescriptions({
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -412,17 +412,17 @@ node_21:adddescriptions({
 })
 
 -- rtok docs
-local node_20 = clink.argmatcher()
-node_20:addarg({ "fetch" .. node_21 })
-node_20:adddescriptions({
+local node_24 = clink.argmatcher()
+node_24:addarg({ "fetch" .. node_25 })
+node_24:adddescriptions({
     ["fetch"] = "Download a dependency's docs at its lockfile-pinned version and index them for docs_query.",
 })
-node_20:nofiles()
+node_24:nofiles()
 
 -- rtok config validate
-local node_19 = clink.argmatcher()
-node_19:addflags({ "--config" .. value, "-h", "--help", "--version" })
-node_19:adddescriptions({
+local node_23 = clink.argmatcher()
+node_23:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_23:adddescriptions({
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -430,9 +430,9 @@ node_19:adddescriptions({
 })
 
 -- rtok config show
-local node_18 = clink.argmatcher()
-node_18:addflags({ "--sources", "--json", "--config" .. value, "-h", "--help", "--version" })
-node_18:adddescriptions({
+local node_22 = clink.argmatcher()
+node_22:addflags({ "--sources", "--json", "--config" .. value, "-h", "--help", "--version" })
+node_22:adddescriptions({
     ["--sources"] = "Show where each value came from: default, a file and line, env or flag.",
     ["--json"] = "Print JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -440,12 +440,12 @@ node_18:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_18:nofiles()
+node_22:nofiles()
 
 -- rtok config set
-local node_17 = clink.argmatcher()
-node_17:addflags({ "--dry-run", "--config" .. value, "-h", "--help", "--version" })
-node_17:adddescriptions({
+local node_21 = clink.argmatcher()
+node_21:addflags({ "--dry-run", "--config" .. value, "-h", "--help", "--version" })
+node_21:adddescriptions({
     ["--dry-run"] = "Check the result and print the diff instead of writing.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
@@ -454,20 +454,20 @@ node_17:adddescriptions({
 })
 
 -- rtok config path
-local node_16 = clink.argmatcher()
-node_16:addflags({ "--config" .. value, "-h", "--help", "--version" })
-node_16:adddescriptions({
+local node_20 = clink.argmatcher()
+node_20:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_20:adddescriptions({
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_16:nofiles()
+node_20:nofiles()
 
 -- rtok config init
-local node_15 = clink.argmatcher()
-node_15:addflags({ "--force", "--dry-run", "--config" .. value, "-h", "--help", "--version" })
-node_15:adddescriptions({
+local node_19 = clink.argmatcher()
+node_19:addflags({ "--force", "--dry-run", "--config" .. value, "-h", "--help", "--version" })
+node_19:adddescriptions({
     ["--force"] = "Overwrite an existing file.",
     ["--dry-run"] = "Print the diff instead of writing.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -475,12 +475,12 @@ node_15:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_15:nofiles()
+node_19:nofiles()
 
 -- rtok config get
-local node_14 = clink.argmatcher()
-node_14:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
-node_14:adddescriptions({
+local node_18 = clink.argmatcher()
+node_18:addflags({ "--json", "--config" .. value, "-h", "--help", "--version" })
+node_18:adddescriptions({
     ["--json"] = "Print JSON.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
@@ -489,9 +489,9 @@ node_14:adddescriptions({
 })
 
 -- rtok config
-local node_13 = clink.argmatcher()
-node_13:addarg({ "get" .. node_14, "init" .. node_15, "path" .. node_16, "set" .. node_17, "show" .. node_18, "validate" .. node_19 })
-node_13:adddescriptions({
+local node_17 = clink.argmatcher()
+node_17:addarg({ "get" .. node_18, "init" .. node_19, "path" .. node_20, "set" .. node_21, "show" .. node_22, "validate" .. node_23 })
+node_17:adddescriptions({
     ["get"] = "Print the effective value of one key or table.",
     ["init"] = "Write the reference config file (every key commented out at its default) and print its path.",
     ["path"] = "Print the path of the user config file.",
@@ -499,12 +499,12 @@ node_13:adddescriptions({
     ["show"] = "Print every effective key and value; secrets are redacted.",
     ["validate"] = "Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.",
 })
-node_13:nofiles()
+node_17:nofiles()
 
 -- rtok completions
-local node_12 = clink.argmatcher()
-node_12:addflags({ "--install", "--uninstall", "-h", "--help", "--version" })
-node_12:adddescriptions({
+local node_16 = clink.argmatcher()
+node_16:addflags({ "--install", "--uninstall", "-h", "--help", "--version" })
+node_16:adddescriptions({
     ["--install"] = "Write the script to the shell's per-user completions directory.",
     ["--uninstall"] = "Remove what --install wrote.",
     ["-h"] = "Show help.",
@@ -513,9 +513,9 @@ node_12:adddescriptions({
 })
 
 -- rtok bench
-local node_11 = clink.argmatcher()
-node_11:addflags({ "--tasks" .. value, "--runs" .. value, "--dry-run", "--timeout" .. value, "--suite" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_11:adddescriptions({
+local node_15 = clink.argmatcher()
+node_15:addflags({ "--tasks" .. value, "--runs" .. value, "--dry-run", "--timeout" .. value, "--suite" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_15:adddescriptions({
     ["--tasks"] = "The task file; [bench] tasks when omitted.",
     ["--runs"] = "Runs per task and config.",
     ["--dry-run"] = "Print the planned runs; run nothing.",
@@ -525,6 +525,52 @@ node_11:adddescriptions({
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
+})
+node_15:nofiles()
+
+-- rtok batch submit
+local node_14 = clink.argmatcher()
+node_14:addflags({ "--provider" .. value, "--url" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_14:adddescriptions({
+    ["--provider"] = "anthropic or openai; default: anthropic.",
+    ["--url"] = "Proxy base URL; default: [proxy] bind and port.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok batch status
+local node_13 = clink.argmatcher()
+node_13:addflags({ "--provider" .. value, "--url" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_13:adddescriptions({
+    ["--provider"] = "anthropic or openai; default: from the id.",
+    ["--url"] = "Proxy base URL; default: [proxy] bind and port.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok batch fetch
+local node_12 = clink.argmatcher()
+node_12:addflags({ "--provider" .. value, "--url" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_12:adddescriptions({
+    ["--provider"] = "anthropic or openai; default: from the id.",
+    ["--url"] = "Proxy base URL; default: [proxy] bind and port.",
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok batch
+local node_11 = clink.argmatcher()
+node_11:addarg({ "fetch" .. node_12, "status" .. node_13, "submit" .. node_14 })
+node_11:adddescriptions({
+    ["fetch"] = "Write the results of a finished batch to a new file.",
+    ["status"] = "Print the provider's current state of a batch.",
+    ["submit"] = "Create a batch from a JSONL file of provider-shaped requests; prints the batch object.",
 })
 node_11:nofiles()
 
@@ -678,7 +724,7 @@ node_1:nofiles()
 
 -- rtok
 local node_0 = clink.argmatcher("rtok")
-node_0:addarg({ "agents" .. node_1, "bench" .. node_11, "completions" .. node_12, "config" .. node_13, "docs" .. node_20, "doctor" .. node_22, "expand" .. node_23, "filter" .. node_24, "hook" .. node_25, "logs" .. node_26, "man" .. node_29, "plugins" .. node_30, "proxy" .. node_31, "run" .. node_32, "stats" .. node_33, "task" .. node_34, "web" .. node_50, "wrap" .. node_51 })
+node_0:addarg({ "agents" .. node_1, "batch" .. node_11, "bench" .. node_15, "completions" .. node_16, "config" .. node_17, "docs" .. node_24, "doctor" .. node_26, "expand" .. node_27, "filter" .. node_28, "hook" .. node_29, "logs" .. node_30, "man" .. node_33, "plugins" .. node_34, "proxy" .. node_35, "run" .. node_36, "stats" .. node_37, "task" .. node_38, "web" .. node_54, "wrap" .. node_55 })
 node_0:addflags({ "-h", "--help", "--version" })
 node_0:adddescriptions({
     ["bench"] = "Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.",

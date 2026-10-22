@@ -1,4 +1,6 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Rtok.Proxy;
 
@@ -20,6 +22,36 @@ internal static class Json
         {
             return null;
         }
+    }
+
+    /// <summary>The body as a mutable object, or null when it is not a JSON object.</summary>
+    public static JsonObject? ParseObject(byte[] bytes)
+    {
+        try
+        {
+            return JsonNode.Parse(bytes) as JsonObject;
+        }
+        catch (Exception e)
+            when (e is JsonException or ArgumentException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>A rewritten body: compact, with non-ASCII text left as the client sent it.</summary>
+    public static byte[] Write(JsonNode node)
+    {
+        using var buffer = new MemoryStream();
+        using (
+            var writer = new Utf8JsonWriter(
+                buffer,
+                new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping }
+            )
+        )
+        {
+            node.WriteTo(writer);
+        }
+        return buffer.ToArray();
     }
 
     /// <summary>The property <paramref name="name"/> of an object; null for anything else.</summary>

@@ -108,5 +108,19 @@ public sealed class PutArchiveTests : IDisposable
         Assert.Single(db.ArchiveDecisions);
     }
 
+    [Fact]
+    public void The_first_summary_of_an_archive_version_stays()
+    {
+        var id = _f.Store.PutArchive("s1", [.. "x\n"u8]);
+        Assert.Null(_f.Store.GetArchiveSummary(id, "v1"));
+
+        Assert.True(_f.Store.PutArchiveSummary(id, "v1", "first"));
+        Assert.False(_f.Store.PutArchiveSummary(id, "v1", "second"));
+        Assert.True(_f.Store.PutArchiveSummary(id, "v2", "other version"));
+
+        Assert.Equal("first", _f.Store.GetArchiveSummary(id, "v1"));
+        Assert.Equal("other version", _f.Store.GetArchiveSummary(id, "v2"));
+    }
+
     public void Dispose() => _f.Dispose();
 }

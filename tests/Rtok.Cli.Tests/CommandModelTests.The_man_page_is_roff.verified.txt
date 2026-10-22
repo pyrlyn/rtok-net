@@ -44,6 +44,18 @@ See \fBrtok\-agents\-update\fR(1).
 Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
 See \fBrtok\-agents\-usage\fR(1).
 .TP
+\fBbatch fetch\fR
+Write the results of a finished batch to a new file.
+See \fBrtok\-batch\-fetch\fR(1).
+.TP
+\fBbatch status\fR
+Print the provider's current state of a batch.
+See \fBrtok\-batch\-status\fR(1).
+.TP
+\fBbatch submit\fR
+Create a batch from a JSONL file of provider\-shaped requests; prints the batch object.
+See \fBrtok\-batch\-submit\fR(1).
+.TP
 \fBbench\fR
 Run each bench task with claude \-p under each [bench.configs] settings file and print mean tokens and cost per config.
 See \fBrtok\-bench\fR(1).

@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Include="CliWrap" />
     <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="WireMock.Net" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />

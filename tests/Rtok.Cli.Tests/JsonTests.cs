@@ -46,6 +46,9 @@ public sealed class JsonTests
         ["proxy"] = "serves HTTP until Ctrl-C",
         ["wrap"] = "prints the command's own output",
         ["web"] = "serves the dashboard until Ctrl-C",
+        ["batch submit"] = "prints the provider's batch object as it came",
+        ["batch status"] = "prints the provider's batch object as it came",
+        ["batch fetch"] = "writes the results file and prints one line",
     };
 
     /// <summary>

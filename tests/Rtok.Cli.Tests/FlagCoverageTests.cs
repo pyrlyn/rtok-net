@@ -35,6 +35,8 @@ public sealed class FlagCoverageTests
         "status", // `task list`: one call's filter
         "remove", // `task conflict`: take one mark off
         "off", // `task parallel`: take one mark off
+        "provider", // `batch`: whose Batch API one call talks to
+        "url", // `batch`: which proxy one call goes through; else [proxy] bind and port
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

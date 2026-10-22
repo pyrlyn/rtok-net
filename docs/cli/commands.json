@@ -527,6 +527,130 @@
       ]
     },
     {
+      "path": "batch fetch",
+      "aliases": [],
+      "description": "Write the results of a finished batch to a new file.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Batch id (msgbatch_… is Anthropic, batch_… OpenAI)."
+        },
+        {
+          "type": "string",
+          "description": "File to create; an existing file is never overwritten."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--provider"
+          ],
+          "type": "string?",
+          "description": "anthropic or openai; default: from the id.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--url"
+          ],
+          "type": "string?",
+          "description": "Proxy base URL; default: [proxy] bind and port.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "batch status",
+      "aliases": [],
+      "description": "Print the provider's current state of a batch.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Batch id (msgbatch_… is Anthropic, batch_… OpenAI)."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--provider"
+          ],
+          "type": "string?",
+          "description": "anthropic or openai; default: from the id.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--url"
+          ],
+          "type": "string?",
+          "description": "Proxy base URL; default: [proxy] bind and port.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "batch submit",
+      "aliases": [],
+      "description": "Create a batch from a JSONL file of provider-shaped requests; prints the batch object.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "One request per line (Anthropic: custom_id + params; OpenAI: custom_id, method, url, body)."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--provider"
+          ],
+          "type": "string?",
+          "description": "anthropic or openai; default: anthropic.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--url"
+          ],
+          "type": "string?",
+          "description": "Proxy base URL; default: [proxy] bind and port.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "bench",
       "aliases": [],
       "description": "Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.",

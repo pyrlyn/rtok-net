@@ -4,9 +4,10 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'proxy', 'run', 'stats', 'task', 'web', 'wrap')
+        '' = @('agents', 'batch', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'proxy', 'run', 'stats', 'task', 'web', 'wrap')
         'agents' = @('info', 'install', 'junk', 'list', 'uninstall', 'update', 'usage')
         'agents junk' = @('clear', 'list')
+        'batch' = @('fetch', 'status', 'submit')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
         'logs' = @('export', 'watch')
@@ -22,6 +23,9 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
         'agents update' = @('--dry-run', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
         'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
+        'batch fetch' = @('--provider', '--url', '--config', '-h', '--help', '--version')
+        'batch status' = @('--provider', '--url', '--config', '-h', '--help', '--version')
+        'batch submit' = @('--provider', '--url', '--config', '-h', '--help', '--version')
         'bench' = @('--tasks', '--runs', '--dry-run', '--timeout', '--suite', '--config', '-h', '--help', '--version')
         'completions' = @('--install', '--uninstall', '-h', '--help', '--version')
         'config get' = @('--json', '--config', '-h', '--help', '--version')
@@ -85,6 +89,15 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents usage|--by'
         'agents usage|--tz'
         'agents usage|--config'
+        'batch fetch|--provider'
+        'batch fetch|--url'
+        'batch fetch|--config'
+        'batch status|--provider'
+        'batch status|--url'
+        'batch status|--config'
+        'batch submit|--provider'
+        'batch submit|--url'
+        'batch submit|--config'
         'bench|--tasks'
         'bench|--runs'
         'bench|--timeout'
@@ -255,6 +268,27 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents usage|-h' = 'Show help.'
         'agents usage|--help' = 'Show help.'
         'agents usage|--version' = 'Show version.'
+        'batch|fetch' = 'Write the results of a finished batch to a new file.'
+        'batch|status' = 'Print the provider''s current state of a batch.'
+        'batch|submit' = 'Create a batch from a JSONL file of provider-shaped requests; prints the batch object.'
+        'batch fetch|--provider' = 'anthropic or openai; default: from the id.'
+        'batch fetch|--url' = 'Proxy base URL; default: [proxy] bind and port.'
+        'batch fetch|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'batch fetch|-h' = 'Show help.'
+        'batch fetch|--help' = 'Show help.'
+        'batch fetch|--version' = 'Show version.'
+        'batch status|--provider' = 'anthropic or openai; default: from the id.'
+        'batch status|--url' = 'Proxy base URL; default: [proxy] bind and port.'
+        'batch status|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'batch status|-h' = 'Show help.'
+        'batch status|--help' = 'Show help.'
+        'batch status|--version' = 'Show version.'
+        'batch submit|--provider' = 'anthropic or openai; default: anthropic.'
+        'batch submit|--url' = 'Proxy base URL; default: [proxy] bind and port.'
+        'batch submit|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'batch submit|-h' = 'Show help.'
+        'batch submit|--help' = 'Show help.'
+        'batch submit|--version' = 'Show version.'
         'bench|--tasks' = 'The task file; [bench] tasks when omitted.'
         'bench|--runs' = 'Runs per task and config.'
         'bench|--dry-run' = 'Print the planned runs; run nothing.'

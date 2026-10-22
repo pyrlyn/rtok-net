@@ -30,6 +30,9 @@ public sealed record ProxyOptions(RtokConfig Config)
     /// <c>/live</c> (rtok S5); null refuses such clients.</summary>
     public string? AccessToken { get; init; }
 
+    /// <summary>The clock Flex retries wait on; tests pass a fake one.</summary>
+    public TimeProvider Time { get; init; } = TimeProvider.System;
+
     /// <summary>The upstream handler, for tests that route it elsewhere; null builds the TLS one.</summary>
     public HttpMessageHandler? Upstream { get; init; }
 

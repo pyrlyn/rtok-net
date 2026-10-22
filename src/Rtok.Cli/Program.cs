@@ -62,6 +62,7 @@ app.Add("expand", ExpandCommand.Run);
 app.Add("proxy", ProxyCommands.ProxyAsync);
 app.Add("wrap", ProxyCommands.WrapAsync);
 app.Add("web", WebCommands.WebAsync);
+app.Add<BatchCommands>("batch");
 app.Run(args);
 
 // "rtok 0.1.0 (3ebd2f7a1)".

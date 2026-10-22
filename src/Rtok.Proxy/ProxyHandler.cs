@@ -14,7 +14,7 @@ namespace Rtok.Proxy;
 /// <summary>Every request the proxy gets: the Host check, <c>/health</c> and <c>/live</c>, and
 /// the forward with its tee. An <see cref="HttpClient"/> forwarder rather than a reverse-proxy
 /// library: the tee and the recording need the body anyway.</summary>
-internal sealed class ProxyHandler
+internal sealed class ProxyHandler : IDisposable
 {
     /// <summary>Headers that describe one hop, not the message; the body bytes stay untouched.</summary>
     private static readonly HashSet<string> HopByHop = new(StringComparer.OrdinalIgnoreCase)
@@ -37,7 +37,11 @@ internal sealed class ProxyHandler
     private readonly HttpClient _client;
     private readonly ProxyRecorder? _recorder;
     private readonly ILogger _log;
-    private readonly TimeSpan _readTimeout;
+    private readonly Dictionary<Lane, LaneRules> _rules = [];
+    private readonly ResponseCache _cache;
+    private readonly Dictionary<Lane, TimeSpan> _timeouts = [];
+    private readonly Dictionary<Lane, string> _laneUpstreams = [];
+    private readonly Dictionary<Lane, LaneGate> _gates = [];
 
     public ProxyHandler(ProxyOptions options, HttpClient client, LiveCalls live)
     {
@@ -49,12 +53,34 @@ internal sealed class ProxyHandler
             options.Store is { } store && !options.Plain
                 ? new ProxyRecorder(store, options.Logger, options.Config.Hook.Host)
                 : null;
-        _readTimeout = TimeSpan.FromSeconds(
-            Math.Clamp(options.Config.Proxy.TimeoutS, 1, int.MaxValue)
-        );
+        _cache = new ResponseCache(options.Time);
+        foreach (var lane in Lanes.All)
+        {
+            var policy = lane.Policy(options.Config.Proxy.Lanes);
+            var rules = LaneRules.For(lane, options.Config);
+            _rules[lane] = rules;
+            _timeouts[lane] = TimeSpan.FromSeconds(Math.Clamp(rules.TimeoutS, 1, int.MaxValue));
+            var upstream = policy.Upstream.Trim().TrimEnd('/');
+            if (upstream.Length > 0)
+            {
+                _laneUpstreams[lane] = upstream;
+            }
+            if (LaneGate.For(policy) is { } gate)
+            {
+                _gates[lane] = gate;
+            }
+        }
     }
 
     public LiveCalls Live { get; }
+
+    public void Dispose()
+    {
+        foreach (var gate in _gates.Values)
+        {
+            gate.Dispose();
+        }
+    }
 
     public async Task HandleAsync(HttpContext context)
     {
@@ -155,6 +181,13 @@ internal sealed class ProxyHandler
     {
         var started = Stopwatch.GetTimestamp();
         var request = context.Request;
+        // The lane marker is for rtok, not the provider: read here, never forwarded.
+        var lane = Lane.Agent;
+        if (_options.Config.Proxy.Lanes.Enabled)
+        {
+            var marker = request.Headers[Lanes.Header];
+            (lane, path) = Lanes.Classify(path, marker.Count > 0 ? marker[0] : null);
+        }
         var hopValues = request.Headers[Hops.Header];
         var hops = Hops.Count(hopValues.Count > 0 ? hopValues[0] : null);
         if (hops >= Hops.Max)
@@ -175,6 +208,48 @@ internal sealed class ProxyHandler
                 hops
             );
         }
+        // The lane's cap is taken before the body is read, so a queued request holds no body.
+        IDisposable? slot = null;
+        if (!_options.Plain && _gates.TryGetValue(lane, out var gate))
+        {
+            try
+            {
+                slot = await gate.EnterAsync(context.RequestAborted).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            if (slot is null)
+            {
+                var full =
+                    $"{request.Method} {path}: {lane.Name()} lane at max_in_flight with a full queue, answered 429";
+                _log.Warning("{Message}", full);
+                context.Response.Headers.RetryAfter = LaneGate.RetryAfterSeconds.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
+                await ErrorAsync(context, StatusCodes.Status429TooManyRequests, full)
+                    .ConfigureAwait(false);
+                return;
+            }
+        }
+        using (slot)
+        {
+            await ShapeAsync(context, lane, path, query, hops, started).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>The body, the bookkeeping and the request shaping, then the relay.</summary>
+    private async Task ShapeAsync(
+        HttpContext context,
+        Lane lane,
+        string path,
+        string? query,
+        int hops,
+        long started
+    )
+    {
+        var request = context.Request;
         byte[] body;
         try
         {
@@ -192,17 +267,12 @@ internal sealed class ProxyHandler
         var wire = Wire.For(path);
         // Plain: a kill switch is off, or an earlier rtok already recorded this request.
         var plain = _options.Plain || hops > 0;
-        var recorded = plain
-            ? null
-            : _recorder?.Record(wire, path, body, h => request.Headers[h].ToString());
-        if (!plain && wire is not null)
-        {
-            body = Prepare(wire, body, _options.Config.Proxy.IncludeUsage);
-        }
+        var (shaped, recorded, flex) = Shape(lane, wire, path, body, request.Headers, plain);
+        body = shaped;
         string target;
         try
         {
-            target = UpstreamUrl.Join(Upstream(wire, path, request.Headers), path, query);
+            target = UpstreamUrl.Join(Upstream(lane, wire, path, request.Headers), path, query);
         }
         catch (FormatException e)
         {
@@ -210,22 +280,156 @@ internal sealed class ProxyHandler
                 .ConfigureAwait(false);
             return;
         }
-        var exchange = new Exchange(request.Method, path, wire, body, plain, recorded, started);
+        // After the target: an answer cached for one upstream is never served for another.
+        var cacheKey = plain ? null : CacheKeyOf(lane, wire, body, request, target);
+        if (cacheKey is not null && _cache.Lookup(cacheKey, CacheTtl) is { } hit)
+        {
+            await ReplayAsync(context, hit, wire, body, recorded, started, cacheKey)
+                .ConfigureAwait(false);
+            return;
+        }
+        var exchange = new Exchange(
+            request.Method,
+            path,
+            lane,
+            wire,
+            body,
+            plain,
+            recorded,
+            started,
+            _timeouts[lane],
+            flex,
+            cacheKey
+        );
         await RelayAsync(context, exchange, target, hops).ConfigureAwait(false);
+    }
+
+    private TimeSpan CacheTtl =>
+        TimeSpan.FromSeconds(
+            Math.Clamp(_options.Config.Plugins.Proxy.SemanticCache.TtlS, 1, int.MaxValue)
+        );
+
+    /// <summary>The cache key when the lane uses the cache and the request may be answered from
+    /// it; null otherwise.</summary>
+    private byte[]? CacheKeyOf(
+        Lane lane,
+        Wire? wire,
+        byte[] body,
+        HttpRequest request,
+        string target
+    )
+    {
+        var cache = _options.Config.Plugins.Proxy.SemanticCache;
+        if (wire is null || !_rules[lane].SemanticCache)
+        {
+            return null;
+        }
+        using var doc = Json.Parse(body);
+        if (doc is null || !CacheKey.Eligible(doc.RootElement, cache))
+        {
+            return null;
+        }
+        var scope = CacheKey.Scope(name => request.Headers[name], request.Method, target);
+        return CacheKey.Of(wire, doc.RootElement, cache, scope);
+    }
+
+    /// <summary>A cache hit: the stored answer as it came, and the same bookkeeping as a relayed
+    /// one minus the round trip.</summary>
+    private async Task ReplayAsync(
+        HttpContext context,
+        CachedAnswer hit,
+        Wire? wire,
+        byte[] request,
+        Recorded? recorded,
+        long started,
+        byte[] key
+    )
+    {
+        var response = context.Response;
+        response.StatusCode = hit.Status;
+        if (hit.ContentType is { } contentType)
+        {
+            response.ContentType = contentType;
+        }
+        try
+        {
+            await response.Body.WriteAsync(hit.Body, context.RequestAborted).ConfigureAwait(false);
+        }
+        catch (Exception e) when (e is IOException or OperationCanceledException)
+        {
+            // The client went away; the hit is still recorded.
+        }
+        if (recorded is not null)
+        {
+            _recorder!.CacheHit(
+                recorded,
+                started,
+                wire,
+                request,
+                hit,
+                Convert.ToHexStringLower(key)[..8]
+            );
+        }
+    }
+
+    /// <summary>What happens to a request before it goes upstream, in rtok's order: the route,
+    /// the record, the wire's own shaping, then Flex.</summary>
+    private (byte[] Body, Recorded? Recorded, FlexRetry? Flex) Shape(
+        Lane lane,
+        Wire? wire,
+        string path,
+        byte[] body,
+        IHeaderDictionary headers,
+        bool plain
+    )
+    {
+        var proxy = _options.Config.Proxy;
+        // Routing runs before the record, so the ledger names the model that served the call.
+        var routed =
+            !plain && lane.Route(proxy.Routing) is { } rule ? ModelRoute.Apply(rule, body) : null;
+        body = routed?.Body ?? body;
+        var recorded = plain
+            ? null
+            : _recorder?.Record(
+                wire,
+                path,
+                body,
+                h => headers[h].ToString(),
+                lane.Kind(),
+                routed?.Provider
+            );
+        if (routed is not null && recorded is not null)
+        {
+            _recorder!.Routed(recorded, lane, routed);
+        }
+        if (!plain && wire is not null && !lane.PassesThrough())
+        {
+            body = Prepare(wire, body, proxy.IncludeUsage);
+        }
+        // Flex last: its retry falls back to the body exactly as it would otherwise have gone.
+        FlexRetry? flex = null;
+        if (
+            !plain
+            && wire is not null
+            && _rules[lane].Flex
+            && Flex.Apply(wire.Provider, body, proxy.Flex) is { } flexed
+        )
+        {
+            flex = FlexRetry.For(body, proxy.Flex);
+            body = flexed;
+        }
+        return (body, recorded, flex);
     }
 
     /// <summary>Sends the request upstream and streams the answer back; the bookkeeping runs
     /// once the client has all of it.</summary>
     private async Task RelayAsync(HttpContext context, Exchange exchange, string target, int hops)
     {
-        using var outgoing = Outgoing(context.Request, exchange, target, hops);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-        timeout.CancelAfter(_readTimeout);
         HttpResponseMessage upstream;
         try
         {
-            upstream = await _client
-                .SendAsync(outgoing, HttpCompletionOption.ResponseHeadersRead, timeout.Token)
+            (upstream, exchange) = await SendAsync(context, exchange, target, hops, timeout)
                 .ConfigureAwait(false);
         }
         catch (Exception e) when (e is HttpRequestException or OperationCanceledException)
@@ -240,8 +444,23 @@ internal sealed class ProxyHandler
             CopyHeaders(upstream.Headers, response.Headers);
             CopyHeaders(upstream.Content.Headers, response.Headers);
             var contentType = upstream.Content.Headers.ContentType?.ToString();
-            var (kept, total) = await TeeAsync(context, upstream, timeout).ConfigureAwait(false);
+            var (kept, total, complete) = await TeeAsync(
+                    context,
+                    upstream,
+                    timeout,
+                    exchange.Timeout
+                )
+                .ConfigureAwait(false);
             await response.CompleteAsync().ConfigureAwait(false);
+            // Filled before the usage rows: a visible usage row then means a warm cache.
+            if (exchange.CacheKey is { } key && complete)
+            {
+                _cache.Store(
+                    key,
+                    CacheTtl,
+                    new CachedAnswer(response.StatusCode, contentType, kept)
+                );
+            }
             if (exchange.Plain)
             {
                 Live.Push(LiveCallOf(exchange, response.StatusCode, total));
@@ -255,9 +474,67 @@ internal sealed class ProxyHandler
                     contentType,
                     exchange.Body,
                     kept,
-                    total
+                    total,
+                    ResultsOf(exchange, response.StatusCode, target)
                 );
             }
+        }
+    }
+
+    /// <summary>A results download to read as usage rows: <c>[proxy.batch] parse_results</c>,
+    /// a 2xx, and a batch or files path (rtok T385.4). The scope is the target without its
+    /// query: the path holds the batch or file id, the query nothing that names the results.</summary>
+    private BatchFetch? ResultsOf(Exchange exchange, int status, string target) =>
+        _options.Config.Proxy.Batch.ParseResults
+        && status is >= 200 and < 300
+        && BatchResults.Source(exchange.Lane, exchange.Method, exchange.Path) is { } source
+            ? new BatchFetch(source, target.Split('?', 2)[0])
+            : null;
+
+    /// <summary>One send, or several when rtok put the request on Flex and the policy retries
+    /// its 429: the dropped 429 is not billed and no byte of it reached the client. Returns the
+    /// last response and the exchange with the body that produced it.</summary>
+    private async Task<(HttpResponseMessage, Exchange)> SendAsync(
+        HttpContext context,
+        Exchange exchange,
+        string target,
+        int hops,
+        CancellationTokenSource timeout
+    )
+    {
+        for (var retries = 0; ; retries++)
+        {
+            timeout.CancelAfter(exchange.Timeout);
+            using var outgoing = Outgoing(
+                context.Request,
+                exchange,
+                target,
+                hops,
+                _options.Config.Proxy.Lanes.Enabled
+            );
+            var upstream = await _client
+                .SendAsync(outgoing, HttpCompletionOption.ResponseHeadersRead, timeout.Token)
+                .ConfigureAwait(false);
+            if (
+                upstream.StatusCode != HttpStatusCode.TooManyRequests
+                || exchange.Flex?.Next(retries, Flex.RetryAfter(upstream.Headers)) is not { } next
+            )
+            {
+                if (retries > 0)
+                {
+                    _log.Warning(
+                        "flex 429 on {Method} {Path}: {Retries} retry(ies)",
+                        exchange.Method,
+                        exchange.Path,
+                        retries
+                    );
+                }
+                return (upstream, exchange);
+            }
+            upstream.Dispose();
+            await Task.Delay(next.Wait, _options.Time, context.RequestAborted)
+                .ConfigureAwait(false);
+            exchange = exchange with { Body = next.Body ?? exchange.Body };
         }
     }
 
@@ -269,7 +546,7 @@ internal sealed class ProxyHandler
         var reason =
             gone ? "client closed the request"
             : error is OperationCanceledException
-                ? $"no response within {_readTimeout.TotalSeconds:0}s"
+                ? $"no response within {exchange.Timeout.TotalSeconds:0}s"
             : error.Message;
         var failure = $"{exchange.Method} {exchange.Path}: {reason}";
         if (exchange.Plain)
@@ -293,15 +570,18 @@ internal sealed class ProxyHandler
 
     /// <summary>Streams the upstream body to the client chunk by chunk while keeping up to
     /// <see cref="ProxyOptions.TeeBytes"/> of it. An upstream that stops mid-body aborts the
-    /// client connection, so the client sees a cut, not a short success.</summary>
-    private async Task<(byte[] Kept, long Total)> TeeAsync(
+    /// client connection, so the client sees a cut, not a short success. Complete means the
+    /// whole body reached the client and the tee kept all of it.</summary>
+    private async Task<(byte[] Kept, long Total, bool Complete)> TeeAsync(
         HttpContext context,
         HttpResponseMessage upstream,
-        CancellationTokenSource timeout
+        CancellationTokenSource timeout,
+        TimeSpan readTimeout
     )
     {
         using var kept = new MemoryStream();
         long total = 0;
+        var complete = false;
         var buffer = ArrayPool<byte>.Shared.Rent(Chunk);
         try
         {
@@ -311,7 +591,12 @@ internal sealed class ProxyHandler
             await using (stream.ConfigureAwait(false))
             {
                 int read;
-                while ((read = await ReadAsync(stream, buffer, timeout).ConfigureAwait(false)) > 0)
+                while (
+                    (
+                        read = await ReadAsync(stream, buffer, timeout, readTimeout)
+                            .ConfigureAwait(false)
+                    ) > 0
+                )
                 {
                     total += read;
                     if (kept.Length < _options.TeeBytes)
@@ -326,6 +611,7 @@ internal sealed class ProxyHandler
                         break;
                     }
                 }
+                complete = read == 0 && kept.Length == total;
             }
         }
         catch (Exception e)
@@ -337,13 +623,18 @@ internal sealed class ProxyHandler
         {
             ArrayPool<byte>.Shared.Return(buffer);
         }
-        return (kept.ToArray(), total);
+        return (kept.ToArray(), total, complete);
     }
 
     /// <summary>One upstream read; the read budget starts again for each.</summary>
-    private async Task<int> ReadAsync(Stream stream, byte[] buffer, CancellationTokenSource timeout)
+    private static async Task<int> ReadAsync(
+        Stream stream,
+        byte[] buffer,
+        CancellationTokenSource timeout,
+        TimeSpan readTimeout
+    )
     {
-        timeout.CancelAfter(_readTimeout);
+        timeout.CancelAfter(readTimeout);
         return await stream
             .ReadAsync(buffer.AsMemory(0, Chunk), timeout.Token)
             .ConfigureAwait(false);
@@ -367,14 +658,16 @@ internal sealed class ProxyHandler
         }
     }
 
-    /// <summary>The upstream request: every end-to-end header, the hop count plus one, and when
-    /// recording <c>Accept-Encoding: identity</c> so the tee can read the body. Plain mode keeps
-    /// the client's encoding and passes the bytes through as they come.</summary>
+    /// <summary>The upstream request: every end-to-end header but the lane marker while lanes are
+    /// on, the hop count plus one, and when recording <c>Accept-Encoding: identity</c> so the tee
+    /// can read the body. Plain mode keeps the client's encoding and passes the bytes through as
+    /// they come.</summary>
     private static HttpRequestMessage Outgoing(
         HttpRequest request,
         Exchange exchange,
         string target,
-        int hops
+        int hops,
+        bool lanes
     )
     {
         var (body, plain) = (exchange.Body, exchange.Plain);
@@ -393,6 +686,7 @@ internal sealed class ProxyHandler
                 HopByHop.Contains(name)
                 || name.Equals("content-length", StringComparison.OrdinalIgnoreCase)
                 || (!plain && name.Equals("accept-encoding", StringComparison.OrdinalIgnoreCase))
+                || (lanes && name.Equals(Lanes.Header, StringComparison.OrdinalIgnoreCase))
             )
             {
                 continue;
@@ -433,32 +727,9 @@ internal sealed class ProxyHandler
     {
         try
         {
-            if (
-                JsonNode.Parse(body) is not JsonObject json
-                || !wire.PrepareRequest(json, includeUsage)
-            )
-            {
-                return body;
-            }
-            using var buffer = new MemoryStream();
-            using (
-                var writer = new Utf8JsonWriter(
-                    buffer,
-                    new JsonWriterOptions
-                    {
-                        Encoder = System
-                            .Text
-                            .Encodings
-                            .Web
-                            .JavaScriptEncoder
-                            .UnsafeRelaxedJsonEscaping,
-                    }
-                )
-            )
-            {
-                json.WriteTo(writer);
-            }
-            return buffer.ToArray();
+            return Json.ParseObject(body) is { } json && wire.PrepareRequest(json, includeUsage)
+                ? Json.Write(json)
+                : body;
         }
         catch (Exception e)
             when (e is JsonException or ArgumentException or InvalidOperationException)
@@ -467,11 +738,16 @@ internal sealed class ProxyHandler
         }
     }
 
-    /// <summary>The OpenAI wires go to <c>openai_upstream</c>, Gemini to <c>gemini_upstream</c>,
-    /// the rest to <c>upstream</c>, except OpenAI's batch and files APIs: Anthropic's Files API
-    /// shares the path but always carries <c>anthropic-version</c>.</summary>
-    private string Upstream(Wire? wire, string path, IHeaderDictionary headers)
+    /// <summary>The lane's own <c>upstream</c> when it names one. Otherwise the OpenAI wires go to
+    /// <c>openai_upstream</c>, Gemini to <c>gemini_upstream</c>, the rest to <c>upstream</c>,
+    /// except OpenAI's batch and files APIs: Anthropic's Files API shares the path but always
+    /// carries <c>anthropic-version</c>.</summary>
+    private string Upstream(Lane lane, Wire? wire, string path, IHeaderDictionary headers)
     {
+        if (_laneUpstreams.TryGetValue(lane, out var own))
+        {
+            return own;
+        }
         var proxy = _options.Config.Proxy;
         return (wire?.Provider) switch
         {
@@ -484,11 +760,7 @@ internal sealed class ProxyHandler
     }
 
     private static bool IsOpenAiBatch(string path) =>
-        Under(path, "/v1/batches") || Under(path, "/v1/files");
-
-    private static bool Under(string path, string root) =>
-        path.StartsWith(root, StringComparison.Ordinal)
-        && (path.Length == root.Length || path[root.Length] == '/');
+        Lanes.Under(path, "/v1/batches") || Lanes.Under(path, "/v1/files");
 
     private static LiveCall LiveCallOf(Exchange exchange, int status, long responseBytes)
     {
@@ -552,10 +824,14 @@ internal sealed class ProxyHandler
     private sealed record Exchange(
         string Method,
         string Path,
+        Lane Lane,
         Wire? Wire,
         byte[] Body,
         bool Plain,
         Recorded? Recorded,
-        long Started
+        long Started,
+        TimeSpan Timeout,
+        FlexRetry? Flex = null,
+        byte[]? CacheKey = null
     );
 }

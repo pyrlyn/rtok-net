@@ -26,8 +26,17 @@ internal sealed class ProxyRecorder
         _hostId = Try(() => _store.HostId(host), null, "host") ?? OtherHost;
     }
 
-    /// <summary>The session, model and <c>calls</c> row for a request about to go upstream.</summary>
-    public Recorded? Record(Wire? wire, string path, byte[] body, Func<string, string?> header)
+    /// <summary>The session, model and <c>calls</c> row for a request about to go upstream.
+    /// <paramref name="kind"/> is the lane's <c>calls.kind</c>; <paramref name="provider"/> names
+    /// the provider a routing rule sent the call to instead of the wire's own.</summary>
+    public Recorded? Record(
+        Wire? wire,
+        string path,
+        byte[] body,
+        Func<string, string?> header,
+        string kind,
+        string? provider = null
+    )
     {
         using var doc = Json.Parse(body);
         var root = doc?.RootElement;
@@ -40,12 +49,12 @@ internal sealed class ProxyRecorder
             long? modelId = null;
             if (wire is not null && model is not null)
             {
-                (providerId, modelId) = _store.UpsertModel(wire.Provider, model);
+                (providerId, modelId) = _store.UpsertModel(provider ?? wire.Provider, model);
             }
             var callId = _store.InsertCall(
                 session,
                 "proxy",
-                "api_request",
+                kind,
                 _hostId,
                 providerId,
                 modelId,
@@ -63,6 +72,39 @@ internal sealed class ProxyRecorder
         }
     }
 
+    /// <summary>A routing rule changed the model: a <c>model_route</c> row (no saving claimed,
+    /// the bytes stay the same) and an info line naming both models.</summary>
+    public void Routed(Recorded recorded, Lane lane, Routed routed)
+    {
+        var bytes = routed.Body.Length;
+        var est = Math.Max(bytes / 4, 1);
+        Try(
+            () =>
+                _store.InsertMeasurement(
+                    recorded.Session,
+                    new MeasurementInput(
+                        "proxy",
+                        "model_route",
+                        bytes,
+                        bytes,
+                        est,
+                        est,
+                        null,
+                        recorded.CallId
+                    )
+                ),
+            "model route",
+            recorded
+        );
+        Log(recorded.Session, recorded.CallId)
+            .Information(
+                "model route on the {Lane} lane: {From} -> {To}",
+                lane.Name(),
+                routed.From,
+                routed.To
+            );
+    }
+
     /// <summary>After the response reached the client: the time, the bodies, then usage.</summary>
     public void Finish(
         Recorded recorded,
@@ -71,7 +113,8 @@ internal sealed class ProxyRecorder
         string? contentType,
         byte[] request,
         byte[] response,
-        long responseBytes
+        long responseBytes,
+        BatchFetch? results = null
     )
     {
         var log = Log(recorded.Session, recorded.CallId);
@@ -88,13 +131,84 @@ internal sealed class ProxyRecorder
         if (wire is null)
         {
             // A path no wire owns (/v1/models) never carries usage; logging it would be noise.
+            if (results is not null)
+            {
+                BatchResultRows(recorded, results, response);
+            }
             return;
+        }
+        if (UsageReader.ServiceTier(contentType, response) is { } tier)
+        {
+            Try(() => _store.SetCallServiceTier(recorded.CallId, tier), "service_tier", recorded);
         }
         var usage = UsageReader.FromResponse(wire, contentType, response);
         Usage(recorded, wire, usage);
         if (usage is null)
         {
             log.Information("no usage in upstream response");
+        }
+    }
+
+    /// <summary>A cache hit: a <c>semantic_cache_hit</c> row (the bytes are the same, the saving
+    /// is the call not made), the time, the bodies, and the usage the cached answer reports.</summary>
+    public void CacheHit(
+        Recorded recorded,
+        long started,
+        Wire? wire,
+        byte[] request,
+        CachedAnswer hit,
+        string hash8
+    )
+    {
+        var bytes = hit.Body.Length;
+        var est = Math.Max(bytes / 4, 1);
+        Try(
+            () =>
+                _store.InsertMeasurement(
+                    recorded.Session,
+                    new MeasurementInput(
+                        "proxy",
+                        "semantic_cache_hit",
+                        bytes,
+                        bytes,
+                        est,
+                        est,
+                        $"1.0000:{hash8}",
+                        recorded.CallId
+                    )
+                ),
+            "cache hit",
+            recorded
+        );
+        Try(() => _store.SetCallMs(recorded.CallId, Ms(started)), "ms", recorded);
+        Try(() => _store.InsertCallIo(recorded.CallId, request, hit.Body), "call_io", recorded);
+        if (wire is not null)
+        {
+            Usage(recorded, wire, UsageReader.FromResponse(wire, hit.ContentType, hit.Body));
+        }
+    }
+
+    /// <summary>A Batch results file: one <c>usage</c> row per result not recorded before, and a
+    /// file download that turned out to be Batch output tagged as the batch lane.</summary>
+    private void BatchResultRows(Recorded recorded, BatchFetch results, byte[] response)
+    {
+        var rows = BatchResults.Rows(response, results.Scope, recorded.Model);
+        if (rows.Count == 0)
+        {
+            return;
+        }
+        Try(
+            () => _store.InsertUsageRows(recorded.Session, recorded.CallId, rows),
+            "batch results",
+            recorded
+        );
+        if (results.Source == BatchSource.File)
+        {
+            Try(
+                () => _store.SetCallKind(recorded.CallId, Lane.Batch.Kind()),
+                "batch results",
+                recorded
+            );
         }
     }
 

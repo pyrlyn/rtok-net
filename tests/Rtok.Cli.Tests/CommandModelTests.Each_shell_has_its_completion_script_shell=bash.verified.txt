@@ -3,9 +3,10 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins proxy run stats task web wrap' ;;
+        '') echo 'agents batch bench completions config docs doctor expand filter hook logs man plugins proxy run stats task web wrap' ;;
         'agents') echo 'info install junk list uninstall update usage' ;;
         'agents junk') echo 'clear list' ;;
+        'batch') echo 'fetch status submit' ;;
         'config') echo 'get init path set show validate' ;;
         'docs') echo 'fetch' ;;
         'logs') echo 'export watch' ;;
@@ -24,6 +25,9 @@ _rtok_options() {
         'agents uninstall') echo '--dry-run --yes --config -h --help --version' ;;
         'agents update') echo '--dry-run --cli --gui --desktop --all --config -h --help --version' ;;
         'agents usage') echo '--source --host --since --until --daily --monthly --by --tz --unpriced --json --config -h --help --version' ;;
+        'batch fetch') echo '--provider --url --config -h --help --version' ;;
+        'batch status') echo '--provider --url --config -h --help --version' ;;
+        'batch submit') echo '--provider --url --config -h --help --version' ;;
         'bench') echo '--tasks --runs --dry-run --timeout --suite --config -h --help --version' ;;
         'completions') echo '--install --uninstall -h --help --version' ;;
         'config get') echo '--json --config -h --help --version' ;;
@@ -75,6 +79,9 @@ _rtok_values() {
         'agents uninstall') echo '--config' ;;
         'agents update') echo '--config' ;;
         'agents usage') echo '--source --host --since --until --by --tz --config' ;;
+        'batch fetch') echo '--provider --url --config' ;;
+        'batch status') echo '--provider --url --config' ;;
+        'batch submit') echo '--provider --url --config' ;;
         'bench') echo '--tasks --runs --timeout --suite --config' ;;
         'config get') echo '--config' ;;
         'config init') echo '--config' ;;

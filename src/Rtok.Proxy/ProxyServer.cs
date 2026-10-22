@@ -18,12 +18,14 @@ public sealed class ProxyServer : IAsyncDisposable
 
     private readonly WebApplication _app;
     private readonly HttpClient _client;
+    private readonly ProxyHandler _handler;
 
-    private ProxyServer(WebApplication app, HttpClient client, LiveCalls live, Uri address)
+    private ProxyServer(WebApplication app, HttpClient client, ProxyHandler handler, Uri address)
     {
         _app = app;
         _client = client;
-        Live = live;
+        _handler = handler;
+        Live = handler.Live;
         Address = address;
     }
 
@@ -68,6 +70,7 @@ public sealed class ProxyServer : IAsyncDisposable
         catch
         {
             await app.DisposeAsync().ConfigureAwait(false);
+            handler.Dispose();
             client.Dispose();
             throw;
         }
@@ -75,7 +78,7 @@ public sealed class ProxyServer : IAsyncDisposable
             .Services.GetRequiredService<IServer>()
             .Features.Get<IServerAddressesFeature>()!
             .Addresses.First();
-        return new ProxyServer(app, client, live, new Uri(address));
+        return new ProxyServer(app, client, handler, new Uri(address));
     }
 
     /// <inheritdoc />
@@ -83,6 +86,7 @@ public sealed class ProxyServer : IAsyncDisposable
     {
         await _app.StopAsync().ConfigureAwait(false);
         await _app.DisposeAsync().ConfigureAwait(false);
+        _handler.Dispose();
         _client.Dispose();
     }
 

@@ -4,6 +4,7 @@
     <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CsCheck" />
     <PackageReference Include="WireMock.Net" />
   </ItemGroup>
   <ItemGroup>
