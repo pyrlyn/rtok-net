@@ -10,6 +10,8 @@ agent:
 
 Some projects get better answers from a language server; some have no grammar at all.
 
+LSP client: StreamJsonRpc 2.25.29 (`SystemTextJsonFormatter` on a source-generated context, `HeaderDelimitedMessageHandler`, `NamedArgs`), proven under NativeAOT against rust-analyzer ([research.md H](../../research.md)). OmniSharp.Extensions.LanguageClient is rejected: it crashes at start under NativeAOT. `shutdown` and `exit` go out without `params`.
+
 Done when these backends answer under the same tool names, with fallback to tags per call:
 - `lsp`: rust-analyzer, dart, and the rest from the catalog, with deadlines and child shutdown;
 - `text`: in-process regex, no child process;

@@ -292,6 +292,7 @@ Notation:
 | shlex | **write own** (POSIX split/quote, about 100 lines) | | | |
 | wasmi (optional plugin host) | **WACS** 0.16.14 (pure C#, Apache-2.0; trim-only, warnings) or **Wasmtime** 48.0.2 (native lib, Apache-2.0 WITH LLVM-exception; warnings) | | warnings | Leave it feature-gated. WACS is closer to wasmi (an interpreter, no native code). |
 | zstd | **ZstdSharp.Port** now; **BCL `ZstandardStream`** in .NET 11 | 0.8.8 | rooted clean, not declared | [doc] https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/libraries |
+| LSP client (graph `lsp` backend, T24.1) | **StreamJsonRpc** with `SystemTextJsonFormatter` + `HeaderDelimitedMessageHandler` | 2.25.29 (MIT) | **runtime-ok** against rust-analyzer, warnings at two call sites [measured] | See H. OmniSharp.Extensions.LanguageClient 1.0.0 crashes under NativeAOT (DryIoc). |
 | pathdiff | **BCL** `Path.GetRelativePath` | | yes | |
 | rmcp (stdio + streamable HTTP) | **ModelContextProtocol** + `.AspNetCore` | 2.3.0 (Apache-2.0) | declared, **runtime-ok over HTTP** [measured] | Use `AddMcpServer().WithStdioServerTransport()` / `.WithHttpTransport()` and `MapMcp("/mcp")`. Initialize and tools/call worked under AOT. No `Mcp-Session-Id` was returned by default (the default looked stateless; check `HttpServerTransportOptions.Stateless` [unverified]). **Adds about 2.3 ms to process startup, so keep it out of the hook.** |
 | ignore (gitignore-aware walk) | **BCL** `FileSystemEnumerable<T>` + **write own** `Rtok.Ignore` (gitignore semantics + .ignore + global excludes) | | | NuGet options exist: Ignore 0.2.1 and GitignoreParserNet 0.2.0.15, both rooted clean but small and with incomplete semantics. MAB.DotIgnore 3.0.2 is stale (2020). |
@@ -733,6 +734,49 @@ client, the proxy and WireMock together.
 The plain hop costs about 0.17 MB a call; recording adds about 0.8 MB more (the 40 KB request
 read whole for usage and `call_io`, the tee, JSON parsing and the EF rows). Rerun on an idle
 machine before quoting the times.
+
+## H. T24.1: LSP client libraries (2026-10-22)
+
+Probe [measured], macOS arm64: a net10.0 console with `PublishAot` drives rust-analyzer over
+stdio on a three-item crate: `initialize`, `initialized`, `didOpen`, `documentSymbol`,
+`shutdown`, `exit`.
+
+| Library | Version | JIT | NativeAOT | Verdict |
+|---|---|---|---|---|
+| OmniSharp.Extensions.LanguageClient | 1.0.0 (MIT) | symbols ok; `Shutdown()` throws `InvalidParametersException` (rust-analyzer refuses its `shutdown` params) | publishes (IL2104 x3, IL3002 x7, IL3053 x1), 6.0 MB; crashes at start: DryIoc `Registrator..cctor`, "Undefined Method 'Initializer'" | rejected |
+| StreamJsonRpc | 2.25.29 (MIT) | ok with the setup below | 5.5 MB; symbols `Foo`, `bar`, `main`; `shutdown`/`exit` and the child exits 0; 6 IL2026 + 2 IL3050, all at the probe's call sites | usable |
+
+- **OmniSharp:** 1.0.0 depends on Newtonsoft.Json, MediatR, System.Reactive, Nerdbank.Streams
+  and an internalized DryIoc. Its unreleased `master` dropped Newtonsoft and MediatR (PR #1830,
+  2026-10-09) but keeps DryIoc, so a newer release would still crash under AOT.
+  https://github.com/OmniSharp/csharp-language-server-protocol/pull/1830
+- **StreamJsonRpc setup that works under AOT** (https://microsoft.github.io/vs-streamjsonrpc/docs/nativeAOT.html):
+  - `SystemTextJsonFormatter` whose `JsonSerializerOptions.TypeInfoResolver` is a
+    source-generated `JsonSerializerContext`. Set the camelCase naming policy and
+    `WhenWritingNull` on those options too: the context's `[JsonSourceGenerationOptions]` do not
+    carry over to the formatter's options.
+  - `HeaderDelimitedMessageHandler` over the child's stdin and stdout is LSP's Content-Length
+    framing.
+  - Requests and notifications go through `NamedArgs.Create(...)`. Top-level param names come
+    from `[DataMember(Name = ...)]` on a `[DataContract]` type; nested values serialize through
+    the context.
+  - `shutdown` and `exit` must carry no `params`. The positional overloads send `[]`, which
+    rust-analyzer rejects ("invalid type: sequence, expected unit"). Only the untyped
+    `(object?)null` parameter-object overload omits it.
+  - Server-to-client requests with no local target get method-not-found; rust-analyzer carried
+    on.
+- **StreamJsonRpc warnings:** the `SystemTextJsonFormatter()` constructor is marked
+  `RequiresUnreferencedCode` and `RequiresDynamicCode` even with a resolver set, and the
+  null-params overload is IL2026. Library code needs a justified suppression at those two
+  places to stay warning-free.
+- **StreamJsonRpc dependencies:** MessagePack, Nerdbank.MessagePack, Nerdbank.Streams,
+  Newtonsoft.Json, Microsoft.VisualStudio.Threading.Only and Microsoft.VisualStudio.Validation.
+  The trimmer drops what is unused (the binary is smaller than OmniSharp's), but MessagePack
+  resolves to 2.5.302 with NU1902 (GHSA-qhrr-8q5h-9q3h), so the build needs a pinned fixed
+  MessagePack under warnings as errors. 2.26.150 (2026-10-19) is too new to take yet.
+- **Own client** instead: Content-Length framing, id correlation, deadlines and about 15 DTOs on
+  System.Text.Json source generation. No new dependency and no suppressions, at the cost of
+  writing and fuzzing the framer (T15's `mcp --` wrap needs the same Content-Length framing).
 
 ---
 
