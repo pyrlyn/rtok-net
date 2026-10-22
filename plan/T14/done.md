@@ -55,3 +55,10 @@ Notes for later tasks:
 - Linux: the resident-up gate was run only on osx-arm64; `baseline.json` has no Linux entry, and CI does not run the gate.
 
 Check: `dotnet build rtok.slnx -c Release -warnaserror`, `dotnet test` (1073 passed) and `dotnet csharpier check .` are green. The latency gate passes with exit 0. By hand on the AOT binaries: autostart, then served; deleting `hook.lock` stops the resident.
+
+Follow-up: with `RTOK_SMOKE_BIN` holding the real `rtok` beside `rtok-hook` (fixed
+`eng/publish.sh`, b0e3454), the smoke tests that drive the client alone spawned a resident:
+`A_hung_resident_costs_the_client_its_budget_and_no_more` could not bind its address, and a
+temp home could not be deleted. They now run a copy of the client in the home with no `rtok`
+beside it (`LoneClientAsync`). `HookTests` pass 17 of 17 against `artifacts/dist/osx-arm64`
+and self-published, and the hung test 3 of 3.

@@ -19,14 +19,14 @@ public sealed class HookTests
         );
 
     // Fail open: every payload, and no payload at all, gets the no-op reply and exit 0. The
-    // published client has no rtok beside it, so nothing starts.
+    // client runs alone (LoneClientAsync), so nothing starts.
     [Theory]
     [MemberData(nameof(Fixtures))]
     public async Task Hook_answers_each_fixture_with_the_no_op_reply(string fixture)
     {
         var ct = TestContext.Current.CancellationToken;
-        var hook = await PublishedApps.PathAsync("rtok-hook", ct);
         using var home = new TempDir();
+        var hook = await LoneClientAsync(home.Path, ct);
 
         var result = await Cli.Wrap(hook)
             .WithEnvironmentVariables(e => e.Set("RTOK_HOME", home.Path))
@@ -41,8 +41,8 @@ public sealed class HookTests
     public async Task Hook_answers_empty_stdin_with_the_no_op_reply()
     {
         var ct = TestContext.Current.CancellationToken;
-        var hook = await PublishedApps.PathAsync("rtok-hook", ct);
         using var home = new TempDir();
+        var hook = await LoneClientAsync(home.Path, ct);
 
         var result = await Cli.Wrap(hook)
             .WithEnvironmentVariables(e => e.Set("RTOK_HOME", home.Path))
@@ -278,8 +278,9 @@ public sealed class HookTests
             Assert.Skip("Unix socket");
         }
         var ct = TestContext.Current.CancellationToken;
-        var hook = await PublishedApps.PathAsync("rtok-hook", ct);
+        // No run may spawn a real resident onto the address the test binds.
         using var home = new TempDir("rh-");
+        var hook = await LoneClientAsync(home.Path, ct);
         var start = await FastestAsync(hook, home.Path, ct);
         var endpoint = Hook.Contracts.HookEndpoint.For(home.Path)!;
         Hook.Contracts.HookEndpoint.EnsurePrivateDir(endpoint.RunDir);
@@ -335,18 +336,32 @@ public sealed class HookTests
             });
     }
 
-    // The published client, which has no rtok beside it: nothing is started.
+    // The lone client: nothing is started.
     private static async Task<BufferedCommandResult> RunAsync(
         string home,
         PipeSource stdin,
         CancellationToken ct
     ) =>
-        await Cli.Wrap(await PublishedApps.PathAsync("rtok-hook", ct))
+        await Cli.Wrap(await LoneClientAsync(home, ct))
             .WithArguments("PreToolUse")
             .WithEnvironmentVariables(e => e.Set("RTOK_HOME", home))
             .WithStandardInputPipe(stdin)
             .WithValidation(CommandResultValidation.None)
             .ExecuteBufferedAsync(ct);
+
+    // The published client copied into the home with no rtok beside it: it starts nothing, even
+    // when RTOK_SMOKE_BIN holds rtok next to rtok-hook.
+    private static async Task<string> LoneClientAsync(string home, CancellationToken ct)
+    {
+        var published = await PublishedApps.PathAsync("rtok-hook", ct);
+        var dir = Directory.CreateDirectory(Path.Join(home, "client")).FullName;
+        var hook = Path.Join(dir, Path.GetFileName(published));
+        if (!File.Exists(hook))
+        {
+            File.Copy(published, hook);
+        }
+        return hook;
+    }
 
     private static async Task<string> RunAsync(HookSandbox box, CancellationToken ct)
     {
