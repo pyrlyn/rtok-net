@@ -9,4 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Testing.Tests" />
+  </ItemGroup>
 </Project>

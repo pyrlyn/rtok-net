@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using CliWrap;
 using CliWrap.Buffered;
+using CliWrap.Builders;
 
 namespace Rtok.Testing;
 
@@ -54,6 +55,9 @@ public static class PublishedApps
 
     // One publish at a time: the apps will share project references.
     private static readonly SemaphoreSlim Gate = new(1, 1);
+
+    // How long a publish waits for another test process's publish to finish.
+    private static readonly TimeSpan LockTimeout = TimeSpan.FromMinutes(30);
     private static readonly Dictionary<string, string> Published = new(StringComparer.Ordinal);
 
     /// <summary>The runtime identifier the apps are published for: the host's.</summary>
@@ -81,7 +85,11 @@ public static class PublishedApps
         {
             if (!Published.TryGetValue(app, out var path))
             {
-                path = Path.Join(await PublishAsync(app, spec, ct).ConfigureAwait(false), exe);
+                using (await LockAsync(ct).ConfigureAwait(false))
+                {
+                    path = Path.Join(await PublishAsync(app, spec, ct).ConfigureAwait(false), exe);
+                }
+
                 Published[app] = path;
             }
 
@@ -92,6 +100,63 @@ public static class PublishedApps
             Gate.Release();
         }
     }
+
+    /// <summary>
+    /// The publish lock shared by every process on this checkout: <c>dotnet test</c> runs each
+    /// test project in its own process, and they publish into the same <c>artifacts/smoke*</c>
+    /// roots. Whoever holds it publishes; the others wait, and their publish then finds the
+    /// output up to date. Dispose to release; the OS releases it if the process dies.
+    /// </summary>
+    public static Task<IDisposable> LockAsync(CancellationToken ct = default) =>
+        LockAsync(Path.Join(RepoPaths.Root, "artifacts", "smoke.lock"), LockTimeout, ct);
+
+    // An exclusive open of `path`, retried until `timeout`; then the sharing IOException.
+    internal static async Task<IDisposable> LockAsync(
+        string path,
+        TimeSpan timeout,
+        CancellationToken ct
+    )
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var deadline = DateTime.UtcNow + timeout;
+        while (true)
+        {
+            try
+            {
+                return new FileStream(
+                    path,
+                    FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite,
+                    FileShare.None
+                );
+            }
+            catch (IOException) when (DateTime.UtcNow < deadline)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(100), ct).ConfigureAwait(false);
+            }
+        }
+    }
+
+    /// <summary><c>dotnet</c> run from the repo root with this process's MSBuild variables
+    /// cleared, so a nested build finds its own, plus <paramref name="env"/>; the exit code is
+    /// the caller's to check.</summary>
+    public static Command Dotnet(
+        IEnumerable<string> arguments,
+        Action<EnvironmentVariablesBuilder>? env = null
+    ) =>
+        Cli.Wrap(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
+            .WithArguments(arguments)
+            .WithWorkingDirectory(RepoPaths.Root)
+            .WithEnvironmentVariables(builder =>
+            {
+                foreach (var variable in MsBuildVariables)
+                {
+                    builder.Set(variable, null);
+                }
+
+                env?.Invoke(builder);
+            })
+            .WithValidation(CommandResultValidation.None);
 
     private static async Task<string> PublishAsync(string key, App app, CancellationToken ct)
     {
@@ -104,7 +169,6 @@ public static class PublishedApps
                 : "smoke"
         );
         var name = Path.GetFileNameWithoutExtension(app.Project);
-        var dotnet = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet";
         List<string> arguments =
         [
             "publish",
@@ -127,19 +191,7 @@ public static class PublishedApps
             arguments.Add("-p:RtokPluginsFile=" + Path.Join(RepoPaths.Root, app.PluginsFile));
         }
 
-        var result = await Cli.Wrap(dotnet)
-            .WithArguments(arguments)
-            .WithWorkingDirectory(RepoPaths.Root)
-            .WithEnvironmentVariables(env =>
-            {
-                foreach (var variable in MsBuildVariables)
-                {
-                    env.Set(variable, null);
-                }
-            })
-            .WithValidation(CommandResultValidation.None)
-            .ExecuteBufferedAsync(ct)
-            .ConfigureAwait(false);
+        var result = await Dotnet(arguments).ExecuteBufferedAsync(ct).ConfigureAwait(false);
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException(

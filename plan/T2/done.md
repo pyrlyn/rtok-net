@@ -33,3 +33,11 @@ The test infrastructure of N11 is in place. Its lanes and helpers are documented
 - `dotnet test`: 245 passed, 1 skipped. This includes Rtok.Smoke and the published AOT lane.
 - `dotnet csharpier check .`: clean.
 - `dotnet run --project tests/Rtok.Latency -c Release`: passes.
+
+**Follow-up: publish lock.** `dotnet test` runs Rtok.Hooks.Tests and Rtok.Smoke in separate processes, and both publish into `artifacts/smoke` at the same time. That collided with MSB3883 and an ilc exit of 1, and the in-process `Gate` did not cover it.
+- `PublishedApps.LockAsync` now holds an exclusive lock on `artifacts/smoke.lock` for the whole publish. Other processes wait, up to 30 minutes, and their publish then finds the output up to date. Each root keeps a single output, so publish time and disk use stay as they were.
+- `PublishedApps.Dotnet` is the single place that runs nested `dotnet` with the MSBuild variables cleared.
+- `RepoPaths.Root` falls back to the working directory for binaries built outside the repo.
+- Tests:
+  - `Rtok.Testing.Tests/PublishLockTests`: a second holder waits for the first and times out with the sharing error. Both tests fail when the lock is off.
+  - `Rtok.Smoke/PublishLockTests`: two file-based probe processes publish `rtok-hook` at once while the test holds the lock. Both wait, then get the same path, and the executable runs.
