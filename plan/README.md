@@ -211,8 +211,8 @@ reads and ordinary operations (status, diff, log, refs, `HEAD`, tree and blob re
 listing and deletion) go through LibGit2Sharp. `git worktree add|remove|list` runs the `git`
 CLI through ProgressRunner (T11), because LibGit2Sharp has no add/remove parity with it. It
 ships native libgit2 per RID: the first task that adds it (T40, T24 or T41, whichever lands
-first) proves an AOT publish of `rtok` with it: the macOS RIDs natively, the Linux RIDs in
-podman, win-x64 in `ci.yml` after the human pushes (its `done.md` says which were proven where).
+first) proves an AOT publish of `rtok` with it: the macOS RIDs natively, the Linux RIDs and
+win-x64 in `ci.yml` after the human pushes (this Mac's podman machine does not start) (its `done.md` says which were proven where).
 If one fails, it comes back to the creator.
 LibGit2Sharp stays out of `rtok-hook` and the hook path.
 
