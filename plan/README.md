@@ -206,6 +206,14 @@ ASP.NET Core, the MCP SDK) join the same pipeline through Serilog.Extensions.Log
 `rtok-hook` does not log at all (N6): it passes its lines to the resident, and drops them
 when the resident is down.
 
+N21. **Git: LibGit2Sharp, with the `git` CLI for worktrees.** The creator decided this. Repository
+reads and ordinary operations (status, diff, log, refs, `HEAD`, tree and blob reads, branch
+listing and deletion) go through LibGit2Sharp. `git worktree add|remove|list` runs the `git`
+CLI through ProgressRunner (T11), because LibGit2Sharp has no add/remove parity with it. It
+ships native libgit2 per RID: the first task that adds it (T40, T24 or T41, whichever lands
+first) proves an AOT publish of `rtok` on every RID; if that fails, it comes back to the creator.
+LibGit2Sharp stays out of `rtok-hook` and the hook path.
+
 ## Measured on this machine (2026-10-21, M3 Max, SDK 10.0.402)
 
 | Probe | Size | Start-to-exit |
@@ -237,6 +245,7 @@ macOS and Linux with the full binary, the resident and both fallbacks: research.
 | HTTP server | ASP.NET Core `CreateSlimBuilder`, Minimal APIs, WebSockets | |
 | Reverse proxy | `HttpClient`/`SocketsHttpHandler` forwarder; YARP `HttpForwarder` where it helps | SSE via `System.Net.ServerSentEvents` |
 | TLS | platform TLS (`SslStream`), `SSL_CERT_FILE` through a custom validation callback | OpenSSL at runtime on Linux |
+| Git | LibGit2Sharp; `git` CLI via ProgressRunner for `worktree add/remove/list` | N21; native libgit2 per RID, never in `rtok-hook` |
 | Tokens | Microsoft.ML.Tokenizers + O200kBase; Anthropic `count_tokens` API for calibration | no local Claude tokenizer exists |
 | Diff | DiffPlex (inside Pyrlyn.ChangePreview) | |
 | Globs | Microsoft.Extensions.FileSystemGlobbing | |

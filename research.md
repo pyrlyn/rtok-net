@@ -323,7 +323,7 @@ Notation:
 | base64 | **BCL** `Convert.ToBase64String`, `System.Buffers.Text.Base64Url` (.NET 9+) | | yes | |
 | log + env_logger (rtok-log) | **BCL** `Microsoft.Extensions.Logging` + `[LoggerMessage]`; or for the hook a **hand-rolled append-only writer** (no DI/host) | 10.0.13 | declared | ZLogger 2.5.10 (trim-declared, source-gen, zero-alloc) and Serilog 4.4.0 (declared) are also fine |
 | OpenTelemetry | **OpenTelemetry** + `.Exporter.OpenTelemetryProtocol` + `.Extensions.Hosting` | 1.20.1 (Apache-2.0) | declared, runtime-ok (OTLP builds) [measured] | Uses BCL `ActivitySource` / `Meter`. Keep it out of the hook. |
-| git worktrees | **shell out to `git`** via `Process` or **CliWrap** 3.10.5 (declared); .NET 11 adds `Process.RunAndCaptureTextAsync` | | yes | LibGit2Sharp 0.32.0 has no worktree add/remove parity and ships native libgit2. GitReader 1.18.0 is read-only. |
+| git | **LibGit2Sharp** for reads and ordinary operations; **shell out to `git`** through ProgressRunner for `worktree add/remove/list` (N21, creator decision) | 0.32.0 | to prove (native libgit2) | LibGit2Sharp has no worktree add/remove parity. GitReader 1.18.0 is read-only. |
 | diffing | **DiffPlex** 1.9.0 (Apache-2.0) | | rooted clean, not declared | Or write your own Myers/patience diff (about 300 lines) if you need unified-diff output identical to the Rust tool. |
 | shell output filtering | **BCL** GeneratedRegex + spans | | yes | |
 | unix-socket daemon | **BCL** `Socket(AddressFamily.Unix, ...)` + `UnixDomainSocketEndPoint`; Windows 10+ also supports AF_UNIX. Kestrel can `ListenUnixSocket`. | | yes | |
