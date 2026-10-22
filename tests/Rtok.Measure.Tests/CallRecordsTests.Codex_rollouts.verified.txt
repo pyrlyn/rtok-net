@@ -1,0 +1,11 @@
+﻿[
+  {
+    Host: codex,
+    Session: codex-1,
+    Model: gpt-x,
+    Ts: 1790845200,
+    Input: 2000000,
+    CacheRead: 1000000,
+    Output: 200000
+  }
+]

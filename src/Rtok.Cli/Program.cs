@@ -48,6 +48,8 @@ app.Add<ShellCommands>();
 app.Add("logs", LogsCommands.Show);
 app.Add("logs export", LogsCommands.Export);
 app.Add("logs watch", LogsCommands.Watch);
+app.Add("stats", StatsCommands.RunAsync);
+app.Add("bench", BenchCommands.RunAsync);
 app.Add("hook", HookCommand.Run);
 app.Add("expand", ExpandCommand.Run);
 app.Run(args);

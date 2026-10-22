@@ -30,6 +30,7 @@
     <ProjectReference Include="../../src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Cmd/Rtok.Plugins.Cmd.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Docs/Rtok.Plugins.Docs.csproj" />
+    <ProjectReference Include="../../src/Rtok.Measure/Rtok.Measure.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Inject/Rtok.Plugins.Inject.csproj" />
   </ItemGroup>
   <ItemGroup>

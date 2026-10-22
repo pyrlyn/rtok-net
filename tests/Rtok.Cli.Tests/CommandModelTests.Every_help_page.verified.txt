@@ -10,6 +10,7 @@ Commands:
   agents usage        Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
      Prices come from [stats.prices]; a model without one counts in the tokens and is left out
      of the cost (--unpriced names those).
+  bench               Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.
   completions         Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
   config get          Print the effective value of one key or table.
   config init         Write the reference config file (every key commented out at its default) and print its path.
@@ -28,6 +29,7 @@ Commands:
   man                 Print the man page (roff), or write every page with --dir.
   plugins             List plugins: id, kind, enabled, surfaces.
   run                 Run a shell command, archive its output and print it filtered; exits with the command's code.
+  stats               Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
 
 $ rtok agents info --help
 Usage: agents info [arguments...] [options...] [-h|--help] [--version]
@@ -113,6 +115,19 @@ Options:
   --tz <string?>        IANA time zone for day and month boundaries (default: the system zone). [Default: null]
   --unpriced            List the models without a price instead of the tables.
   --json                One JSON document.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok bench --help
+Usage: bench [options...] [-h|--help] [--version]
+
+Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.
+
+Options:
+  --tasks <string?>     The task file; [bench] tasks when omitted. [Default: null]
+  --runs <uint?>        Runs per task and config. [Default: null]
+  --dry-run             Print the planned runs; run nothing.
+  --timeout <ulong?>    Seconds one run may take before it is killed. [Default: null]
+  --suite <string?>     The task suite; empty for the task file. [Default: null]
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok completions --help
@@ -298,4 +313,20 @@ Options:
   --agent <string?>     Sub-agent id from PreToolUse; scopes the dedup pointer. [Default: null]
   --no-ref              Do not print the reference line after a cut.
   --config <string?>    The config file to load instead of the user's. [Default: null]
+
+$ rtok stats --help
+Usage: stats [options...] [-h|--help] [--version]
+
+Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
+
+Options:
+  --since <string?>            The window: 30d, 12h; [stats] since when omitted. [Default: null]
+  --json                       Print the report as JSON.
+  --plugin <string?>           One plugin: a catalogue plugin's own page, or the report for its rows. [Default: null]
+  --save-baseline <string?>    Save the report as this baseline instead of printing it. [Default: null]
+  --compare <string?>          Print the change against this saved baseline. [Default: null]
+  --calibrate                  Fit [estimator] chars per token with Anthropic's count_tokens (ANTHROPIC_API_KEY).
+  --cache                      Prompt-cache health per session from the proxy's usage rows.
+  --price                      Add the cost of the proxy's usage rows at [stats.prices].
+  --config <string?>           The config file to use instead of ~/.rtok/config.toml. [Default: null]
 

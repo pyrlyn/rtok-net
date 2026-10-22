@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- What rtok saves, measured: transcripts, `rtok stats` and `rtok bench` (plan T30). -->
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Agents/Rtok.Agents.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Durations/src/Pyrlyn.Durations.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Measure.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
+  </ItemGroup>
+</Project>

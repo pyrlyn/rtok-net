@@ -1,0 +1,46 @@
+﻿sessions 1  compact 0  checkpoint 0  no_checkpoint 1  lines 26  malformed 0
+usage input=1768 cache_create=16080 cache_read=137120 output=318  hit=88.5%  median_context=17780
+sub-agents 1 sessions / 1 agents  results 2199 B vs parents 12409 B (15.1% of the tree)
+  reads 2144 B (97.5% of results)  re-reads: parent 2144 B, sibling 0 B
+  re-read 2144 B = 100.0% of reads, 97.5% of results, 14.7% of the tree
+  usage input=15 cache_read=4000 cache_write=4100 output=42
+  brief: 0 agents  re-read 0 B (0.0% of reads)  input=0
+  no brief: 1 agents  re-read 2144 B (100.0% of reads)  input=15
+  Explore | claude-haiku-5-5  1 agents  results 2199 B  reads 2144 B  re-read 2144 B
+api                         input cache_create cache_read output    hit
+anthropic                    4000        61900      61200    800  48.2%
+archive replay (estimate) ctt 44821 → 44821  -0.0%  over 0 results
+cost (USD at [stats.prices] $/MTok; `-` = no price row)
+model                           input cache_create   cache_read       output       cost      saved
+claude-sonnet-5                  4000        61900        61200          800       0.18       0.11
+cost total $0.18 (cache reads saved $0.11; 0 model(s) without a price)
+edit calls 1  old_string 58 B  new_string 72 B  old/tool_input 7.1%  old/output_tokens (est) 4.7%
+repeat reads  total 2
+  fired calls 0 bytes 0
+  changed calls 0 bytes 0
+  ranged calls 0 bytes 0
+  subagent calls 1 bytes 2144
+  hook_absent calls 1 bytes 2144
+  declined calls 0 bytes 0
+thinking blocks 1 bytes 95 est. tokens 24 0.0155% of session input
+images blocks 1  bytes 24  est. tokens 1650  resident 1650  1.06% of session input  no_size 0
+  images user  blocks 1  bytes 24  est. tokens 1650
+dictionary requests 6  content bytes 44146  billed input est. bytes 318676
+  paths repeated 1815 (0.57% of billed)  cache-safe saving 1143 (0.36% of billed, 2.59% of content)
+  idents repeated 6384 (2.00% of billed)  cache-safe saving 2792 (0.88% of billed, 6.32% of content)
+repeat calls 2  bytes 3811  of result bytes 12409  30.7%
+tool                       count        bytes     mean      p95      max   est_tokens          ctt
+Bash                           4         4012     1003     1667     1667         1004        10739
+Edit                           1           68       68       68       68           17          102
+Grep                           1          807      807      807      807          202         2020
+Read                           3         6228     2076     2144     2144         1557        27822
+Task                           1           68       68       68       68           17           68
+mcp__github__get_issue         1          481      481      481      481          121         1452
+mcp__rtok__search              1          745      745      745      745          187         2618
+bash                     filter     count        bytes     mean      p95      max   est_tokens          ctt
+cargo                    default        2         3334     1667     1667     1667          834         7923
+git                      default        2          678      339      583      583          170         2816
+bash unmarked  below_gate calls 1 bytes 300 100.0%  no_rule calls 0 bytes 0 0.0%
+mcp                        count        bytes     mean      p95      max   est_tokens          ctt
+github                         1          481      481      481      481          121         1452
+rtok                           1          745      745      745      745          187         2618

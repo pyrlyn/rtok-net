@@ -1,0 +1,1 @@
+{"role":"assistant","providerID":"anthropic","modelID":"claude-sonnet-5-5","time":{"created":1790000005000},"tokens":{"input":120,"output":40,"reasoning":10,"cache":{"read":9000,"write":300}}}

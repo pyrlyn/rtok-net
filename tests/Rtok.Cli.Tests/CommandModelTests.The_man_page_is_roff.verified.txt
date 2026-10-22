@@ -36,6 +36,10 @@ See \fBrtok\-agents\-update\fR(1).
 Tokens and estimated cost per agent and month (or day), from the agents' logs or rtok.
 See \fBrtok\-agents\-usage\fR(1).
 .TP
+\fBbench\fR
+Run each bench task with claude \-p under each [bench.configs] settings file and print mean tokens and cost per config.
+See \fBrtok\-bench\fR(1).
+.TP
 \fBcompletions\fR
 Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).
 See \fBrtok\-completions\fR(1).
@@ -103,3 +107,7 @@ See \fBrtok\-plugins\fR(1).
 \fBrun\fR
 Run a shell command, archive its output and print it filtered; exits with the command's code.
 See \fBrtok\-run\fR(1).
+.TP
+\fBstats\fR
+Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
+See \fBrtok\-stats\fR(1).

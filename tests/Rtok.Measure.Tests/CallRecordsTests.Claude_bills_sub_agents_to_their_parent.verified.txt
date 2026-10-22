@@ -1,0 +1,169 @@
+﻿[
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 12,
+    CacheCreate: 9000,
+    Output: 40,
+    Tools: [
+      Read
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 8,
+    CacheCreate: 1200,
+    CacheRead: 9000,
+    Output: 35,
+    Tools: [
+      Read
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 6,
+    CacheCreate: 400,
+    CacheRead: 10200,
+    Output: 20,
+    Tools: [
+      Bash
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 6,
+    CacheCreate: 300,
+    CacheRead: 10600,
+    Output: 22,
+    Tools: [
+      Bash
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 6,
+    CacheCreate: 500,
+    CacheRead: 10900,
+    Output: 25,
+    Tools: [
+      Bash
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 600,
+    CacheRead: 11400,
+    Output: 18,
+    Tools: [
+      mcp__rtok__search
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 450,
+    CacheRead: 12000,
+    Output: 18,
+    Tools: [
+      mcp__github__get_issue
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 380,
+    CacheRead: 12450,
+    Output: 15,
+    Tools: [
+      Grep
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 2900,
+    CacheRead: 12830,
+    Output: 15,
+    Tools: [
+      Read
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 200,
+    CacheRead: 15730,
+    Output: 60,
+    Tools: [
+      Edit
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 150,
+    CacheRead: 15930,
+    Output: 30,
+    Tools: [
+      Task
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Model: claude-sonnet-5-5,
+    Input: 1700,
+    CacheRead: 16080,
+    Output: 20,
+    Tools: [
+      Bash
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Agent: Explore,
+    Model: claude-sonnet-5-5,
+    Input: 10,
+    CacheCreate: 4000,
+    Output: 30,
+    Tools: [
+      Read
+    ]
+  },
+  {
+    Host: claude,
+    Session: sess-1,
+    Agent: Explore,
+    Model: claude-sonnet-5-5,
+    Input: 5,
+    CacheCreate: 100,
+    CacheRead: 4000,
+    Output: 12,
+    Tools: [
+      Grep
+    ]
+  }
+]

@@ -349,6 +349,68 @@
       ]
     },
     {
+      "path": "bench",
+      "aliases": [],
+      "description": "Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--tasks"
+          ],
+          "type": "string?",
+          "description": "The task file; [bench] tasks when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--runs"
+          ],
+          "type": "uint?",
+          "description": "Runs per task and config.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print the planned runs; run nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--timeout"
+          ],
+          "type": "ulong?",
+          "description": "Seconds one run may take before it is killed.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--suite"
+          ],
+          "type": "string?",
+          "description": "The task suite; empty for the task file.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "completions",
       "aliases": [],
       "description": "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",
@@ -874,6 +936,95 @@
           ],
           "type": "string?",
           "description": "The config file to load instead of the user's.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "stats",
+      "aliases": [],
+      "description": "Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--since"
+          ],
+          "type": "string?",
+          "description": "The window: 30d, 12h; [stats] since when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the report as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--plugin"
+          ],
+          "type": "string?",
+          "description": "One plugin: a catalogue plugin's own page, or the report for its rows.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--save-baseline"
+          ],
+          "type": "string?",
+          "description": "Save the report as this baseline instead of printing it.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--compare"
+          ],
+          "type": "string?",
+          "description": "Print the change against this saved baseline.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--calibrate"
+          ],
+          "type": null,
+          "description": "Fit [estimator] chars per token with Anthropic's count_tokens (ANTHROPIC_API_KEY).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--cache"
+          ],
+          "type": null,
+          "description": "Prompt-cache health per session from the proxy's usage rows.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--price"
+          ],
+          "type": null,
+          "description": "Add the cost of the proxy's usage rows at [stats.prices].",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
           "default": null,
           "required": false
         }

@@ -1,0 +1,9 @@
+[
+  { "text": "", "tokens": 0 },
+  { "text": "hello world", "tokens": 2 },
+  { "text": "The widget service keeps the catalogue in step with the warehouse.", "tokens": 12 },
+  { "text": "pub fn compute_token_budget_for_request(req: &Request) -> Budget {", "tokens": 15 },
+  { "text": "{\"number\":42,\"title\":\"Reservations stuck in pending\"}", "tokens": 12 },
+  { "text": "test widget::reservation::case_07 ... ok\ntest result: ok. 40 passed", "tokens": 19 },
+  { "text": "東京都渋谷区の天気は晴れです。", "tokens": 13 }
+]

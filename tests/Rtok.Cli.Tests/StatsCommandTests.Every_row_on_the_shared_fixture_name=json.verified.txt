@@ -1,0 +1,245 @@
+﻿{
+  "sessions": 1,
+  "no_checkpoint": 1,
+  "lines": 26,
+  "malformed": 0,
+  "tools": {
+    "Bash": {
+      "count": 4,
+      "total_bytes": 4012,
+      "mean": 1003,
+      "p95": 1667,
+      "max": 1667,
+      "est_tokens": 1004,
+      "ctt": 10739
+    },
+    "Edit": {
+      "count": 1,
+      "total_bytes": 68,
+      "mean": 68,
+      "p95": 68,
+      "max": 68,
+      "est_tokens": 17,
+      "ctt": 102
+    },
+    "Grep": {
+      "count": 1,
+      "total_bytes": 807,
+      "mean": 807,
+      "p95": 807,
+      "max": 807,
+      "est_tokens": 202,
+      "ctt": 2020
+    },
+    "Read": {
+      "count": 3,
+      "total_bytes": 6228,
+      "mean": 2076,
+      "p95": 2144,
+      "max": 2144,
+      "est_tokens": 1557,
+      "ctt": 27822
+    },
+    "Task": {
+      "count": 1,
+      "total_bytes": 68,
+      "mean": 68,
+      "p95": 68,
+      "max": 68,
+      "est_tokens": 17,
+      "ctt": 68
+    },
+    "mcp__github__get_issue": {
+      "count": 1,
+      "total_bytes": 481,
+      "mean": 481,
+      "p95": 481,
+      "max": 481,
+      "est_tokens": 121,
+      "ctt": 1452
+    },
+    "mcp__rtok__search": {
+      "count": 1,
+      "total_bytes": 745,
+      "mean": 745,
+      "p95": 745,
+      "max": 745,
+      "est_tokens": 187,
+      "ctt": 2618
+    }
+  },
+  "bash_families": {
+    "cargo": {
+      "count": 2,
+      "total_bytes": 3334,
+      "mean": 1667,
+      "p95": 1667,
+      "max": 1667,
+      "est_tokens": 834,
+      "ctt": 7923
+    },
+    "git": {
+      "count": 2,
+      "total_bytes": 678,
+      "mean": 339,
+      "p95": 583,
+      "max": 583,
+      "est_tokens": 170,
+      "ctt": 2816
+    }
+  },
+  "mcp_groups": {
+    "github": {
+      "count": 1,
+      "total_bytes": 481,
+      "mean": 481,
+      "p95": 481,
+      "max": 481,
+      "est_tokens": 121,
+      "ctt": 1452
+    },
+    "rtok": {
+      "count": 1,
+      "total_bytes": 745,
+      "mean": 745,
+      "p95": 745,
+      "max": 745,
+      "est_tokens": 187,
+      "ctt": 2618
+    }
+  },
+  "usage_input": 1768,
+  "usage_cache_create": 16080,
+  "usage_cache_read": 137120,
+  "usage_output": 318,
+  "cache_hit_rate": 0.8848278354240876,
+  "median_final_context": 17780,
+  "ctt_total": 44821,
+  "ctt_archive": 44821,
+  "archive_candidates": 0,
+  "api": {
+    "anthropic": {
+      "input": 4000,
+      "cache_create": 61900,
+      "cache_read": 61200,
+      "output": 800,
+      "hit": 0.4815106215578285
+    }
+  },
+  "edits": {
+    "calls": 1,
+    "old_bytes": 58,
+    "new_bytes": 72,
+    "tool_input_bytes": 818
+  },
+  "repeat": {
+    "calls": 2,
+    "bytes": 3811,
+    "result_bytes": 12409
+  },
+  "bash_unmarked": {
+    "gate_calls": 1,
+    "gate_bytes": 300,
+    "unmatched_calls": 0,
+    "unmatched_bytes": 0
+  },
+  "thinking": {
+    "blocks": 1,
+    "bytes": 95
+  },
+  "images": {
+    "blocks": 1,
+    "bytes": 24,
+    "tokens": 1650,
+    "resident": 1650,
+    "no_size": 0,
+    "by_source": {
+      "user": {
+        "blocks": 1,
+        "bytes": 24,
+        "tokens": 1650
+      }
+    }
+  },
+  "dictionary": {
+    "requests": 6,
+    "input_bytes": 44146,
+    "request_tokens": 79669,
+    "paths": {
+      "repeated": 1815,
+      "saved": 1143
+    },
+    "idents": {
+      "repeated": 6384,
+      "saved": 2792
+    }
+  },
+  "subagents": {
+    "sessions": 1,
+    "count": 1,
+    "result_bytes": 2199,
+    "parent_result_bytes": 12409,
+    "read_bytes": 2144,
+    "read_parent": 2144,
+    "read_sibling": 0,
+    "reread_bytes": 2144,
+    "reread_calls": 1,
+    "share_read": 100,
+    "share_results": 97.49886311959982,
+    "share_tree": 14.676889375684556,
+    "usage_input": 15,
+    "usage_cache_read": 4000,
+    "usage_cache_write": 4100,
+    "usage_output": 42,
+    "by_type": [
+      {
+        "agent_type": "Explore",
+        "model": "claude-haiku-5-5",
+        "count": 1,
+        "result_bytes": 2199,
+        "read_bytes": 2144,
+        "reread_bytes": 2144
+      }
+    ],
+    "with_brief": {
+      "count": 0,
+      "read_bytes": 0,
+      "reread_bytes": 0,
+      "share_read": 0,
+      "usage_input": 0
+    },
+    "without_brief": {
+      "count": 1,
+      "read_bytes": 2144,
+      "reread_bytes": 2144,
+      "share_read": 100,
+      "usage_input": 15
+    }
+  },
+  "repeat_reads": {
+    "fired": {
+      "calls": 0,
+      "bytes": 0
+    },
+    "changed": {
+      "calls": 0,
+      "bytes": 0
+    },
+    "ranged": {
+      "calls": 0,
+      "bytes": 0
+    },
+    "subagent": {
+      "calls": 1,
+      "bytes": 2144
+    },
+    "hook_absent": {
+      "calls": 1,
+      "bytes": 2144
+    },
+    "declined": {
+      "calls": 0,
+      "bytes": 0
+    }
+  }
+}

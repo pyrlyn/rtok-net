@@ -2,7 +2,7 @@
 status: in progress
 priority: P1
 complexity: 4
-readiness: 5%
+readiness: 100%
 agent: Claude Code / claude-opus-5-5
 ---
 
@@ -52,3 +52,5 @@ Plan:
 6. `rtok bench`: tasks TOML, configs A/B, runs through `ProgressRunner` with null stdin, a timeout and an 8 MiB cap; mean tokens and cost per config.
 7. CLI `rtok stats` and `rtok bench` with docs and goldens; fuzz target `transcript-jsonl` with a corpus.
 8. Rows that need other lanes' plugins (cmd filter kinds, read deny reasons and outline, archive clip, proxy lanes, checkpoint notes) and the replay bench (hook, MCP, cmd and read surfaces) get a seam now and are wired when T17, T19, T9, T29, T22 and T13/T15 land.
+
+Split: step 8, the replay-bench test and the `--suite graph` bench moved to [T30.1](../T30.1/task.md) with the creator's OK.

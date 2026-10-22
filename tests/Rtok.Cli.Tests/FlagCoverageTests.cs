@@ -24,6 +24,9 @@ public sealed class FlagCoverageTests
         "desktop",
         "gui", // `--desktop`
         "all",
+        "save-baseline", // `stats`: save one report under a name
+        "calibrate", // `stats`: fit [estimator] once
+        "cache", // `stats`: the cache page of one call
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

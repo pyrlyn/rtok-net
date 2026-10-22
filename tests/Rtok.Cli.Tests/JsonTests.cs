@@ -18,6 +18,7 @@ public sealed class JsonTests
         ["plugins"] = [],
         ["logs"] = [],
         ["logs export"] = [],
+        ["stats"] = [],
     };
 
     private static readonly Dictionary<string, string> Other = new(StringComparer.Ordinal)
@@ -37,6 +38,7 @@ public sealed class JsonTests
         ["agents uninstall"] = "writes host files",
         ["run"] = "prints the command's own output, filtered",
         ["filter"] = "prints its stdin, filtered",
+        ["bench"] = "runs the agent; prints a table and writes results/<config>.json",
     };
 
     [Fact]

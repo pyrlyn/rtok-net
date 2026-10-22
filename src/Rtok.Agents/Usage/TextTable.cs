@@ -6,15 +6,21 @@ namespace Rtok.Agents.Usage;
 /// The padded-column table: every column as wide as its widest cell, columns separated by one
 /// space, one line per row; the first row is the header. Numbers right-align, text left-aligns.
 /// End a table on a right-aligned column, or its last column keeps its trailing pad.
+/// <paramref name="floors"/>, when given, are the columns' minimum widths.
 /// </summary>
 internal static class TextTable
 {
     public static string Render(
         IReadOnlyList<bool> rightAligned,
-        IReadOnlyList<IReadOnlyList<string>> rows
+        IReadOnlyList<IReadOnlyList<string>> rows,
+        IReadOnlyList<int>? floors = null
     )
     {
         var widths = new int[rightAligned.Count];
+        for (var j = 0; floors is not null && j < widths.Length && j < floors.Count; j++)
+        {
+            widths[j] = floors[j];
+        }
         foreach (var row in rows)
         {
             for (var j = 0; j < widths.Length && j < row.Count; j++)

@@ -4,7 +4,7 @@
 
 _rtok_children() {
   case $1 in
-    '') items=('agents' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.') ;;
+    '') items=('agents' 'bench:Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.' 'stats:Report tokens per tool, Bash family and MCP group from the agents'\'' transcripts, with rtok'\''s rows.') ;;
     'agents') items=('info:One or more hosts in detail: apps, files, and each module'\''s state.' 'install:Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.' 'list:Every host rtok knows: whether its apps are here, and what of rtok each one has.' 'uninstall:Take rtok out of hosts: only entries that are still rtok'\''s; one you changed asks first.' 'update:Rewrite rtok'\''s entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).' 'usage:Tokens and estimated cost per agent and month (or day), from the agents'\'' logs or rtok.') ;;
     'config') items=('get:Print the effective value of one key or table.' 'init:Write the reference config file (every key commented out at its default) and print its path.' 'path:Print the path of the user config file.' 'set:Set a key in the user config file, keeping its comments; the result is checked first.' 'show:Print every effective key and value; secrets are redacted.' 'validate:Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.') ;;
     'docs') items=('fetch:Download a dependency'\''s docs at its lockfile-pinned version and index them for docs_query.') ;;
@@ -21,6 +21,7 @@ _rtok_options() {
     'agents uninstall') items=('--dry-run:Print what would change; write nothing.' '--yes:Remove entries you changed without asking.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'agents update') items=('--dry-run:Print what would change; write nothing.' '--cli:Only the CLI apps.' '--gui:Only the desktop apps.' '--desktop:Only the desktop apps.' '--all:Every app of the host (the default without --cli or --desktop).' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'agents usage') items=('--source:Data source: logs (the agents'\'' own session files, the default), rtok (what passed through rtok) or both.' '--host:Only these hosts, comma-separated (claude,codex).' '--since:From a date (2026-09-01, whole days in --tz) or a duration back from now (30d).' '--until:Through this date, inclusive.' '--daily:Bottom table by day.' '--monthly:Bottom table by month (the default).' '--by:Middle table grouping: agent (the default) or model.' '--tz:IANA time zone for day and month boundaries (default: the system zone).' '--unpriced:List the models without a price instead of the tables.' '--json:One JSON document.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'bench') items=('--tasks:The task file; [bench] tasks when omitted.' '--runs:Runs per task and config.' '--dry-run:Print the planned runs; run nothing.' '--timeout:Seconds one run may take before it is killed.' '--suite:The task suite; empty for the task file.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'completions') items=('--install:Write the script to the shell'\''s per-user completions directory.' '--uninstall:Remove what --install wrote.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config get') items=('--json:Print JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'config init') items=('--force:Overwrite an existing file.' '--dry-run:Print the diff instead of writing.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
@@ -38,6 +39,7 @@ _rtok_options() {
     'man') items=('--dir:Write rtok.1 and a page for every subcommand into this directory, and print their paths.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'plugins') items=('--json:Print JSON.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'run') items=('--agent:Sub-agent id from PreToolUse; scopes the dedup pointer.' '--no-ref:Do not print the reference line after a cut.' '--config:The config file to load instead of the user'\''s.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'stats') items=('--since:The window: 30d, 12h; [stats] since when omitted.' '--json:Print the report as JSON.' '--plugin:One plugin: a catalogue plugin'\''s own page, or the report for its rows.' '--save-baseline:Save the report as this baseline instead of printing it.' '--compare:Print the change against this saved baseline.' '--calibrate:Fit [estimator] chars per token with Anthropic'\''s count_tokens (ANTHROPIC_API_KEY).' '--cache:Prompt-cache health per session from the proxy'\''s usage rows.' '--price:Add the cost of the proxy'\''s usage rows at [stats.prices].' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
   esac
 }
 
@@ -49,6 +51,7 @@ _rtok_values() {
     'agents uninstall') items=('--config') ;;
     'agents update') items=('--config') ;;
     'agents usage') items=('--source' '--host' '--since' '--until' '--by' '--tz' '--config') ;;
+    'bench') items=('--tasks' '--runs' '--timeout' '--suite' '--config') ;;
     'config get') items=('--config') ;;
     'config init') items=('--config') ;;
     'config path') items=('--config') ;;
@@ -64,6 +67,7 @@ _rtok_values() {
     'logs watch') items=('--lines' '--config') ;;
     'man') items=('--dir') ;;
     'run') items=('--agent' '--config') ;;
+    'stats') items=('--since' '--plugin' '--save-baseline' '--compare' '--config') ;;
   esac
 }
 

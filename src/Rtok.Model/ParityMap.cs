@@ -20,6 +20,7 @@ public static class ParityMap
             ["logs"] = new(Page.Logs, Page.Logs),
             ["logs export"] = new(Page.Logs, Page.Logs),
             ["plugins"] = new(Page.Plugins, Page.Plugins),
+            ["stats"] = new(Page.Stats, Page.Stats),
         };
 
     /// <summary>Reading commands with no page, each with the reason.</summary>

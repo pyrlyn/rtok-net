@@ -5,6 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Agents.Tests" />
+    <!-- The usage readers and log walker, reused by `rtok stats` (plan T30). -->
+    <InternalsVisibleTo Include="Rtok.Measure" />
     <InternalsVisibleTo Include="rtok-fuzz" />
   </ItemGroup>
   <ItemGroup>

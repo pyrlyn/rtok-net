@@ -43,7 +43,7 @@ internal static class FuzzTargets
         new("proxy-wire", "T27", null),
         new("proxy-rewrite", "T28", null),
         new("lane-classify", "T29", null),
-        new("transcript-jsonl", "T30", null),
+        new("transcript-jsonl", "T30", TranscriptJsonl.Run),
         new("report-html", "T31", null),
         new("doctor-config", "T32", null),
         new("agents-install", "T35", AgentsInstall.Run),

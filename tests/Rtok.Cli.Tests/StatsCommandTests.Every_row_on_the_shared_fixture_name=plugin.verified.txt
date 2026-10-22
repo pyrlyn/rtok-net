@@ -1,0 +1,22 @@
+﻿{
+  "plugin": "cmd",
+  "archive_hits": 0,
+  "rows": [
+    {
+      "kind": "rule",
+      "before": 4000,
+      "after": 400,
+      "est_before": 1000,
+      "est_after": 100,
+      "ref_id": "cargo:test"
+    },
+    {
+      "kind": "raw",
+      "before": 300,
+      "after": 300,
+      "est_before": 75,
+      "est_after": 75,
+      "ref_id": null
+    }
+  ]
+}

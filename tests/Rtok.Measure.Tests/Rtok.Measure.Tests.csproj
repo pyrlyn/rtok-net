@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+    <PackageReference Include="Microsoft.ML.Tokenizers" />
+    <PackageReference Include="Microsoft.ML.Tokenizers.Data.O200kBase" />
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="WireMock.Net" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../../src/Rtok.Measure/Rtok.Measure.csproj" />
+  </ItemGroup>
+</Project>

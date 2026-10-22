@@ -1,0 +1,27 @@
+﻿[
+  {
+    Host: cursor,
+    Session: c1,
+    Model: claude-4.5-sonnet,
+    Ts: 1790000000,
+    Input: 5400,
+    Output: 120,
+    Tools: [
+      read_file
+    ]
+  },
+  {
+    Host: cursor,
+    Session: c1,
+    Model: claude-4.5-sonnet,
+    Ts: 1789984800,
+    Input: 6100,
+    Output: 80
+  },
+  {
+    Host: cursor,
+    Session: c2,
+    Input: 10,
+    Output: 2
+  }
+]

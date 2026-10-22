@@ -1,0 +1,12 @@
+﻿[
+  {
+    Host: opencode,
+    Session: ses_1,
+    Model: claude-sonnet-5-5,
+    Ts: 1790000005,
+    Input: 120,
+    CacheCreate: 300,
+    CacheRead: 9000,
+    Output: 50
+  }
+]

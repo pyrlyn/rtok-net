@@ -1,0 +1,21 @@
+# T30 done
+
+New layer `src/Rtok.Measure` with `tests/Rtok.Measure.Tests`. It reuses T38's walker, JSON helpers, the Codex and OpenCode readers and `UsageCost` from `Rtok.Agents` instead of copying them.
+
+- Transcripts: the Claude parser ports rtok's records, counters and compactions. Sub-agents under `<session>/subagents/agent-*.jsonl` are read with their `meta.json` and billed to the parent session. `CallRecords` gives one record per API call for Claude, Codex and OpenCode. `CursorLogs` is new (rtok had none): it reads `state.vscdb` read-only, `composerData:*` for the model and `bubbleId:*` assistant bubbles with `tokenCount` or a tool. The Cursor format is undocumented, so the reader is best-effort and skips anything it does not know.
+- `rtok stats` prints every catalog row: per tool, Bash families (`cd`, env assignments and quoted paths stripped; an unterminated quote keeps the raw command), MCP groups, context-token-turns, repeat reads (fired, changed, ranged, hook_absent, declined, subagent), thinking, images (PNG IHDR and JPEG SOF, ceil(w/28)·ceil(h/28), the high-res tier), the dictionary row (paths of 16+ bytes and identifiers of 12+ bytes, absent when nothing repeats), sub-agents, and rtok's own Measurement rows. Flags: `--since`, `--json`, `--plugin`, `--cache` (prompt-cache health from the proxy's usage rows, with bust causes), `--price` (`[stats.prices]`), `--save-baseline`, `--compare`. p95 is the nearest rank over a deterministic 2048-sample reservoir.
+- `--calibrate` sends sampled text per class (prose, code, JSON, CJK) to Anthropic's `count_tokens`, fits chars per token and writes only rtok's `[estimator]` keys in the user config. Any failure leaves the file byte for byte.
+- `rtok bench` reads a tasks TOML (`[[tasks]]` id, prompt, check) and runs every task with each `[bench.configs]` settings file the given number of times (default 3) through `ProgressRunner`: stdin closed, a timeout, an 8 MiB output cap. It prints mean input, cache, output and cost per config with pass and failed counts, and writes `results/<config>.json`. A failed, timed-out or unparsable run counts as failed and stays out of the means; rtok counted it as zero. `--dry-run` lists the runs. `--suite graph` is refused until T15 serves the graph tools.
+- Tokenizers: Microsoft.ML.Tokenizers with the o200k vocabulary is in the tests only and checks the fixture counts in `tests/fixtures/tokens/o200k.json`. The Release binary carries no vocabulary.
+- Store: `UsageByApi` and `UsageByModel` return the new `UsageGroup`, next to main's `UsageTotals`. The stats queries follow the precompiler rules (locals only, no anonymous or nested projection types), so the AOT publish compiles them.
+- `stats` maps to the `Stats` page on web and TUI in `ParityMap`.
+- Fuzz target `transcript-jsonl` with a corpus: any line through the Claude, Codex, OpenCode and Cursor parsers never throws and gives non-negative sums.
+
+Moved to [T30.1](../T30.1/task.md) with the creator's OK: the replay bench with its 76 % floor (needs T13, T15, T17, T19, T22), the stats seams `StatsSignals` and `Replay` (T9, T17, T19, T29), and the graph bench suite (T15).
+
+New dependencies: WireMock.Net (Measure.Tests, a fake `count_tokens`), Verify.XunitV3 (Measure.Tests, reader snapshots), Microsoft.ML.Tokenizers and Microsoft.ML.Tokenizers.Data.O200kBase (Measure.Tests, o200k fixture counts).
+
+Checked:
+- `Rtok.Measure.Tests`: Verify snapshots of the four readers, sub-agents billed to their parent, the walker counting a symlinked alias once and skipping dangling links, CsCheck garbage lines, p95, Bash families, image tokens, repeat reads, the dictionary row, cache health, baselines, WireMock calibrate (fit and unreachable), o200k counts, and bench against a fake `sh` agent (12 runs with stdin closed, the exact table, `results/a.json`, a 9 MiB flood, a non-zero exit, a hang and a missing program all failing cleanly).
+- `Rtok.Cli.Tests`: `rtok stats` goldens on the shared fixture (table, JSON, `--price`, `--plugin cmd`, `--cache`), save-then-compare shows Δ0, an unknown baseline and a bad `--since` exit 1; `rtok bench --dry-run`; help, man and completion goldens.
+- `dotnet build rtok.slnx -c Release -warnaserror`, `dotnet test`, `dotnet csharpier check .` and markdownlint green on macOS arm64.

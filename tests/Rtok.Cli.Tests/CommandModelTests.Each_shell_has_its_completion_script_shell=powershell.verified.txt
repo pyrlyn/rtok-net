@@ -4,7 +4,7 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'completions', 'config', 'docs', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
+        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
@@ -18,6 +18,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
         'agents update' = @('--dry-run', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
         'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
+        'bench' = @('--tasks', '--runs', '--dry-run', '--timeout', '--suite', '--config', '-h', '--help', '--version')
         'completions' = @('--install', '--uninstall', '-h', '--help', '--version')
         'config get' = @('--json', '--config', '-h', '--help', '--version')
         'config init' = @('--force', '--dry-run', '--config', '-h', '--help', '--version')
@@ -35,6 +36,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'man' = @('--dir', '-h', '--help', '--version')
         'plugins' = @('--json', '-h', '--help', '--version')
         'run' = @('--agent', '--no-ref', '--config', '-h', '--help', '--version')
+        'stats' = @('--since', '--json', '--plugin', '--save-baseline', '--compare', '--calibrate', '--cache', '--price', '--config', '-h', '--help', '--version')
     }
     $values = @(
         'agents info|--config'
@@ -49,6 +51,11 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents usage|--by'
         'agents usage|--tz'
         'agents usage|--config'
+        'bench|--tasks'
+        'bench|--runs'
+        'bench|--timeout'
+        'bench|--suite'
+        'bench|--config'
         'config get|--config'
         'config init|--config'
         'config path|--config'
@@ -72,8 +79,14 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'man|--dir'
         'run|--agent'
         'run|--config'
+        'stats|--since'
+        'stats|--plugin'
+        'stats|--save-baseline'
+        'stats|--compare'
+        'stats|--config'
     )
     $hints = @{
+        '|bench' = 'Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.'
         '|completions' = 'Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).'
         '|expand' = 'Print an archived original byte for byte, or the lines, grep hits or context you ask for.'
         '|filter' = 'Filter stdin as the output of a command, without running it.'
@@ -82,6 +95,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '|man' = 'Print the man page (roff), or write every page with --dir.'
         '|plugins' = 'List plugins: id, kind, enabled, surfaces.'
         '|run' = 'Run a shell command, archive its output and print it filtered; exits with the command''s code.'
+        '|stats' = 'Report tokens per tool, Bash family and MCP group from the agents'' transcripts, with rtok''s rows.'
         '|-h' = 'Show help.'
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
@@ -141,6 +155,15 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents usage|-h' = 'Show help.'
         'agents usage|--help' = 'Show help.'
         'agents usage|--version' = 'Show version.'
+        'bench|--tasks' = 'The task file; [bench] tasks when omitted.'
+        'bench|--runs' = 'Runs per task and config.'
+        'bench|--dry-run' = 'Print the planned runs; run nothing.'
+        'bench|--timeout' = 'Seconds one run may take before it is killed.'
+        'bench|--suite' = 'The task suite; empty for the task file.'
+        'bench|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'bench|-h' = 'Show help.'
+        'bench|--help' = 'Show help.'
+        'bench|--version' = 'Show version.'
         'completions|--install' = 'Write the script to the shell''s per-user completions directory.'
         'completions|--uninstall' = 'Remove what --install wrote.'
         'completions|-h' = 'Show help.'
@@ -240,6 +263,18 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'run|-h' = 'Show help.'
         'run|--help' = 'Show help.'
         'run|--version' = 'Show version.'
+        'stats|--since' = 'The window: 30d, 12h; [stats] since when omitted.'
+        'stats|--json' = 'Print the report as JSON.'
+        'stats|--plugin' = 'One plugin: a catalogue plugin''s own page, or the report for its rows.'
+        'stats|--save-baseline' = 'Save the report as this baseline instead of printing it.'
+        'stats|--compare' = 'Print the change against this saved baseline.'
+        'stats|--calibrate' = 'Fit [estimator] chars per token with Anthropic''s count_tokens (ANTHROPIC_API_KEY).'
+        'stats|--cache' = 'Prompt-cache health per session from the proxy''s usage rows.'
+        'stats|--price' = 'Add the cost of the proxy''s usage rows at [stats.prices].'
+        'stats|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'stats|-h' = 'Show help.'
+        'stats|--help' = 'Show help.'
+        'stats|--version' = 'Show version.'
     }
     $cmd = ''
     $skip = $false
