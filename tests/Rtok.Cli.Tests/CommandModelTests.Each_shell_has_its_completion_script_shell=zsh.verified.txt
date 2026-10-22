@@ -4,7 +4,7 @@
 
 _rtok_children() {
   case $1 in
-    '') items=('agents' 'bench:Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'doctor:Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.' 'stats:Report tokens per tool, Bash family and MCP group from the agents'\'' transcripts, with rtok'\''s rows.' 'task') ;;
+    '') items=('agents' 'bench:Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'doctor:Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'proxy:Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.' 'stats:Report tokens per tool, Bash family and MCP group from the agents'\'' transcripts, with rtok'\''s rows.' 'task' 'wrap:Run a command with its API base URLs on the proxy, starting one when none answers.') ;;
     'agents') items=('info:One or more hosts in detail: apps, files, and each module'\''s state.' 'install:Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.' 'list:Every host rtok knows: whether its apps are here, and what of rtok each one has.' 'uninstall:Take rtok out of hosts: only entries that are still rtok'\''s; one you changed asks first.' 'update:Rewrite rtok'\''s entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).' 'usage:Tokens and estimated cost per agent and month (or day), from the agents'\'' logs or rtok.') ;;
     'config') items=('get:Print the effective value of one key or table.' 'init:Write the reference config file (every key commented out at its default) and print its path.' 'path:Print the path of the user config file.' 'set:Set a key in the user config file, keeping its comments; the result is checked first.' 'show:Print every effective key and value; secrets are redacted.' 'validate:Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.') ;;
     'docs') items=('fetch:Download a dependency'\''s docs at its lockfile-pinned version and index them for docs_query.') ;;
@@ -40,6 +40,7 @@ _rtok_options() {
     'logs watch') items=('--lines:How many lines the screen keeps; [log] lines when omitted.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'man') items=('--dir:Write rtok.1 and a page for every subcommand into this directory, and print their paths.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'plugins') items=('--json:Print JSON.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'proxy') items=('--port:Listen on this port instead of [proxy] port.' '--upstream:Forward to this URL instead of [proxy] upstream.' '--mode:passthrough or compress, instead of [proxy] mode.' '--dry-run:Print the effective [proxy] settings and exit.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'run') items=('--agent:Sub-agent id from PreToolUse; scopes the dedup pointer.' '--no-ref:Do not print the reference line after a cut.' '--config:The config file to load instead of the user'\''s.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'stats') items=('--since:The window: 30d, 12h; [stats] since when omitted.' '--json:Print the report as JSON.' '--plugin:One plugin: a catalogue plugin'\''s own page, or the report for its rows.' '--save-baseline:Save the report as this baseline instead of printing it.' '--compare:Print the change against this saved baseline.' '--calibrate:Fit [estimator] chars per token with Anthropic'\''s count_tokens (ANTHROPIC_API_KEY).' '--cache:Prompt-cache health per session from the proxy'\''s usage rows.' '--price:Add the cost of the proxy'\''s usage rows at [stats.prices].' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'task claim') items=('--agent:The rtok agent id; defaults to RTOK_AGENT_ID.' '--json:Print the task as JSON, with changed.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
@@ -57,6 +58,7 @@ _rtok_options() {
     'task show') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'task status') items=('--force:Finish a parent even though subtasks are still open.' '--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'task sync') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'wrap') items=('--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
   esac
 }
 
@@ -84,6 +86,7 @@ _rtok_values() {
     'logs export') items=('--lines' '--config') ;;
     'logs watch') items=('--lines' '--config') ;;
     'man') items=('--dir') ;;
+    'proxy') items=('--port' '--upstream' '--mode' '--config') ;;
     'run') items=('--agent' '--config') ;;
     'stats') items=('--since' '--plugin' '--save-baseline' '--compare' '--config') ;;
     'task claim') items=('--agent' '--config') ;;
@@ -101,6 +104,7 @@ _rtok_values() {
     'task show') items=('--config') ;;
     'task status') items=('--config') ;;
     'task sync') items=('--config') ;;
+    'wrap') items=('--config') ;;
   esac
 }
 

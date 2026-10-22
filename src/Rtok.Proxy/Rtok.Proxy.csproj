@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- rtok proxy (plan T27): Kestrel slim in front of the provider APIs, the four wires, usage
+       rows and the hop count. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Log/Rtok.Log.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Proxy.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
+  </ItemGroup>
+</Project>

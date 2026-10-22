@@ -29,6 +29,7 @@ Commands:
   logs watch          Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.
   man                 Print the man page (roff), or write every page with --dir.
   plugins             List plugins: id, kind, enabled, surfaces.
+  proxy               Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
   run                 Run a shell command, archive its output and print it filtered; exits with the command's code.
   stats               Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
   task claim          Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
@@ -46,6 +47,7 @@ Commands:
   task show           One task: title, status, parent, subtasks, link and description.
   task status         Print a task's status, or set it; done and closed move it out of the plan.
   task sync           Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
+  wrap                Run a command with its API base URLs on the proxy, starting one when none answers.
 
 $ rtok agents info --help
 Usage: agents info [arguments...] [options...] [-h|--help] [--version]
@@ -333,6 +335,18 @@ List plugins: id, kind, enabled, surfaces.
 Options:
   --json    Print JSON.
 
+$ rtok proxy --help
+Usage: proxy [options...] [-h|--help] [--version]
+
+Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
+
+Options:
+  --port <ushort?>        Listen on this port instead of [proxy] port. [Default: null]
+  --upstream <string?>    Forward to this URL instead of [proxy] upstream. [Default: null]
+  --mode <string?>        passthrough or compress, instead of [proxy] mode. [Default: null]
+  --dry-run               Print the effective [proxy] settings and exit.
+  --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
 $ rtok run --help
 Usage: run [arguments...] [options...] [-h|--help] [--version]
 
@@ -543,5 +557,16 @@ Raise the id counters to the adapter's highest ids and report drift; never write
 
 Options:
   --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok wrap --help
+Usage: wrap [arguments...] [options...] [-h|--help] [--version]
+
+Run a command with its API base URLs on the proxy, starting one when none answers.
+
+Arguments:
+  [0] <string[]>    The command, when it starts with no option; otherwise after --.
+
+Options:
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 

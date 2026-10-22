@@ -108,6 +108,10 @@ See \fBrtok\-man\fR(1).
 List plugins: id, kind, enabled, surfaces.
 See \fBrtok\-plugins\fR(1).
 .TP
+\fBproxy\fR
+Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
+See \fBrtok\-proxy\fR(1).
+.TP
 \fBrun\fR
 Run a shell command, archive its output and print it filtered; exits with the command's code.
 See \fBrtok\-run\fR(1).
@@ -175,3 +179,7 @@ See \fBrtok\-task\-status\fR(1).
 \fBtask sync\fR
 Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
 See \fBrtok\-task\-sync\fR(1).
+.TP
+\fBwrap\fR
+Run a command with its API base URLs on the proxy, starting one when none answers.
+See \fBrtok\-wrap\fR(1).

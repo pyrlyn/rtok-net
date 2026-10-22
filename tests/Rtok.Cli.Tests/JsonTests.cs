@@ -41,6 +41,8 @@ public sealed class JsonTests
         ["filter"] = "prints its stdin, filtered",
         ["bench"] = "runs the agent; prints a table and writes results/<config>.json",
         ["task init"] = "writes .rtok.toml and prints one line",
+        ["proxy"] = "serves HTTP until Ctrl-C",
+        ["wrap"] = "prints the command's own output",
     };
 
     /// <summary>

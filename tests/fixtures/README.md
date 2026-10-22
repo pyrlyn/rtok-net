@@ -6,6 +6,8 @@ Shared inputs for every test lane (`RepoPaths.Fixture(...)` in `tests/Rtok.Testi
   `rtok-hook`. The latency harness (`tests/Rtok.Latency`) times the hook on each of them.
 - `graph_truth.json`: labelled definitions and references of this repository's own C#, which
   `tests/Rtok.Plugins.Graph.Tests` scores the graph index against (rtok's `graph_truth.toml`).
+- `proxy/`: an Anthropic Messages request (`messages.json`, 40 KB, rtok's) and a streamed
+  answer with usage (`anthropic_messages_stream.json`). The proxy bench replays them.
 - `stats/`: one Claude Code session with a sub-agent (`claude/proj/sess-1/subagents/`) whose
   results cover every `rtok stats` row: tools, Bash families, MCP groups, repeat reads, an
   image, thinking, an edit and repeated paths and identifiers. The `rtok stats` goldens in

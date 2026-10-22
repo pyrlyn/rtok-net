@@ -991,6 +991,59 @@
       ]
     },
     {
+      "path": "proxy",
+      "aliases": [],
+      "description": "Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--port"
+          ],
+          "type": "ushort?",
+          "description": "Listen on this port instead of [proxy] port.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--upstream"
+          ],
+          "type": "string?",
+          "description": "Forward to this URL instead of [proxy] upstream.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--mode"
+          ],
+          "type": "string?",
+          "description": "passthrough or compress, instead of [proxy] mode.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print the effective [proxy] settings and exit.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "run",
       "aliases": [],
       "description": "Run a shell command, archive its output and print it filtered; exits with the command's code.",
@@ -1691,6 +1744,28 @@
           "default": null,
           "required": false
         },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "wrap",
+      "aliases": [],
+      "description": "Run a command with its API base URLs on the proxy, starting one when none answers.",
+      "arguments": [
+        {
+          "type": "string[]",
+          "description": "The command, when it starts with no option; otherwise after --."
+        }
+      ],
+      "options": [
         {
           "names": [
             "--config"

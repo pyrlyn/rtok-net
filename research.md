@@ -710,6 +710,32 @@ More from T8 (the real store, EF 10.0.13; `src/Rtok.Store/StoreHost.targets` hol
 
 ---
 
+## G. T27: proxy overhead (2026-10-22)
+
+Measured 2026-10-22 **[measured]** with `ProxyBenchmarks` in `tests/Rtok.Benchmarks`
+(`dotnet run --project tests/Rtok.Benchmarks -c Release -- --filter '*Proxy*' --job short`;
+BenchmarkDotNet 0.15.8, JIT, .NET 10.0.13, Apple M3 Max, macOS 27.0.1). One call posts rtok's
+40 KB Anthropic Messages fixture (`tests/fixtures/proxy/messages.json`) and reads the streamed
+answer (`anthropic_messages_stream.json`) from a WireMock upstream in the same process: straight
+to WireMock, through the proxy in plain mode, and through the recording proxy, which also writes
+the call, `call_io`, `usage` and `tokens` rows to a real store.
+
+The machine ran other lanes' builds (load average about 140 on 16 cores), so the times are noisy
+(the 99.9% error is larger than the mean); the allocations are stable. Allocated counts the
+client, the proxy and WireMock together.
+
+| Route | Mean | StdDev | Allocated |
+|---|---|---|---|
+| direct | 4.6 ms | 2.5 ms | 1.28 MB |
+| plain proxy | 11.5 ms | 2.4 ms | 1.45 MB |
+| recording proxy | 14.8 ms | 4.5 ms | 2.27 MB |
+
+The plain hop costs about 0.17 MB a call; recording adds about 0.8 MB more (the 40 KB request
+read whole for usage and `call_io`, the tee, JSON parsing and the EF rows). Rerun on an idle
+machine before quoting the times.
+
+---
+
 ## Unverified / open items
 
 - Startup numbers on Windows (T52; macOS and Linux are in F).

@@ -40,7 +40,7 @@ internal static class FuzzTargets
         new("outline", "T24", Outline.Run),
         new("lsp-frame", "T24.1", null),
         new("manifest-refs", "T25", null),
-        new("proxy-wire", "T27", null),
+        new("proxy-wire", "T27", ProxyWire.Run),
         new("proxy-rewrite", "T28", null),
         new("lane-classify", "T29", null),
         new("transcript-jsonl", "T30", TranscriptJsonl.Run),

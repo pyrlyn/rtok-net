@@ -7,8 +7,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="WireMock.Net" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Proxy/Rtok.Proxy.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Graph/Rtok.Plugins.Graph.csproj" />
     <ProjectReference Include="../../src/Rtok.Store/Rtok.Store.csproj" />

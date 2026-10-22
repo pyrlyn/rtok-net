@@ -21,6 +21,11 @@ var hook = args is ["hook", ..];
 
 using var log = hook ? null : Logger(args);
 log?.ForSource("cli").Named("argv").Debug("argv {Argv}", args);
+if (log is not null)
+{
+    // Long-running surfaces (the proxy) log through the same sink.
+    Serilog.Log.Logger = log;
+}
 
 // ConsoleAppFramework answers an unknown command with the root help and exit 0.
 if (!hook && CommandPath.Check(CommandDocs.Model, args) is var (message, help))
@@ -54,6 +59,8 @@ app.Add("stats", StatsCommands.RunAsync);
 app.Add("bench", BenchCommands.RunAsync);
 app.Add("hook", HookCommand.Run);
 app.Add("expand", ExpandCommand.Run);
+app.Add("proxy", ProxyCommands.ProxyAsync);
+app.Add("wrap", ProxyCommands.WrapAsync);
 app.Run(args);
 
 // "rtok 0.1.0 (3ebd2f7a1)".

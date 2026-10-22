@@ -4,7 +4,7 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats', 'task')
+        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'proxy', 'run', 'stats', 'task', 'wrap')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
@@ -37,6 +37,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'logs watch' = @('--lines', '--config', '-h', '--help', '--version')
         'man' = @('--dir', '-h', '--help', '--version')
         'plugins' = @('--json', '-h', '--help', '--version')
+        'proxy' = @('--port', '--upstream', '--mode', '--dry-run', '--config', '-h', '--help', '--version')
         'run' = @('--agent', '--no-ref', '--config', '-h', '--help', '--version')
         'stats' = @('--since', '--json', '--plugin', '--save-baseline', '--compare', '--calibrate', '--cache', '--price', '--config', '-h', '--help', '--version')
         'task claim' = @('--agent', '--json', '--config', '-h', '--help', '--version')
@@ -54,6 +55,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'task show' = @('--json', '--config', '-h', '--help', '--version')
         'task status' = @('--force', '--json', '--config', '-h', '--help', '--version')
         'task sync' = @('--json', '--config', '-h', '--help', '--version')
+        'wrap' = @('--config', '-h', '--help', '--version')
     }
     $values = @(
         'agents info|--config'
@@ -97,6 +99,10 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'logs watch|--lines'
         'logs watch|--config'
         'man|--dir'
+        'proxy|--port'
+        'proxy|--upstream'
+        'proxy|--mode'
+        'proxy|--config'
         'run|--agent'
         'run|--config'
         'stats|--since'
@@ -129,6 +135,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'task show|--config'
         'task status|--config'
         'task sync|--config'
+        'wrap|--config'
     )
     $hints = @{
         '|bench' = 'Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.'
@@ -140,8 +147,10 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '|logs' = 'Print the last lines of rtok''s log, numbered 1 = newest, across the rotated files.'
         '|man' = 'Print the man page (roff), or write every page with --dir.'
         '|plugins' = 'List plugins: id, kind, enabled, surfaces.'
+        '|proxy' = 'Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.'
         '|run' = 'Run a shell command, archive its output and print it filtered; exits with the command''s code.'
         '|stats' = 'Report tokens per tool, Bash family and MCP group from the agents'' transcripts, with rtok''s rows.'
+        '|wrap' = 'Run a command with its API base URLs on the proxy, starting one when none answers.'
         '|-h' = 'Show help.'
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
@@ -315,6 +324,14 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'plugins|-h' = 'Show help.'
         'plugins|--help' = 'Show help.'
         'plugins|--version' = 'Show version.'
+        'proxy|--port' = 'Listen on this port instead of [proxy] port.'
+        'proxy|--upstream' = 'Forward to this URL instead of [proxy] upstream.'
+        'proxy|--mode' = 'passthrough or compress, instead of [proxy] mode.'
+        'proxy|--dry-run' = 'Print the effective [proxy] settings and exit.'
+        'proxy|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'proxy|-h' = 'Show help.'
+        'proxy|--help' = 'Show help.'
+        'proxy|--version' = 'Show version.'
         'run|--agent' = 'Sub-agent id from PreToolUse; scopes the dedup pointer.'
         'run|--no-ref' = 'Do not print the reference line after a cut.'
         'run|--config' = 'The config file to load instead of the user''s.'
@@ -438,6 +455,10 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'task sync|-h' = 'Show help.'
         'task sync|--help' = 'Show help.'
         'task sync|--version' = 'Show version.'
+        'wrap|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'wrap|-h' = 'Show help.'
+        'wrap|--help' = 'Show help.'
+        'wrap|--version' = 'Show version.'
     }
     $cmd = ''
     $skip = $false

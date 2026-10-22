@@ -3,7 +3,7 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins run stats task' ;;
+        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins proxy run stats task wrap' ;;
         'agents') echo 'info install list uninstall update usage' ;;
         'config') echo 'get init path set show validate' ;;
         'docs') echo 'fetch' ;;
@@ -39,6 +39,7 @@ _rtok_options() {
         'logs watch') echo '--lines --config -h --help --version' ;;
         'man') echo '--dir -h --help --version' ;;
         'plugins') echo '--json -h --help --version' ;;
+        'proxy') echo '--port --upstream --mode --dry-run --config -h --help --version' ;;
         'run') echo '--agent --no-ref --config -h --help --version' ;;
         'stats') echo '--since --json --plugin --save-baseline --compare --calibrate --cache --price --config -h --help --version' ;;
         'task claim') echo '--agent --json --config -h --help --version' ;;
@@ -56,6 +57,7 @@ _rtok_options() {
         'task show') echo '--json --config -h --help --version' ;;
         'task status') echo '--force --json --config -h --help --version' ;;
         'task sync') echo '--json --config -h --help --version' ;;
+        'wrap') echo '--config -h --help --version' ;;
     esac
 }
 
@@ -83,6 +85,7 @@ _rtok_values() {
         'logs export') echo '--lines --config' ;;
         'logs watch') echo '--lines --config' ;;
         'man') echo '--dir' ;;
+        'proxy') echo '--port --upstream --mode --config' ;;
         'run') echo '--agent --config' ;;
         'stats') echo '--since --plugin --save-baseline --compare --config' ;;
         'task claim') echo '--agent --config' ;;
@@ -100,6 +103,7 @@ _rtok_values() {
         'task show') echo '--config' ;;
         'task status') echo '--config' ;;
         'task sync') echo '--config' ;;
+        'wrap') echo '--config' ;;
     esac
 }
 
