@@ -30,7 +30,12 @@ internal static class Git
     {
         var options = new CompareOptions { Similarity = SimilarityOptions.None };
         var commits = new List<List<string>>();
-        foreach (var commit in repo.Commits.Take(count))
+        // Time alone may put a parent before its child when both share a second; git log never does.
+        var filter = new CommitFilter
+        {
+            SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
+        };
+        foreach (var commit in repo.Commits.QueryBy(filter).Take(count))
         {
             var parents = commit.Parents.Take(2).ToList();
             if (parents.Count > 1)

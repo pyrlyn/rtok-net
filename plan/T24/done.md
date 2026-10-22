@@ -102,3 +102,6 @@ Left for later tasks:
   tests cover ranking.
 - Inherited from rtok: the `map` render prints the first word of the line (`pub Point 2`), and
   `outline` `kind` skips words starting with `pub`.
+- Follow-up: co-change walks commits topologically, then by time, as `git log` does. Time alone
+  put a parent before its child when both shared a second, so
+  `Commit_files_match_git_log_name_only_relative` failed on fast machines.
