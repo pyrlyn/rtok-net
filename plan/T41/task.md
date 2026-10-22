@@ -14,6 +14,7 @@ Done when:
 - TaskId rules and the counter allocator work.
 - `rtok task create|list|show|status|next|ready|init|sync|conflict|parallel|export` and the MCP `task_*` tools return the same JSON.
 - Adapters: disk (front-matter files, an OS claim lock), GitHub (labels, sub-issues, pacing, Projects v2) and GitLab.
+- GitLab goes through its own small REST v4 client on `HttpClient` and reflection-free System.Text.Json (source generation, `Utf8JsonWriter`, `JsonDocument`). Not NGitLab: 12.5.0 serializes through reflection, so a NativeAOT publish warns IL2026/IL3050 and the binary throws `Reflection-based serialization has been disabled` on the first request.
 - `worktree add` writes the task list id.
 
 Tests:
