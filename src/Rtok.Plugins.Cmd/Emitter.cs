@@ -156,13 +156,7 @@ internal sealed class Emitter(CmdSettings settings, bool trailer, uint trailerMi
             }
 
             // The host names the archive; markers and the trailer must name the same id.
-            if (
-                !string.Equals(
-                    ArchiveIds.Abbreviate(stored),
-                    ArchiveIds.Abbreviate(id),
-                    StringComparison.Ordinal
-                )
-            )
+            if (!SameArchiveId(stored, id))
             {
                 id = stored;
                 shown = Render(argv, before, body, exit, id, lines);
@@ -173,6 +167,9 @@ internal sealed class Emitter(CmdSettings settings, bool trailer, uint trailerMi
 
         Filtered(host, output, body.Length, before, shown, refId);
     }
+
+    private static bool SameArchiveId(string a, string b) =>
+        string.Equals(ArchiveIds.Abbreviate(a), ArchiveIds.Abbreviate(b), StringComparison.Ordinal);
 
     private static void Filtered(
         ICapabilities host,
