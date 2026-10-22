@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 4
-readiness: 0%
-agent:
+readiness: 5%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T28. Proxy rewriters: archive pointers, toon, json_tree, tools_rewrite
@@ -40,3 +40,18 @@ Ports: rtok closed T5.3, T5.4, T11.7, T11.8, T36.1, T36.2, T55.15, T59.5, T61.2,
 Fuzz: `proxy-rewrite` in `tests/Rtok.Fuzz`: any request through each rewriter is valid JSON, deterministic, leaves the system prompt, tools and last two turns byte-identical, and every pointer expands back.
 
 Check: Replaying a recorded session twice gives byte-identical requests, every pointer expands back to its original, and the image/document test passes.
+
+Plan:
+1. Store: `GetArchiveDecision` by (session, tool_use_id); `StoreRuntime` serves the archive
+   capabilities (put, get, decisions, summaries) instead of the pending stubs, and takes the
+   call it runs under.
+2. Wires implement `IToolResults`: Anthropic (results, skill bodies, live blobs), Chat (results,
+   live blobs), Responses and Gemini (results).
+3. Plugins `Rtok.Plugins.Archive` (pointers, skills, live_blobs), `Rtok.Plugins.Toon` (the one
+   TOON encoder, the report's table rendering uses its cells) and `Rtok.Plugins.JsonTree`,
+   linked in `eng/RtokPlugins.targets`.
+4. `Rtok.Proxy` compress pass: `Dispatcher.ProxyFilter`, the compressor hookup
+   (`SummaryView`, `SummaryQueue`), terminal-noise stripping, `context_management`,
+   `tools_rewrite` with `compact_schema`, one Measurement per rewrite; any throw forwards the
+   original body.
+5. Tests as listed, fuzz target `proxy-rewrite`, gates.
