@@ -31,8 +31,9 @@ public sealed class RetentionTests
         store.InsertTokens(old, null, "before", "estimate", 1);
         store.InsertLog("info", "proxy", "n", "old, no call");
         store.InsertLog("info", "proxy", "n", "old call", callId: old);
-        store.InsertUsage("s", "m", "messages", 1, 0, 0, 1, old);
-        store.InsertMeasurement("s", new MeasurementInput("p", "k", 2, 1, 2, 1, CallId: old));
+        var u = Fakes.Usage().Generate();
+        store.InsertUsage("s", u.Model, u.Api, u.Input, u.CacheCreate, u.CacheRead, u.Output, old);
+        store.InsertMeasurement("s", Fakes.Measurement().Generate() with { CallId = old });
         using (var db = h.Read())
         {
             db.ArchiveDecisions.Add(
@@ -126,7 +127,7 @@ public sealed class RetentionTests
                 var root in (string[])[live.Path, gone, home, Path.GetPathRoot(live.Path)!, ""]
             )
             {
-                db.Symbols.Add(Symbol(root));
+                db.Symbols.Add(Fakes.Symbol(root));
             }
             db.SymbolStale.Add(new SymbolStale { Root = gone, Path = "a.cs" });
             db.Extractor.Add(new Extractor { Root = gone, Fingerprint = "f" });
@@ -175,25 +176,4 @@ public sealed class RetentionTests
             StringComparison.Ordinal
         );
     }
-
-    private static Symbol Symbol(string root) =>
-        new()
-        {
-            Root = root,
-            Path = "a.cs",
-            Name = "A",
-            Kind = "class",
-            Line = 1,
-            EndLine = 2,
-            StartByte = 0,
-            EndByte = 10,
-            IsDef = true,
-            Scope = "",
-            FileSha = "",
-            Mtime = 0,
-            Size = 10,
-            ContentHash = "",
-            Signature = "",
-            Doc = "",
-        };
 }

@@ -53,13 +53,17 @@ public sealed class LedgerTests
     public void Last_measurement_ref_is_the_newest_of_that_plugin_and_kind()
     {
         using var h = new StoreHarness();
+        var m = Fakes.Measurement().Generate();
+        MeasurementInput Row(string kind, string refId) =>
+            m with
+            {
+                Plugin = "memory",
+                Kind = kind,
+                RefId = refId,
+            };
         h.Store.InsertMeasurements(
             "s",
-            [
-                new("memory", "prompt_recall", 1, 1, 1, 1, "old"),
-                new("memory", "prompt_recall", 1, 1, 1, 1, "new"),
-                new("memory", "recall", 1, 1, 1, 1, "other kind"),
-            ]
+            [Row("prompt_recall", "old"), Row("prompt_recall", "new"), Row("recall", "other kind")]
         );
 
         Assert.Equal("new", h.Store.LastMeasurementRef("s", "memory", "prompt_recall"));
@@ -71,7 +75,9 @@ public sealed class LedgerTests
     {
         using var h = new StoreHarness();
         var claude = h.Store.HostId("claude");
-        h.Store.UpsertSession("s", claude, "proj", "/p", "startup");
+        var f = Fakes.Values();
+        var project = f.Lorem.Word();
+        h.Store.UpsertSession("s", claude, project, f.System.DirectoryPath(), "startup");
         h.Clock.Advance(TimeSpan.FromMinutes(5));
 
         h.Store.EndSession("s", null);
@@ -81,7 +87,7 @@ public sealed class LedgerTests
         var s = db.Sessions.Single(x => x.Id == "s");
         Assert.Equal(s.StartedAt + 300, s.EndedAt);
         Assert.Equal(claude, s.HostId);
-        Assert.Equal("proj", s.Project);
+        Assert.Equal(project, s.Project);
         Assert.NotNull(db.Sessions.Single(x => x.Id == "unseen").EndedAt);
     }
 }

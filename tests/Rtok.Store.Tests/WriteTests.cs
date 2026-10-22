@@ -6,18 +6,21 @@ public sealed class WriteTests
     public void A_session_keeps_what_an_earlier_writer_set()
     {
         using var h = new StoreHarness();
+        var f = Fakes.Values();
+        var (sProject, sCwd) = (f.Lorem.Word(), f.System.DirectoryPath());
+        var (tProject, tCwd) = (f.Lorem.Word(), f.System.DirectoryPath());
         var claude = h.Store.HostId("claude");
-        h.Store.UpsertSession("s", claude, "rtok", "/w", "hook");
+        h.Store.UpsertSession("s", claude, sProject, sCwd, "hook");
         h.Store.UpsertSession("s", null, null, null, "proxy");
         h.Store.UpsertSession("t", null, null, null, "proxy");
-        h.Store.UpsertSession("t", claude, "p", "/c", "hook");
+        h.Store.UpsertSession("t", claude, tProject, tCwd, "hook");
 
         using var db = h.Read();
         var s = db.Sessions.Single(x => x.Id == "s");
-        Assert.Equal((claude, "rtok", "/w", "hook"), (s.HostId, s.Project, s.Cwd, s.SourceName));
+        Assert.Equal((claude, sProject, sCwd, "hook"), (s.HostId, s.Project, s.Cwd, s.SourceName));
         Assert.Equal(1_800_000_000, s.StartedAt);
         var t = db.Sessions.Single(x => x.Id == "t");
-        Assert.Equal((claude, "p", "/c", "proxy"), (t.HostId, t.Project, t.Cwd, t.SourceName));
+        Assert.Equal((claude, tProject, tCwd, "proxy"), (t.HostId, t.Project, t.Cwd, t.SourceName));
     }
 
     [Fact]
@@ -42,6 +45,8 @@ public sealed class WriteTests
     public void A_call_takes_every_later_detail()
     {
         using var h = new StoreHarness();
+        var f = Fakes.Values();
+        var (ms, error) = (Math.Round(f.Random.Double(1, 5_000), 1), f.Lorem.Sentence());
         h.Store.UpsertSession("s", null, null, null, null);
         var (provider, model) = h.Store.UpsertModel("acme", "m");
         var parent = h.Store.InsertCall(
@@ -57,15 +62,15 @@ public sealed class WriteTests
         var child = h.Store.InsertCall("s", "proxy", "plugin_run", plugin: "dedup");
 
         h.Store.SetCallParent(child, parent);
-        h.Store.SetCallMs(parent, 12.5);
+        h.Store.SetCallMs(parent, ms);
         h.Store.SetCallKind(parent, "count_tokens");
         h.Store.SetCallServiceTier(parent, "priority");
-        h.Store.SetCallError(child, "boom");
+        h.Store.SetCallError(child, error);
 
         using var db = h.Read();
         var p = db.Calls.Single(c => c.Id == parent);
         Assert.Equal(
-            (12.5, "count_tokens", "priority", true, null),
+            (ms, "count_tokens", "priority", true, null),
             (p.Ms, p.Kind, p.ServiceTier, p.Ok, p.Error)
         );
         Assert.Equal(
@@ -73,32 +78,42 @@ public sealed class WriteTests
             (p.ProviderId!.Value, p.ModelId!.Value, p.Name)
         );
         var c = db.Calls.Single(x => x.Id == child);
-        Assert.Equal(
-            (parent, false, "boom", "dedup"),
-            (c.ParentId!.Value, c.Ok, c.Error, c.Plugin)
-        );
+        Assert.Equal((parent, false, error, "dedup"), (c.ParentId!.Value, c.Ok, c.Error, c.Plugin));
     }
 
     [Fact]
     public void Tokens_logs_and_usage_land_as_given()
     {
         using var h = new StoreHarness();
+        var f = Fakes.Values();
+        var (estimate, message) = (f.Random.Long(1, 100_000), f.Lorem.Sentence());
+        var u = Fakes.Usage().Generate();
+        var total = u.Input + u.CacheCreate + u.CacheRead + u.Output;
         h.Store.UpsertSession("s", null, null, null, null);
         var call = h.Store.InsertCall("s", "proxy", "api");
 
-        h.Store.InsertTokens(call, "dedup", "before", "estimate", 40);
-        h.Store.InsertProviderTokens(call, 10, 1, 2, 3, 4);
-        h.Store.InsertUsage("s", "m", "messages", 1, 2, 3, 4, call);
-        h.Store.InsertLog("warn", "proxy", "upstream", "slow", "s", call, "dedup");
+        h.Store.InsertTokens(call, "dedup", "before", "estimate", estimate);
+        h.Store.InsertProviderTokens(call, total, u.Input, u.CacheCreate, u.CacheRead, u.Output);
+        h.Store.InsertUsage(
+            "s",
+            u.Model,
+            u.Api,
+            u.Input,
+            u.CacheCreate,
+            u.CacheRead,
+            u.Output,
+            call
+        );
+        h.Store.InsertLog("warn", "proxy", "upstream", message, "s", call, "dedup");
 
         using var db = h.Read();
         var tokens = db.Tokens.OrderBy(t => t.Id).ToList();
         Assert.Equal(
-            ("dedup", "before", "estimate", 40L),
+            ("dedup", "before", "estimate", estimate),
             (tokens[0].Plugin, tokens[0].Phase, tokens[0].SourceName, tokens[0].Tokens)
         );
         Assert.Equal(
-            ("after", "provider", 10L, 1L, 2L, 3L, 4L),
+            ("after", "provider", total, u.Input, u.CacheCreate, u.CacheRead, u.Output),
             (
                 tokens[1].Phase,
                 tokens[1].SourceName,
@@ -111,7 +126,7 @@ public sealed class WriteTests
         );
         var usage = db.Usage.Single();
         Assert.Equal(
-            ("m", "messages", 1L, 2L, 3L, 4L, call),
+            (u.Model, u.Api, u.Input, u.CacheCreate, u.CacheRead, u.Output, call),
             (
                 usage.Model,
                 usage.Api,
@@ -124,7 +139,7 @@ public sealed class WriteTests
         );
         var log = db.Logs.Single();
         Assert.Equal(
-            ("warn", "proxy", "upstream", "slow", "dedup"),
+            ("warn", "proxy", "upstream", message, "dedup"),
             (log.Level, log.SourceName, log.Name, log.Message, log.Plugin)
         );
     }
@@ -135,7 +150,8 @@ public sealed class WriteTests
         using var h = new StoreHarness();
         h.Store.UpsertSession("s", null, null, null, null);
         var call = h.Store.InsertCall("s", "proxy", "batch");
-        UsageInput Row(string? key) => new("m", "batch", 1, 0, 0, 1, key);
+        var usage = Fakes.Usage().Generate();
+        UsageInput Row(string? key) => usage with { ResultKey = key };
 
         Assert.Equal(
             3,
@@ -153,10 +169,11 @@ public sealed class WriteTests
     {
         using var h = new StoreHarness();
         h.Store.UpsertSession("s", null, null, null, null);
-        var m = new MeasurementInput("dedup", "dedup", 100, 10, 25, 3, "ref");
+        var m = Fakes.Measurement().Generate();
+        var other = m with { Kind = m.Kind + "-other" };
 
         h.Store.InsertMeasurement("s", m, once: "PreToolUse:t1");
-        h.Store.InsertMeasurements("s", [m, m with { Kind = "inject" }], once: "PreToolUse:t1");
+        h.Store.InsertMeasurements("s", [m, other], once: "PreToolUse:t1");
         h.Store.InsertMeasurement("s", m, once: "PreToolUse:t2");
         h.Store.InsertMeasurement("s", m);
         h.Store.InsertMeasurement("s", m);
@@ -165,9 +182,10 @@ public sealed class WriteTests
         Assert.Equal(5, db.Measurements.Count());
         Assert.Equal(
             [
-                "PreToolUse:t1|dedup|dedup|ref",
-                "PreToolUse:t1|dedup|inject|ref",
-                "PreToolUse:t2|dedup|dedup|ref",
+                // "-" sorts before "|", so the longer kind comes first.
+                $"PreToolUse:t1|{m.Plugin}|{other.Kind}|{m.RefId}",
+                $"PreToolUse:t1|{m.Plugin}|{m.Kind}|{m.RefId}",
+                $"PreToolUse:t2|{m.Plugin}|{m.Kind}|{m.RefId}",
             ],
             db.Measurements.Where(x => x.OnceKey != null)
                 .Select(x => x.OnceKey!)
@@ -176,7 +194,7 @@ public sealed class WriteTests
         );
         var row = db.Measurements.First();
         Assert.Equal(
-            (100L, 10L, 25L, 3L, "ref"),
+            (m.BeforeBytes, m.AfterBytes, m.EstBefore, m.EstAfter, m.RefId),
             (row.BeforeBytes, row.AfterBytes, row.EstBefore, row.EstAfter, row.RefId)
         );
     }

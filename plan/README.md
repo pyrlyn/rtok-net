@@ -120,7 +120,9 @@ N10. **Console output: Spectre.Console** for colours, tables, prompts, status an
 pipes.
 
 N11. **Tests: xUnit v3 on Microsoft.Testing.Platform**, with Verify for snapshots, CsCheck
-for property tests, WireMock.Net for upstream fakes and NSubstitute for interface mocks.
+for property tests, WireMock.Net for upstream fakes, NSubstitute for interface mocks and
+Bogus for data whose values a test does not look at (seeded, so a run repeats; T59). Values a
+test is about stay literal, and Bogus stays out of libraries and the AOT lane.
 Tests run on the JIT; only a small AOT test project, which checks that AOT works and uses
 no mocks, and smoke tests against the published binaries run AOT, on every OS in CI.
 Every task lists the tests that prove it under `Tests:` (project, kind, case); it closes
@@ -259,7 +261,7 @@ macOS and Linux with the full binary, the resident and both fallbacks: research.
 | OpenTelemetry | own OTLP/HTTP JSON projection of the ledgers (rtok D19), STJ source gen | the OTel SDK instruments live code; rtok exports stored rows with watermarks |
 | PDF report | QuestPDF, behind an own renderer interface (N18) | only in `Rtok.Report.Pdf`; native Skia |
 | SVG to PNG | Svg.Skia | optional |
-| Tests | xunit.v3, Verify.XunitV3, CsCheck, WireMock.Net, NSubstitute, CliWrap, Porta.Pty, BenchmarkDotNet, SharpFuzz | N11 |
+| Tests | xunit.v3, Verify.XunitV3, CsCheck, WireMock.Net, NSubstitute, Bogus, CliWrap, Porta.Pty, BenchmarkDotNet, SharpFuzz | N11 |
 | Analyzers, format | Roslynator, Meziantou, VS Threading, BannedApiAnalyzers; CSharpier; markdownlint-cli2 | shared part in Pyrlyn.CodeStyle (T55) |
 
 ## Own packages

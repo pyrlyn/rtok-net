@@ -153,7 +153,11 @@ public sealed class BatchTests
         return new Holder(connection, transaction);
     }
 
-    private static MeasurementInput Row(string plugin) => new(plugin, "k", 10, 5, 3, 1, null, null);
+    private static MeasurementInput Row(string plugin) =>
+        Fakes.Measurement().Generate() with
+        {
+            Plugin = plugin,
+        };
 
     private sealed class Holder(SqliteConnection connection, SqliteTransaction transaction)
         : IDisposable

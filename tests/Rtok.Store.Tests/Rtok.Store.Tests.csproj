@@ -4,6 +4,7 @@
     <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Bogus" />
     <PackageReference Include="CsCheck" />
     <PackageReference Include="Verify.XunitV3" />
   </ItemGroup>

@@ -5,12 +5,17 @@ runs every lane below except the tools at the end.
 
 | Lane | Project | What it runs |
 | --- | --- | --- |
-| JIT | `*.Tests` (here and in `packages/<Name>/tests`) | unit tests on the JIT: Verify snapshots, CsCheck properties, WireMock.Net fakes |
+| JIT | `*.Tests` (here and in `packages/<Name>/tests`) | unit tests on the JIT: Verify snapshots, CsCheck properties, WireMock.Net fakes, Bogus data |
 | AOT | `Rtok.AotTests` | source-generated xUnit (`xunit.v3.aot.mtp-v2`), run only as its published NativeAOT executable |
 | Smoke | `Rtok.Smoke` | the published `rtok` and `rtok-hook` through CliWrap and Porta.Pty, and the published AOT lane |
 
 Every test project is named `*.Tests` (or is one of the two above) and gets xUnit and
 `using Xunit` from `tests/Directory.Build.*`. Test names read as sentences with underscores.
+
+Data a test does not look at (counts, project names, paths, log text) comes from Bogus,
+seeded so every run sees the same rows: `Rtok.Store.Tests/Fakes.cs`. Values the test checks
+for their meaning (expected parser output, priced models, snapshot inputs, keys the asserts
+name) stay literal.
 
 Verify snapshots live next to their test as `*.verified.*`. A mismatch writes a
 `*.received.*` file (ignored by git); review it and rename it over the `.verified` one to
