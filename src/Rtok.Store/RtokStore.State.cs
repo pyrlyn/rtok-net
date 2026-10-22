@@ -41,20 +41,7 @@ public sealed partial class RtokStore
 
     /// <summary>The <c>measurements</c> row for <paramref name="m"/>, stamped now.</summary>
     private Measurement MeasurementRow(string session, MeasurementInput m, string? onceKey) =>
-        new()
-        {
-            Ts = Now,
-            Session = session,
-            Plugin = m.Plugin,
-            Kind = m.Kind,
-            BeforeBytes = m.BeforeBytes,
-            AfterBytes = m.AfterBytes,
-            EstBefore = m.EstBefore,
-            EstAfter = m.EstAfter,
-            RefId = m.RefId,
-            CallId = m.CallId,
-            OnceKey = onceKey,
-        };
+        m.ToMeasurement(Now, session, onceKey);
 
     public string? KvGet(string key)
     {

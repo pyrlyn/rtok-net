@@ -34,6 +34,8 @@
     />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks" PrivateAssets="all" />
+    <!-- A source generator; its attributes are compile-time only, so no runtime asset ships. -->
+    <PackageReference Include="Riok.Mapperly" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <!-- One EF-generated SQL script per migration, written by eng/Rtok.Store.Scripts from the

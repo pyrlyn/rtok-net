@@ -216,17 +216,5 @@ public sealed partial class RtokStore
     }
 
     private Usage NewUsage(string session, long callId, UsageInput row) =>
-        new()
-        {
-            Ts = Now,
-            Session = session,
-            Model = row.Model,
-            Api = row.Api,
-            Input = row.Input,
-            CacheCreate = row.CacheCreate,
-            CacheRead = row.CacheRead,
-            Output = row.Output,
-            CallId = callId,
-            ResultKey = row.ResultKey,
-        };
+        row.ToUsage(Now, session, callId);
 }

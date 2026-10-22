@@ -257,6 +257,7 @@ macOS and Linux with the full binary, the resident and both fallbacks: research.
 | Processes | CliWrap behind one ProgressRunner API | the only way rtok spawns |
 | SemVer | Semver | |
 | File watching | `FileSystemWatcher` + own debounce | |
+| Object mapping | Riok.Mapperly (source generator, compile time only) | input records to store entities (T60); EF query projections stay hand-written |
 | Hashing, ids, base64, time zones | BCL (`SHA256`, `Guid.CreateVersion7`, `Base64Url`, `TimeZoneInfo`) | |
 | OpenTelemetry | own OTLP/HTTP JSON projection of the ledgers (rtok D19), STJ source gen | the OTel SDK instruments live code; rtok exports stored rows with watermarks |
 | PDF report | QuestPDF, behind an own renderer interface (N18) | only in `Rtok.Report.Pdf`; native Skia |

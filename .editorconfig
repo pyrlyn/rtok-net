@@ -20,6 +20,10 @@ dotnet_diagnostic.MA0004.severity = none
 dotnet_diagnostic.VSTHRD002.severity = none
 dotnet_diagnostic.VSTHRD103.severity = none
 
+# Mapperly (T60): a member a mapper leaves out fails the build instead of being dropped.
+dotnet_diagnostic.RMG012.severity = error
+dotnet_diagnostic.RMG020.severity = error
+
 # EF Core's generated query interceptors (src/Rtok.Store; research.md F): the older
 # InterceptsLocation form and EF's own obsolete members. CS8669 is in the project's NoWarn.
 [*.EFInterceptors.*.g.cs]
