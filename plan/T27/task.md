@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P1
 complexity: 5
-readiness: 0%
-agent:
+readiness: 10%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T27. Proxy core: Kestrel passthrough, SSE, wires, usage
@@ -45,3 +45,22 @@ Ports: rtok closed T5.1, T5.2, T5.5, T11.1, T11.2, T11.3, T11.4, T11.6, T34.6, T
 Fuzz: `proxy-wire` in `tests/Rtok.Fuzz`: request and SSE bodies for each wire give usage or none, plain passthrough bytes stay unchanged, and the Host header check never throws.
 
 Check: WireMock upstream tests cover passthrough byte-identity, SSE usage for each wire, and loop detection, and the proxy fixture bench is recorded.
+
+Plan:
+1. `src/Rtok.Proxy` (app layer, Kestrel through `Microsoft.AspNetCore.App`): the four wires
+   (`Wire` with Anthropic Messages, OpenAI Chat, OpenAI Responses and Gemini), the shared usage
+   walk, SSE usage per event with lossy UTF-8, the upstream URL join, the hop count, the Host
+   check, the live ring, TLS (platform roots plus `SSL_CERT_FILE`, fail closed) and the proxy
+   base URLs that `wrap` and T35.4 share.
+2. `ProxyServer`: Kestrel on `[proxy] bind:port` (default 127.0.0.1:8790), `/health`, `/live`
+   and one forwarding handler. An `HttpClient` forwarder, no YARP: the tee and the recording
+   need the body anyway. Plain mode (a kill switch or hops > 0) forwards bytes untouched;
+   otherwise the call, its `call_io`, one `usage` row (zeros when there are no counters or
+   upstream fails) and the provider `tokens` row are written after the response completes.
+3. Rtok.Cli: `rtok proxy [--port] [--upstream] [--mode] [--dry-run] [--config]` and
+   `rtok wrap -- <cmd>` (starts the proxy in-process when `/health` does not answer, sets
+   `ANTHROPIC_BASE_URL` and `OPENAI_BASE_URL`, exits with the child's code, fails open).
+4. Tests: `tests/Rtok.Proxy.Tests` (unit, WireMock upstreams, TLS with a generated
+   self-signed CA), `Rtok.Cli.Tests` for `wrap`, fuzz target `proxy-wire`, a smoke test on
+   the published binary, and a proxy fixture bench in `Rtok.Benchmarks` recorded in
+   `research.md`.
