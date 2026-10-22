@@ -111,6 +111,8 @@ public sealed class GooseMcpTests
     [InlineData("extensions: {}\n")]
     [InlineData("extensions: 3\n")]
     [InlineData("extensions: [\n")]
+    [InlineData("extensions:\n*OOSE_MODE: auto\n")]
+    [InlineData("? [a, b]\n: c\n")]
     public void A_file_it_cannot_edit_is_refused_and_untouched(string text)
     {
         _disk.Put(_file, text);

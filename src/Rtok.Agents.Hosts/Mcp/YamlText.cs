@@ -156,7 +156,7 @@ internal static class YamlText
     /// The first document of <paramref name="text"/> as JSON: mappings, sequences, and plain
     /// scalars typed by YAML's core schema; null for an empty document.
     /// </summary>
-    /// <exception cref="YamlException">The text is not valid YAML.</exception>
+    /// <exception cref="YamlException">The text is not valid YAML, or a key is not a scalar.</exception>
     public static JsonNode? Parse(string text)
     {
         var parser = Parser.CreateParser(new StringReader(text));
@@ -192,21 +192,13 @@ internal static class YamlText
                 default:
                     continue;
             }
-            if (open.TryPeek(out var parent))
+            if (open.Count == 0)
             {
-                if (parent is JsonObject map)
-                {
-                    map[key!] = node;
-                    key = null;
-                }
-                else
-                {
-                    ((JsonArray)parent).Add(node);
-                }
+                root = node;
             }
             else
             {
-                root = node;
+                Attach(open.Peek(), ref key, node, parser.Current!);
             }
             if (node is JsonObject or JsonArray)
             {
@@ -214,6 +206,21 @@ internal static class YamlText
             }
         }
         return root;
+    }
+
+    /// <summary>Adds <paramref name="node"/> to its open mapping under <paramref name="key"/>, or to its sequence.</summary>
+    private static void Attach(JsonNode parent, ref string? key, JsonNode? node, ParsingEvent at)
+    {
+        if (parent is JsonArray list)
+        {
+            list.Add(node);
+            return;
+        }
+        // An alias or a collection as a key has no JSON form.
+        ((JsonObject)parent)[
+            key ?? throw new YamlException(at.Start, at.End, "a mapping key that is not a scalar")
+        ] = node;
+        key = null;
     }
 
     private static JsonValue? Value(Scalar s)

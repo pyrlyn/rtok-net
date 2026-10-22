@@ -18,6 +18,7 @@
 - A shared host (VS Code stable and insiders) installs every surface in one apply.
 - Ownership checks drop the entry's `name`, which is always `rtok` and is no sign of what the entry runs.
 - Reasonix keeps the blank line before its table under CRLF too.
+- After the merge: a YAML key that is an alias or a collection is a parse error (a refusal), not a crash; the `agents-install` fuzz target found it.
 - The entry's `args` use `JsonArray`'s `params` constructor: a collection expression calls the generic `Add<T>`, which the AOT publish rejects (IL2026/IL3050) while the library build stays silent.
 - `Rtok.Agents.Hosts` has its layer in `ArchitectureTests`.
 
