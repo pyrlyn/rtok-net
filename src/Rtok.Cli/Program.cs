@@ -13,8 +13,8 @@ if (args is ["--version"] or ["-V"])
     return;
 }
 
-// `agent`, `agents setup` and `agents remove` are spelled out before anything reads the command.
-args = AgentsCommands.Aliases(args);
+// `agent`, `agents setup`, `agents remove` and `dashboard` are spelled out before anything reads the command.
+args = WebCommands.Aliases(AgentsCommands.Aliases(args));
 
 // The hook stays on its budget: no command model, no display and no config load for the log.
 var hook = args is ["hook", ..];
@@ -61,6 +61,7 @@ app.Add("hook", HookCommand.Run);
 app.Add("expand", ExpandCommand.Run);
 app.Add("proxy", ProxyCommands.ProxyAsync);
 app.Add("wrap", ProxyCommands.WrapAsync);
+app.Add("web", WebCommands.WebAsync);
 app.Run(args);
 
 // "rtok 0.1.0 (3ebd2f7a1)".

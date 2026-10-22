@@ -52,7 +52,7 @@ internal static class FuzzTargets
         new("worktree-arg", "T40", null),
         new("task-file", "T41", TaskFileText.Run),
         new("lockfiles", "T42", Targets.Lockfiles.Run),
-        new("ws-message", "T44", null),
+        new("ws-message", "T44", WsMessage.Run),
         new("demon-state", "T46", null),
         new("otlp-encode", "T47", null),
         new("win-quote", "T48", null),

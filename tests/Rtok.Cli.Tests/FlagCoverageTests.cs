@@ -61,6 +61,7 @@ public sealed class FlagCoverageTests
         "junk.items", // how one `agents junk list` prints
         "junk.sort",
         "junk.bytes",
+        "web.no_token", // one run without the token, never a stored setting
     };
 
     [Fact]

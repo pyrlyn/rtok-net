@@ -1,0 +1,66 @@
+<Project>
+  <!-- The dashboard client (N13), published after it is built and before this assembly compiles,
+       then embedded as client/<path>. Only one light and one dark Radzen theme go in; a file with
+       a Brotli copy goes in as its .br and .gz copies only (the host never compresses, and it
+       gunzips for the rare client that takes neither). -->
+  <PropertyGroup>
+    <RtokClientProject>$(MSBuildThisFileDirectory)../Rtok.Web.Client/Rtok.Web.Client.csproj</RtokClientProject>
+    <RtokClientPublish>$(RtokClientDir)publish/</RtokClientPublish>
+    <RtokClientStamp>$(RtokClientDir)published.stamp</RtokClientStamp>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RtokClientInput
+      Include="$(MSBuildThisFileDirectory)../Rtok.Web.Client/**/*"
+      Exclude="$(MSBuildThisFileDirectory)../Rtok.Web.Client/bin/**;$(MSBuildThisFileDirectory)../Rtok.Web.Client/obj/**"
+    />
+    <RtokClientInput Include="$(MSBuildThisFileDirectory)../Rtok.Web.Contracts/**/*.cs" />
+    <RtokClientInput Include="$(MSBuildThisFileDirectory)../../Directory.Packages.props" />
+  </ItemGroup>
+
+  <Target
+    Name="RtokPublishClient"
+    BeforeTargets="SplitResourcesByCulture"
+    DependsOnTargets="ResolveProjectReferences"
+    Inputs="@(RtokClientInput)"
+    Outputs="$(RtokClientStamp)"
+  >
+    <RemoveDir Directories="$(RtokClientPublish)" />
+    <MSBuild
+      Projects="$(RtokClientProject)"
+      Targets="Publish"
+      Properties="Configuration=$(Configuration);NoBuild=true;PublishDir=$(RtokClientPublish)"
+    />
+    <Touch Files="$(RtokClientStamp)" AlwaysCreate="true" />
+  </Target>
+
+  <Target
+    Name="RtokEmbedClient"
+    AfterTargets="RtokPublishClient"
+    BeforeTargets="SplitResourcesByCulture"
+  >
+    <PropertyGroup>
+      <_RtokRoot>$(RtokClientPublish)wwwroot/</_RtokRoot>
+      <_RtokThemes>$(_RtokRoot)_content/Radzen.Blazor/css/</_RtokThemes>
+    </PropertyGroup>
+    <ItemGroup>
+      <_RtokClientFile
+        Include="$(_RtokRoot)**/*"
+        Exclude="$(_RtokThemes)*;$(_RtokRoot)_content/Radzen.Blazor/Radzen.Blazor.min.js*"
+      />
+      <!-- RadzenTheme links the -base variant of the theme it shows. -->
+      <_RtokClientFile Include="$(_RtokThemes)standard-base.css*;$(_RtokThemes)standard-dark-base.css*" />
+      <_RtokClientRaw Include="@(_RtokClientFile)" Condition="Exists('%(FullPath).br')" />
+      <_RtokClientFile Remove="@(_RtokClientRaw)" />
+      <EmbeddedResource
+        Include="@(_RtokClientFile)"
+        LogicalName="client/$([MSBuild]::MakeRelative('$(_RtokRoot)', '%(FullPath)').Replace('\', '/'))"
+        WithCulture="false"
+      />
+    </ItemGroup>
+    <Error
+      Condition="'@(_RtokClientFile)' == ''"
+      Text="The dashboard client did not publish to $(_RtokRoot)."
+    />
+  </Target>
+</Project>

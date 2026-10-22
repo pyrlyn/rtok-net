@@ -98,11 +98,11 @@ public sealed class SnapshotTests
         using var fx = new ModelFixture();
         var snapshot = fx.Model().Build();
 
-        var json = JsonSerializer.Serialize(snapshot, SnapshotJsonContext.Default.Snapshot);
-        var back = JsonSerializer.Deserialize(json, SnapshotJsonContext.Default.Snapshot);
+        var json = JsonSerializer.Serialize(snapshot, WsJsonContext.Default.Snapshot);
+        var back = JsonSerializer.Deserialize(json, WsJsonContext.Default.Snapshot);
 
         Assert.NotNull(back);
-        Assert.Equal(json, JsonSerializer.Serialize(back, SnapshotJsonContext.Default.Snapshot));
+        Assert.Equal(json, JsonSerializer.Serialize(back, WsJsonContext.Default.Snapshot));
         Assert.Contains("\"cacheCreate\":10", json, StringComparison.Ordinal);
     }
 
@@ -135,7 +135,10 @@ public sealed class SnapshotTests
             return [type.ToString()];
         }
         var record = type.IsSealed && type.GetMethod("<Clone>$") is not null;
-        if (!record || !string.Equals(type.Namespace, "Rtok.Model", StringComparison.Ordinal))
+        if (
+            !record
+            || !string.Equals(type.Namespace, "Rtok.Web.Contracts", StringComparison.Ordinal)
+        )
         {
             return [type.ToString()];
         }

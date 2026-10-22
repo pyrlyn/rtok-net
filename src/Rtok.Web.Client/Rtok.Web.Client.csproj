@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+  <!-- The web dashboard (N13): a standalone Blazor WebAssembly app on Radzen.Blazor. Rtok.Web
+       publishes it and embeds the output; it talks to rtok only over /ws. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Web.Client</RootNamespace>
+    <!-- The browser runs this on the WebAssembly runtime; NativeAOT does not apply. -->
+    <RtokJitOnly>true</RtokJitOnly>
+    <UseAppHost>false</UseAppHost>
+    <!-- No satellite assemblies, no globalization data: the dashboard is English only. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <BlazorWebAssemblyLoadAllGlobalizationData>false</BlazorWebAssemblyLoadAllGlobalizationData>
+    <PublishTrimmed>true</PublishTrimmed>
+    <!-- Brotli and gzip copies come out of publish; the host serves them, never compresses. -->
+    <CompressionEnabled>true</CompressionEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="Radzen.Blazor" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Web.Contracts/Rtok.Web.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Radzen grids bind columns by property name: keep every contract member. -->
+    <TrimmerRootAssembly Include="Rtok.Web.Contracts" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Web.Client.Tests" />
+  </ItemGroup>
+</Project>

@@ -1925,6 +1925,50 @@
       ]
     },
     {
+      "path": "web",
+      "aliases": [],
+      "description": "Serve the web dashboard until Ctrl-C; prints its address with this run's token to stderr.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--host"
+          ],
+          "type": "string?",
+          "description": "The address to bind, an IP or localhost; [web] host when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--port"
+          ],
+          "type": "ushort?",
+          "description": "The port, 0 for any free one; [web] port when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--no-token"
+          ],
+          "type": null,
+          "description": "Serve /ws without the token; refused unless the host is loopback.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to load instead of the user's.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "wrap",
       "aliases": [],
       "description": "Run a command with its API base URLs on the proxy, starting one when none answers.",

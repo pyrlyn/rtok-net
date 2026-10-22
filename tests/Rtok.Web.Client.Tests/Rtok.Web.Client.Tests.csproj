@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="bunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Web.Client/Rtok.Web.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Bunit" />
+  </ItemGroup>
+</Project>

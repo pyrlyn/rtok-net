@@ -1,0 +1,36 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.rtok-boot {
+  padding: 2rem;
+  font-family: system-ui, sans-serif;
+  color: #6b7280;
+}
+
+#blazor-error-ui {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem 1rem;
+  background: #fee2e2;
+  color: #7f1d1d;
+  font-family: system-ui, sans-serif;
+}
+
+.rtok-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+}
+
+.rtok-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 1rem;
+}

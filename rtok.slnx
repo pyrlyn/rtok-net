@@ -91,6 +91,9 @@
     <Project Path="src/Rtok.Plugins.Read/Rtok.Plugins.Read.csproj" />
     <Project Path="src/Rtok.Tasks/Rtok.Tasks.csproj" />
     <Project Path="src/Rtok.Proxy/Rtok.Proxy.csproj" />
+    <Project Path="src/Rtok.Web.Client/Rtok.Web.Client.csproj" />
+    <Project Path="src/Rtok.Web.Contracts/Rtok.Web.Contracts.csproj" />
+    <Project Path="src/Rtok.Web/Rtok.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Rtok.Agents.Tests/Rtok.Agents.Tests.csproj" />
@@ -124,5 +127,7 @@
     <Project Path="tests/Rtok.Tasks.Tests/Rtok.Tasks.Tests.csproj" />
     <Project Path="tests/Rtok.Testing.Tests/Rtok.Testing.Tests.csproj" />
     <Project Path="tests/Rtok.Testing/Rtok.Testing.csproj" />
+    <Project Path="tests/Rtok.Web.Client.Tests/Rtok.Web.Client.Tests.csproj" />
+    <Project Path="tests/Rtok.Web.Tests/Rtok.Web.Tests.csproj" />
   </Folder>
 </Solution>

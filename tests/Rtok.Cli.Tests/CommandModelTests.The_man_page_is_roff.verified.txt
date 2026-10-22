@@ -188,6 +188,10 @@ See \fBrtok\-task\-status\fR(1).
 Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
 See \fBrtok\-task\-sync\fR(1).
 .TP
+\fBweb\fR
+Serve the web dashboard until Ctrl\-C; prints its address with this run's token to stderr.
+See \fBrtok\-web\fR(1).
+.TP
 \fBwrap\fR
 Run a command with its API base URLs on the proxy, starting one when none answers.
 See \fBrtok\-wrap\fR(1).

@@ -39,11 +39,25 @@ internal static class RtokBinary
         string? workingDirectory = null
     )
     {
-        var result = CliWrap
-            .Cli.Wrap(Path)
-            .WithArguments(args)
+        var result = Command(args, environment)
             .WithStandardInputPipe(stdin is null ? PipeSource.Null : PipeSource.FromString(stdin))
             .WithWorkingDirectory(workingDirectory ?? Environment.CurrentDirectory)
+            .WithValidation(CommandResultValidation.None)
+            .ExecuteBufferedAsync()
+            .Task.GetAwaiter()
+            .GetResult();
+        return (result.ExitCode, result.StandardOutput, result.StandardError);
+    }
+
+    /// <summary>The same sandboxed run as <see cref="Exec"/>, not started, for a command that
+    /// runs until it is stopped.</summary>
+    internal static Command Command(
+        IReadOnlyList<string> args,
+        IReadOnlyDictionary<string, string?>? environment = null
+    ) =>
+        CliWrap
+            .Cli.Wrap(Path)
+            .WithArguments(args)
             .WithEnvironmentVariables(env =>
             {
                 env.Set("HOME", Home.Path)
@@ -57,13 +71,7 @@ internal static class RtokBinary
                 {
                     env.Set(name, value);
                 }
-            })
-            .WithValidation(CommandResultValidation.None)
-            .ExecuteBufferedAsync()
-            .Task.GetAwaiter()
-            .GetResult();
-        return (result.ExitCode, result.StandardOutput, result.StandardError);
-    }
+            });
 
     private static TempDir Home { get; } = new("rtok-cli-home-");
 }

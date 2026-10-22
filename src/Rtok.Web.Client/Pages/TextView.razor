@@ -1,0 +1,21 @@
+@page "/{Slug}"
+
+@if (TextPages.Find(Slug) is { } info && Snapshot is { } snapshot)
+{
+  var text = info.Read(snapshot);
+  <PageTitle>rtok · @info.Title</PageTitle>
+  <RadzenText TextStyle="TextStyle.H4">@info.Title</RadzenText>
+  <pre class="rtok-text" aria-busy="@(text.Ready ? "false" : "true")">@text.Text</pre>
+}
+else
+{
+  <RadzenText TextStyle="TextStyle.H5">No such page</RadzenText>
+}
+
+@code {
+  [Parameter]
+  public string Slug { get; set; } = "";
+
+  [CascadingParameter]
+  public Snapshot? Snapshot { get; set; }
+}

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The /ws wire shared by Rtok.Web and Rtok.Web.Client (N13): the snapshot, the requests and
+       the frames, with one STJ context. No references, so the browser bundle stays small. -->
+  <PropertyGroup>
+    <RootNamespace>Rtok.Web.Contracts</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Web.Tests" />
+  </ItemGroup>
+</Project>

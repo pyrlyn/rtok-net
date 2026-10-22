@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 4
-readiness: 0%
-agent:
+readiness: 75%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T44. Web dashboard: Kestrel, `/ws`, Blazor WebAssembly shell
@@ -45,3 +45,25 @@ Ports: rtok closed T19.1, T19.2, T19.4, T21.3, T36.14, T36.15, T60.3, T60.4, T60
 Fuzz: `ws-message` in `tests/Rtok.Fuzz`: any `/ws` message is answered or refused, and the Origin and Host checks never throw.
 
 Check: Web e2e tests over `ClientWebSocket` cover snapshot, toggle, expand and doctor plan/apply, and `/ws` without the token is refused.
+
+Plan (same rule as T43: build now; a request whose function is not on `main` yet is answered
+"not available in this build yet", and the task stays open until each is wired):
+1. `src/Rtok.Web.Contracts`: the snapshot pages move here from `Rtok.Model` (one copy, used by
+   the model, the host and the client), plus the `/ws` requests, the frames and one STJ context.
+2. `src/Rtok.Web`: Kestrel slim host with `/health`, `/ws` and the client assets (decoded once
+   per segment, precompressed, immutable `_framework`, `index.html` fallback, CSP), the
+   Origin/Host checks and the per-run token; the snapshot comes from `OperatorModel`.
+3. `src/Rtok.Web.Client`: Blazor WebAssembly on Radzen: layout, sidebar, routing, theme toggle,
+   the `/ws` client with loading/offline/Reconnect, the overview page. Rtok.Web publishes it
+   before compile and embeds the output, with two Radzen themes only.
+4. `rtok web [--host] [--port]` in the CLI, `dashboard` as a hidden alias.
+5. Tests: `Rtok.Web.Tests`, `Rtok.Web.Client.Tests` (bUnit), architecture rules, smoke, the
+   `ws-message` fuzz target.
+
+Pending (answered "not available in this build yet" until their function is on `main`):
+- Doctor plan/apply over `/ws` and its test. `DoctorFix.Plan`/`Apply` (T32) are on `main`;
+  next: the fix action in `OperatorModel` (T43's open item), a plan frame in
+  `Rtok.Web.Contracts`, and the selection mapped onto `FixRequest`.
+- Graph drill-down and link/unlink over `/ws`, and their test: need the project registry
+  (catalog B15), which is not on `main`; T24 brought only the tags index.
+- Live calls frames over `/ws` and the CallBatch unit test.

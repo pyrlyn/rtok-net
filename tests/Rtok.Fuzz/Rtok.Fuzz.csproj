@@ -36,6 +36,7 @@
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
     <ProjectReference Include="../../src/Rtok.Tasks/Rtok.Tasks.csproj" />
     <ProjectReference Include="../../src/Rtok.Proxy/Rtok.Proxy.csproj" />
+    <ProjectReference Include="../../src/Rtok.Web/Rtok.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Fuzz.Tests" />

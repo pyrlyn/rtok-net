@@ -30,6 +30,7 @@
     <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
     <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />
     <ProjectReference Include="../Rtok.Tasks/Rtok.Tasks.csproj" />
+    <ProjectReference Include="../Rtok.Web/Rtok.Web.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.OperationIcons/src/Pyrlyn.OperationIcons.csproj" />
   </ItemGroup>

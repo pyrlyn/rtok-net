@@ -17,5 +17,6 @@
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../Rtok.Log/Rtok.Log.csproj" />
     <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+    <ProjectReference Include="../Rtok.Web.Contracts/Rtok.Web.Contracts.csproj" />
   </ItemGroup>
 </Project>

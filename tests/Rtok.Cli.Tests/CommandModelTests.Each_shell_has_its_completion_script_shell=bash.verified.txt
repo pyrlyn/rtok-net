@@ -3,7 +3,7 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins proxy run stats task wrap' ;;
+        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins proxy run stats task web wrap' ;;
         'agents') echo 'info install junk list uninstall update usage' ;;
         'agents junk') echo 'clear list' ;;
         'config') echo 'get init path set show validate' ;;
@@ -60,6 +60,7 @@ _rtok_options() {
         'task show') echo '--json --config -h --help --version' ;;
         'task status') echo '--force --json --config -h --help --version' ;;
         'task sync') echo '--json --config -h --help --version' ;;
+        'web') echo '--host --port --no-token --config -h --help --version' ;;
         'wrap') echo '--config -h --help --version' ;;
     esac
 }
@@ -108,6 +109,7 @@ _rtok_values() {
         'task show') echo '--config' ;;
         'task status') echo '--config' ;;
         'task sync') echo '--config' ;;
+        'web') echo '--host --port --config' ;;
         'wrap') echo '--config' ;;
     esac
 }

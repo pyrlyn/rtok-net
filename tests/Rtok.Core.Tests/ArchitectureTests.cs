@@ -12,7 +12,7 @@ public sealed class ArchitectureTests
     [
         ["Pyrlyn.*"],
         ["Rtok.Plugin.Sdk", "Rtok.Agent.Sdk"],
-        ["Rtok.Hook.Contracts"],
+        ["Rtok.Hook.Contracts", "Rtok.Web.Contracts"],
         [
             "Rtok.Core",
             "Rtok.Config",
@@ -43,6 +43,7 @@ public sealed class ArchitectureTests
             "Rtok.Mcp",
             "Rtok.Proxy",
             "Rtok.Web",
+            "Rtok.Web.Client",
             "Rtok.Tui",
             "Rtok.Demon",
         ],
@@ -111,6 +112,16 @@ public sealed class ArchitectureTests
         Assert.Contains("Rtok.Model", references, StringComparer.Ordinal);
         Assert.DoesNotContain("Rtok.Store", references, StringComparer.Ordinal);
         Assert.DoesNotContain("Rtok.Store.Model", references, StringComparer.Ordinal);
+    }
+
+    // The browser bundle stays small and talks to rtok only over /ws (N13): the client knows
+    // the wire contracts and nothing else of rtok, and the contracts know nothing at all.
+    [Fact]
+    public void The_web_client_references_only_the_web_contracts()
+    {
+        var projects = Projects();
+        Assert.Equal(["Rtok.Web.Contracts"], projects["Rtok.Web.Client"]);
+        Assert.Empty(projects["Rtok.Web.Contracts"]);
     }
 
     [Theory]

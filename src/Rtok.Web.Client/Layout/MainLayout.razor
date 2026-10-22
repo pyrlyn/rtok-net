@@ -1,0 +1,95 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject DashboardConnection Connection
+@inject ThemeStore Theme
+
+<HeadContent>
+  <RadzenTheme Theme="@(Theme.IsDark ? ThemeStore.DarkTheme : ThemeStore.LightTheme)" />
+</HeadContent>
+<RadzenComponents />
+<RadzenLayout>
+  <RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" class="rz-px-2">
+      <RadzenSidebarToggle Click="@(() => _sidebar = !_sidebar)" />
+      <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">rtok</RadzenText>
+      <RadzenBadge class="rtok-state" BadgeStyle="@StateStyle" Text="@StateText" />
+      <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="rz-ms-auto">
+        <RadzenIcon Icon="light_mode" />
+        <RadzenSwitch class="rtok-theme" Value="@Theme.IsDark" ValueChanged="@((bool _) => ToggleTheme())"
+                      InputAttributes="@(new Dictionary<string, object> { ["aria-label"] = "Dark theme" })" />
+        <RadzenIcon Icon="dark_mode" />
+      </RadzenStack>
+    </RadzenStack>
+  </RadzenHeader>
+  <RadzenSidebar @bind-Expanded="_sidebar">
+    <RadzenPanelMenu>
+      <RadzenPanelMenuItem Text="Overview" Icon="dashboard" Path="" />
+      @foreach (var item in TextPages.All)
+      {
+        <RadzenPanelMenuItem Text="@item.Title" Icon="@item.Icon" Path="@item.Slug" />
+      }
+    </RadzenPanelMenu>
+  </RadzenSidebar>
+  <RadzenBody>
+    @if (Connection.State == ConnectionState.Offline)
+    {
+      <RadzenAlert class="rtok-offline" AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" AllowClose="false">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+          <span>Offline: @Connection.Notice</span>
+          <RadzenButton class="rtok-reconnect" Text="Reconnect" Icon="refresh" Click="@Reconnect" />
+        </RadzenStack>
+      </RadzenAlert>
+    }
+    @if (Connection.Snapshot is null)
+    {
+      @if (Connection.State == ConnectionState.Loading)
+      {
+        <RadzenStack class="rtok-loading" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+          <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Small" />
+          <span>connecting to rtok…</span>
+        </RadzenStack>
+      }
+    }
+    else
+    {
+      <CascadingValue Value="Connection.Snapshot">
+        @Body
+      </CascadingValue>
+    }
+  </RadzenBody>
+</RadzenLayout>
+
+@code {
+  private bool _sidebar = true;
+
+  private BadgeStyle StateStyle =>
+    Connection.State switch
+    {
+      ConnectionState.Live => BadgeStyle.Success,
+      ConnectionState.Offline => BadgeStyle.Danger,
+      _ => BadgeStyle.Info,
+    };
+
+  private string StateText =>
+    Connection.State switch
+    {
+      ConnectionState.Live => "live",
+      ConnectionState.Offline => "offline",
+      _ => "connecting",
+    };
+
+  protected override async Task OnInitializedAsync()
+  {
+    Connection.Changed += OnChanged;
+    await Theme.LoadAsync();
+    await Connection.StartAsync();
+  }
+
+  private void OnChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+  private Task Reconnect() => Connection.ReconnectAsync();
+
+  private Task ToggleTheme() => Theme.ToggleAsync();
+
+  public void Dispose() => Connection.Changed -= OnChanged;
+}

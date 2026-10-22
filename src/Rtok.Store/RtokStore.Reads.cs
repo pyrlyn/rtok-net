@@ -40,28 +40,31 @@ public sealed partial class RtokStore
         using var scope = Enter();
         var db = scope.Db;
         var n = limit;
+        // No anonymous types in these trees: the compiler builds them with an Expression.New
+        // overload that trimming refuses. So the last activity is written out where it is used.
         return db
-            .Sessions.Select(s => new
-            {
-                Session = s,
-                LastCall = db.Calls.Where(c => c.SessionId == s.Id).Max(c => (long?)c.Ts),
-            })
-            .OrderByDescending(x => x.LastCall != null ? x.LastCall.Value : x.Session.StartedAt)
-            .ThenBy(x => x.Session.Id)
+            .Sessions.OrderByDescending(s =>
+                db.Calls.Where(c => c.SessionId == s.Id)
+                    .Max(c => (long?)c.Ts)
+                    .GetValueOrDefault(s.StartedAt)
+            )
+            .ThenBy(s => s.Id)
             .Take(n)
-            .Select(x => new SessionSummary(
-                x.Session.Id,
-                db.Hosts.Where(h => h.Id == x.Session.HostId).Select(h => h.Slug).FirstOrDefault(),
-                x.Session.Project,
-                x.Session.Cwd,
-                x.Session.SourceName,
-                x.Session.StartedAt,
-                x.Session.EndedAt,
-                x.LastCall != null ? x.LastCall.Value : x.Session.StartedAt,
-                db.Usage.Where(u => u.Session == x.Session.Id).Sum(u => u.Input),
-                db.Usage.Where(u => u.Session == x.Session.Id).Sum(u => u.CacheCreate),
-                db.Usage.Where(u => u.Session == x.Session.Id).Sum(u => u.CacheRead),
-                db.Usage.Where(u => u.Session == x.Session.Id).Sum(u => u.Output)
+            .Select(s => new SessionSummary(
+                s.Id,
+                db.Hosts.Where(h => h.Id == s.HostId).Select(h => h.Slug).FirstOrDefault(),
+                s.Project,
+                s.Cwd,
+                s.SourceName,
+                s.StartedAt,
+                s.EndedAt,
+                db.Calls.Where(c => c.SessionId == s.Id)
+                    .Max(c => (long?)c.Ts)
+                    .GetValueOrDefault(s.StartedAt),
+                db.Usage.Where(u => u.Session == s.Id).Sum(u => u.Input),
+                db.Usage.Where(u => u.Session == s.Id).Sum(u => u.CacheCreate),
+                db.Usage.Where(u => u.Session == s.Id).Sum(u => u.CacheRead),
+                db.Usage.Where(u => u.Session == s.Id).Sum(u => u.Output)
             ))
             .ToList();
     }
@@ -103,30 +106,30 @@ public sealed partial class RtokStore
         using var scope = Enter();
         var db = scope.Db;
         var from = since;
-        // Anonymous rows of exact types: the query precompiler models no implicit conversions.
-        var rows = db
+        // A two-part group key would be an anonymous type (see RecentSessions), so each plugin
+        // is grouped by day on its own; there are only as many as are linked.
+        var plugins = db
             .Measurements.Where(m => m.Ts >= from)
-            .GroupBy(m => new { Day = m.Ts / 86400L, m.Plugin })
-            .OrderBy(g => g.Key.Day)
-            .ThenBy(g => g.Key.Plugin)
-            .Select(g => new
-            {
-                g.Key.Day,
-                g.Key.Plugin,
-                Rows = g.LongCount(),
-                EstBefore = g.Sum(m => m.EstBefore),
-                EstAfter = g.Sum(m => m.EstAfter),
-            })
+            .Select(m => m.Plugin)
+            .Distinct()
             .ToList();
-        return
-        [
-            .. rows.Select(r => new MeasurementDay(
-                r.Day,
-                r.Plugin,
-                r.Rows,
-                r.EstBefore,
-                r.EstAfter
-            )),
-        ];
+        var days = new List<MeasurementDay>();
+        foreach (var plugin in plugins)
+        {
+            var name = plugin;
+            days.AddRange(
+                db.Measurements.Where(m => m.Ts >= from && m.Plugin == name)
+                    .GroupBy(m => m.Ts / 86400L)
+                    .Select(g => new MeasurementDay(
+                        g.Key,
+                        name,
+                        g.LongCount(),
+                        g.Sum(m => m.EstBefore),
+                        g.Sum(m => m.EstAfter)
+                    ))
+                    .ToList()
+            );
+        }
+        return [.. days.OrderBy(d => d.Day).ThenBy(d => d.Plugin, StringComparer.Ordinal)];
     }
 }

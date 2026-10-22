@@ -1,0 +1,12 @@
+<RadzenCard class="rtok-kpi" Variant="Variant.Outlined">
+  <RadzenText TextStyle="TextStyle.Overline" class="rz-m-0">@Label</RadzenText>
+  <RadzenText TextStyle="TextStyle.H5" class="rz-m-0">@Value.ToString("N0", CultureInfo.InvariantCulture)</RadzenText>
+</RadzenCard>
+
+@code {
+  [Parameter, EditorRequired]
+  public string Label { get; set; } = "";
+
+  [Parameter]
+  public long Value { get; set; }
+}

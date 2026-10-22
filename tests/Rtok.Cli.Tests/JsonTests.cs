@@ -45,6 +45,7 @@ public sealed class JsonTests
         ["task init"] = "writes .rtok.toml and prints one line",
         ["proxy"] = "serves HTTP until Ctrl-C",
         ["wrap"] = "prints the command's own output",
+        ["web"] = "serves the dashboard until Ctrl-C",
     };
 
     /// <summary>

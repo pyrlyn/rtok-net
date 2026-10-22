@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rtok.Web/Rtok.Web.csproj" />
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The operator model's fixture: one seeded home and store for the model and the host. -->
+    <Compile Include="../Rtok.Model.Tests/ModelFixture.cs" Link="Model/ModelFixture.cs" />
+    <Compile Include="../Rtok.Model.Tests/FakePlugin.cs" Link="Model/FakePlugin.cs" />
+    <Compile Include="../Rtok.Model.Tests/ManualClock.cs" Link="Model/ManualClock.cs" />
+    <Compile Include="../Rtok.Model.Tests/CountingSource.cs" Link="Model/CountingSource.cs" />
+  </ItemGroup>
+</Project>
