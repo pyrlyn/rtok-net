@@ -23,10 +23,17 @@ public sealed class FlagCoverageTests
         "cli", // which apps of a host one `agents` call touches
         "desktop",
         "gui", // `--desktop`
-        "all",
+        "all", // `agents`: every host; `task list`: one call's filter
         "save-baseline", // `stats`: save one report under a name
         "calibrate", // `stats`: fit [estimator] once
         "cache", // `stats`: the cache page of one call
+        "agent", // `task claim|release`: who is calling, else RTOK_AGENT_ID
+        "description", // `task create`: the new task's body
+        "body-file", // `task create`: where to read that body
+        "parent", // `task create|list`: which task one call is about
+        "status", // `task list`: one call's filter
+        "remove", // `task conflict`: take one mark off
+        "off", // `task parallel`: take one mark off
     };
 
     /// <summary>Keys a flag maps to that are one call's choice rather than a stored setting.</summary>

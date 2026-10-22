@@ -1,0 +1,176 @@
+﻿$ rtok task init --adapter disk --prefix a
+<temp>/app/.rtok.toml: adapter disk, next id A1
+(exit 0)
+$ rtok task create Ship -d Why. --json
+{
+  "id": "A1",
+  "title": "Ship",
+  "description": "Why.",
+  "status": "open",
+  "created_at": 1800000000,
+  "updated_at": 1800000000
+}
+(exit 0)
+$ rtok task create Sub --parent A1 --json
+{
+  "id": "A1.1",
+  "title": "Sub",
+  "description": "",
+  "status": "open",
+  "parent": "A1",
+  "created_at": 1800000000,
+  "updated_at": 1800000000
+}
+(exit 0)
+$ rtok task create Two --json
+{
+  "id": "A2",
+  "title": "Two",
+  "description": "",
+  "status": "open",
+  "created_at": 1800000000,
+  "updated_at": 1800000000
+}
+(exit 0)
+$ rtok task conflict A2 A1.1 --json
+{
+  "id": "A2",
+  "title": "Two",
+  "description": "",
+  "status": "open",
+  "created_at": 1800000000,
+  "updated_at": 1800000000,
+  "conflicts_with": [
+    "A1.1"
+  ]
+}
+(exit 0)
+$ rtok task parallel A1 --json
+{
+  "id": "A1",
+  "title": "Ship",
+  "description": "Why.",
+  "status": "open",
+  "created_at": 1800000000,
+  "updated_at": 1800000000,
+  "parallel": true
+}
+(exit 0)
+$ rtok task list --json
+[
+  {
+    "id": "A1",
+    "title": "Ship",
+    "description": "Why.",
+    "status": "open",
+    "created_at": 1800000000,
+    "updated_at": 1800000000,
+    "parallel": true
+  },
+  {
+    "id": "A1.1",
+    "title": "Sub",
+    "description": "",
+    "status": "open",
+    "parent": "A1",
+    "created_at": 1800000000,
+    "updated_at": 1800000000,
+    "conflicts_with": [
+      "A2"
+    ]
+  },
+  {
+    "id": "A2",
+    "title": "Two",
+    "description": "",
+    "status": "open",
+    "created_at": 1800000000,
+    "updated_at": 1800000000,
+    "conflicts_with": [
+      "A1.1"
+    ]
+  }
+]
+(exit 0)
+$ rtok task show A1 --json
+{
+  "id": "A1",
+  "title": "Ship",
+  "description": "Why.",
+  "status": "open",
+  "created_at": 1800000000,
+  "updated_at": 1800000000,
+  "parallel": true,
+  "subtasks": [
+    "A1.1"
+  ]
+}
+(exit 0)
+$ rtok task next --json
+{
+  "id": "A1.1",
+  "title": "Sub",
+  "description": "",
+  "status": "open",
+  "parent": "A1",
+  "created_at": 1800000000,
+  "updated_at": 1800000000,
+  "conflicts_with": [
+    "A2"
+  ]
+}
+(exit 0)
+$ rtok task ready --json
+[
+  {
+    "id": "A1.1",
+    "title": "Sub",
+    "description": "",
+    "status": "open",
+    "parent": "A1",
+    "created_at": 1800000000,
+    "updated_at": 1800000000,
+    "conflicts_with": [
+      "A2"
+    ],
+    "stale": false
+  },
+  {
+    "id": "A2",
+    "title": "Two",
+    "description": "",
+    "status": "open",
+    "created_at": 1800000000,
+    "updated_at": 1800000000,
+    "conflicts_with": [
+      "A1.1"
+    ],
+    "stale": false
+  }
+]
+(exit 0)
+$ rtok task status A1.1 done --json
+{
+  "id": "A1.1",
+  "title": "Sub",
+  "description": "",
+  "status": "done",
+  "parent": "A1",
+  "created_at": 1800000000,
+  "updated_at": 1800000000,
+  "conflicts_with": [
+    "A2"
+  ]
+}
+(exit 0)
+$ rtok task sync --json
+{
+  "adapter": "disk",
+  "counter": 2,
+  "next": "A3",
+  "raised": [],
+  "above_counter": [],
+  "duplicates": [],
+  "unlabelled": []
+}
+(exit 0)

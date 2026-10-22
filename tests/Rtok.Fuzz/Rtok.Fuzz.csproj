@@ -34,6 +34,7 @@
     <ProjectReference Include="../../src/Rtok.Measure/Rtok.Measure.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Inject/Rtok.Plugins.Inject.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../../src/Rtok.Tasks/Rtok.Tasks.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Rtok.Fuzz.Tests" />

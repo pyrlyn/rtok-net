@@ -22,11 +22,34 @@ public static class ParityMap
             ["logs export"] = new(Page.Logs, Page.Logs),
             ["plugins"] = new(Page.Plugins, Page.Plugins),
             ["stats"] = new(Page.Stats, Page.Stats),
+            ["task list"] = new(Page.Tasks, Page.Tasks),
+            ["task next"] = new(Page.Tasks, Page.Tasks),
+            ["task ready"] = new(Page.Tasks, Page.Tasks),
+            ["task show"] = new(Page.Tasks, Page.Tasks),
+            ["task status"] = new(Page.Tasks, Page.Tasks),
+            ["task sync"] = new(Page.Tasks, Page.Tasks),
         };
 
     /// <summary>Reading commands with no page, each with the reason.</summary>
     public static IReadOnlyDictionary<string, string> Exempt { get; } =
-        new Dictionary<string, string>(StringComparer.Ordinal);
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["task claim"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task conflict"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task create"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task dep"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task parallel"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task priority"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task release"] =
+                "writes a task; --json prints the task it changed, which the Tasks page shows",
+            ["task export"] = "writes to an issue tracker; --json prints what it sent",
+        };
 
     /// <summary>True when the command reads: it has a <c>--json</c> option.</summary>
     /// <param name="command">The command.</param>

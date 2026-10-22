@@ -1118,6 +1118,589 @@
           "required": false
         }
       ]
+    },
+    {
+      "path": "task claim",
+      "aliases": [],
+      "description": "Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.",
+      "arguments": [
+        {
+          "type": "string?",
+          "description": "Task id; omit to take the first ready task."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--agent"
+          ],
+          "type": "string?",
+          "description": "The rtok agent id; defaults to RTOK_AGENT_ID.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON, with changed.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task conflict",
+      "aliases": [],
+      "description": "Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "One task."
+        },
+        {
+          "type": "string",
+          "description": "The task it conflicts with."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--remove"
+          ],
+          "type": null,
+          "description": "Take the conflict off instead.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task create",
+      "aliases": [],
+      "description": "Create a task under the next free id and print the id.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "One-line title."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "-d",
+            "--description"
+          ],
+          "type": "string?",
+          "description": "Description: why the task exists and what done means.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--body-file"
+          ],
+          "type": "string?",
+          "description": "Read the description from this file (- for stdin).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--parent"
+          ],
+          "type": "string?",
+          "description": "Make it a subtask of this task, e.g. R2 → R2.1.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON instead of the id.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task dep",
+      "aliases": [],
+      "description": "Record that this task waits on another. A cycle is refused and nothing is written.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The task that waits."
+        },
+        {
+          "type": "string",
+          "description": "The task that must finish first."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task export",
+      "aliases": [],
+      "description": "Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Where to mirror the tasks: github or linear."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--dry-run"
+          ],
+          "type": null,
+          "description": "Print the planned creates, updates and closes and send nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the text.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task init",
+      "aliases": [],
+      "description": "Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--adapter"
+          ],
+          "type": "string?",
+          "description": "disk, github or gitlab (default: disk, or what the file already says).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--prefix"
+          ],
+          "type": "string?",
+          "description": "Task id prefix, 1–8 ASCII letters (default: the project name's first letter).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task list",
+      "aliases": [],
+      "description": "The plan: open and in-progress tasks, subtasks under their parent.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--status"
+          ],
+          "type": "string?",
+          "description": "Only these statuses (comma-separated: open, in-progress, done, closed).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--all"
+          ],
+          "type": null,
+          "description": "Done and closed tasks too.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--parent"
+          ],
+          "type": "string?",
+          "description": "Only the subtasks of this task.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the table.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task next",
+      "aliases": [],
+      "description": "The first ready task: free or stale, not blocked; a leaf when nothing is blocked.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the text.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task parallel",
+      "aliases": [],
+      "description": "Mark a task safe to run beside any other task.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Task id, e.g. R12."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--off"
+          ],
+          "type": null,
+          "description": "Take the mark off instead.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task priority",
+      "aliases": [],
+      "description": "Set priority from 0 (highest) to 4. 2 is the default and is not stored.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Task id, e.g. R12."
+        },
+        {
+          "type": "int",
+          "description": "0 to 4."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task ready",
+      "aliases": [],
+      "description": "Tasks that can be claimed, highest priority first.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the text.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task release",
+      "aliases": [],
+      "description": "Clear the assignee and set the task open. Only the holder, unless --force.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Task id, e.g. R12."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--agent"
+          ],
+          "type": "string?",
+          "description": "The rtok agent id; defaults to RTOK_AGENT_ID.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--force"
+          ],
+          "type": null,
+          "description": "Release a task held by someone else.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task show",
+      "aliases": [],
+      "description": "One task: title, status, parent, subtasks, link and description.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Task id, e.g. R12 or R2.1."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the text.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task status",
+      "aliases": [],
+      "description": "Print a task's status, or set it; done and closed move it out of the plan.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "Task id, e.g. R12 or R2.1."
+        },
+        {
+          "type": "string?",
+          "description": "open, in-progress, done or closed."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--force"
+          ],
+          "type": null,
+          "description": "Finish a parent even though subtasks are still open.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "Print the task as JSON.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "path": "task sync",
+      "aliases": [],
+      "description": "Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--json"
+          ],
+          "type": null,
+          "description": "JSON instead of the text.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
     }
   ]
 }

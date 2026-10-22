@@ -40,6 +40,29 @@ public sealed class JsonTests
         ["run"] = "prints the command's own output, filtered",
         ["filter"] = "prints its stdin, filtered",
         ["bench"] = "runs the agent; prints a table and writes results/<config>.json",
+        ["task init"] = "writes .rtok.toml and prints one line",
+    };
+
+    /// <summary>
+    /// Task commands take <c>--json</c> but open the project's store and tracker, which the
+    /// binary must not touch here; <c>TaskCliTests</c> runs them in a sandbox.
+    /// </summary>
+    private static readonly HashSet<string> Tasks = new(StringComparer.Ordinal)
+    {
+        "task claim",
+        "task conflict",
+        "task create",
+        "task dep",
+        "task export",
+        "task list",
+        "task next",
+        "task parallel",
+        "task priority",
+        "task ready",
+        "task release",
+        "task show",
+        "task status",
+        "task sync",
     };
 
     [Fact]
@@ -49,9 +72,16 @@ public sealed class JsonTests
 
         Assert.Equal(
             commands.Order(StringComparer.Ordinal),
-            Reading.Keys.Concat(Other.Keys).Order(StringComparer.Ordinal)
+            Reading.Keys.Concat(Other.Keys).Concat(Tasks).Order(StringComparer.Ordinal)
         );
     }
+
+    [Fact]
+    public void Every_task_command_takes_json() =>
+        Assert.All(
+            RtokBinary.Model.Commands.Where(c => Tasks.Contains(c.Path)),
+            c => Assert.Contains(c.Options, o => o.Names.Contains("--json", StringComparer.Ordinal))
+        );
 
     [Fact]
     public void Every_reading_command_prints_json_with_json()

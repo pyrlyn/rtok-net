@@ -31,6 +31,21 @@ Commands:
   plugins             List plugins: id, kind, enabled, surfaces.
   run                 Run a shell command, archive its output and print it filtered; exits with the command's code.
   stats               Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
+  task claim          Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
+  task conflict       Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.
+  task create         Create a task under the next free id and print the id.
+  task dep            Record that this task waits on another. A cycle is refused and nothing is written.
+  task export         Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.
+  task init           Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.
+  task list           The plan: open and in-progress tasks, subtasks under their parent.
+  task next           The first ready task: free or stale, not blocked; a leaf when nothing is blocked.
+  task parallel       Mark a task safe to run beside any other task.
+  task priority       Set priority from 0 (highest) to 4. 2 is the default and is not stored.
+  task ready          Tasks that can be claimed, highest priority first.
+  task release        Clear the assignee and set the task open. Only the holder, unless --force.
+  task show           One task: title, status, parent, subtasks, link and description.
+  task status         Print a task's status, or set it; done and closed move it out of the plan.
+  task sync           Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
 
 $ rtok agents info --help
 Usage: agents info [arguments...] [options...] [-h|--help] [--version]
@@ -346,4 +361,187 @@ Options:
   --cache                      Prompt-cache health per session from the proxy's usage rows.
   --price                      Add the cost of the proxy's usage rows at [stats.prices].
   --config <string?>           The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task claim --help
+Usage: task claim [arguments...] [options...] [-h|--help] [--version]
+
+Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
+
+Arguments:
+  [0] <string?>    Task id; omit to take the first ready task.
+
+Options:
+  --agent <string?>     The rtok agent id; defaults to RTOK_AGENT_ID. [Default: null]
+  --json                Print the task as JSON, with changed.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task conflict --help
+Usage: task conflict [arguments...] [options...] [-h|--help] [--version]
+
+Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.
+
+Arguments:
+  [0] <string>    One task.
+  [1] <string>    The task it conflicts with.
+
+Options:
+  --remove              Take the conflict off instead.
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task create --help
+Usage: task create [arguments...] [options...] [-h|--help] [--version]
+
+Create a task under the next free id and print the id.
+
+Arguments:
+  [0] <string>    One-line title.
+
+Options:
+  -d, --description <string?>    Description: why the task exists and what done means. [Default: null]
+  --body-file <string?>          Read the description from this file (- for stdin). [Default: null]
+  --parent <string?>             Make it a subtask of this task, e.g. R2 → R2.1. [Default: null]
+  --json                         Print the task as JSON instead of the id.
+  --config <string?>             The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task dep --help
+Usage: task dep [arguments...] [options...] [-h|--help] [--version]
+
+Record that this task waits on another. A cycle is refused and nothing is written.
+
+Arguments:
+  [0] <string>    The task that waits.
+  [1] <string>    The task that must finish first.
+
+Options:
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task export --help
+Usage: task export [arguments...] [options...] [-h|--help] [--version]
+
+Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.
+
+Arguments:
+  [0] <string>    Where to mirror the tasks: github or linear.
+
+Options:
+  --dry-run             Print the planned creates, updates and closes and send nothing.
+  --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task init --help
+Usage: task init [options...] [-h|--help] [--version]
+
+Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.
+
+Options:
+  --adapter <string?>    disk, github or gitlab (default: disk, or what the file already says). [Default: null]
+  --prefix <string?>     Task id prefix, 1–8 ASCII letters (default: the project name's first letter). [Default: null]
+  --config <string?>     The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task list --help
+Usage: task list [options...] [-h|--help] [--version]
+
+The plan: open and in-progress tasks, subtasks under their parent.
+
+Options:
+  --status <string?>    Only these statuses (comma-separated: open, in-progress, done, closed). [Default: null]
+  --all                 Done and closed tasks too.
+  --parent <string?>    Only the subtasks of this task. [Default: null]
+  --json                JSON instead of the table.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task next --help
+Usage: task next [options...] [-h|--help] [--version]
+
+The first ready task: free or stale, not blocked; a leaf when nothing is blocked.
+
+Options:
+  --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task parallel --help
+Usage: task parallel [arguments...] [options...] [-h|--help] [--version]
+
+Mark a task safe to run beside any other task.
+
+Arguments:
+  [0] <string>    Task id, e.g. R12.
+
+Options:
+  --off                 Take the mark off instead.
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task priority --help
+Usage: task priority [arguments...] [options...] [-h|--help] [--version]
+
+Set priority from 0 (highest) to 4. 2 is the default and is not stored.
+
+Arguments:
+  [0] <string>    Task id, e.g. R12.
+  [1] <int>       0 to 4.
+
+Options:
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task ready --help
+Usage: task ready [options...] [-h|--help] [--version]
+
+Tasks that can be claimed, highest priority first.
+
+Options:
+  --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task release --help
+Usage: task release [arguments...] [options...] [-h|--help] [--version]
+
+Clear the assignee and set the task open. Only the holder, unless --force.
+
+Arguments:
+  [0] <string>    Task id, e.g. R12.
+
+Options:
+  --agent <string?>     The rtok agent id; defaults to RTOK_AGENT_ID. [Default: null]
+  --force               Release a task held by someone else.
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task show --help
+Usage: task show [arguments...] [options...] [-h|--help] [--version]
+
+One task: title, status, parent, subtasks, link and description.
+
+Arguments:
+  [0] <string>    Task id, e.g. R12 or R2.1.
+
+Options:
+  --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task status --help
+Usage: task status [arguments...] [options...] [-h|--help] [--version]
+
+Print a task's status, or set it; done and closed move it out of the plan.
+
+Arguments:
+  [0] <string>     Task id, e.g. R12 or R2.1.
+  [1] <string?>    open, in-progress, done or closed.
+
+Options:
+  --force               Finish a parent even though subtasks are still open.
+  --json                Print the task as JSON.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok task sync --help
+Usage: task sync [options...] [-h|--help] [--version]
+
+Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
+
+Options:
+  --json                JSON instead of the text.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 

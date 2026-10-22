@@ -53,7 +53,9 @@ public static class ConfigValidator
     ];
 
     private static readonly string[] JunkKinds = ["cache", "temp", "logs", "crash-dumps"];
-    private static readonly string[] TaskAdapters = ["disk", "github", "gitlab"];
+
+    /// <summary>The values <c>tasks.adapter</c> takes.</summary>
+    public static IReadOnlyList<string> TaskAdapters { get; } = ["disk", "github", "gitlab"];
     private static readonly string[] GraphBackends = ["tags", "lsp", "auto", "text"];
     private static readonly string[] GraphGrammars =
     [

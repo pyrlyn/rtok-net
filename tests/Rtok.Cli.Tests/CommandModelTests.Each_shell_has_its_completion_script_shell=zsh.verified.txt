@@ -4,11 +4,12 @@
 
 _rtok_children() {
   case $1 in
-    '') items=('agents' 'bench:Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'doctor:Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.' 'stats:Report tokens per tool, Bash family and MCP group from the agents'\'' transcripts, with rtok'\''s rows.') ;;
+    '') items=('agents' 'bench:Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.' 'completions:Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).' 'config' 'docs' 'doctor:Check hooks, MCP servers, instructions and skills without running a hook; --fix removes broken and extra copies.' 'expand:Print an archived original byte for byte, or the lines, grep hits or context you ask for.' 'filter:Filter stdin as the output of a command, without running it.' 'hook:Run one hook event from stdin, or serve hooks as this home'\''s resident.' 'logs:Print the last lines of rtok'\''s log, numbered 1 = newest, across the rotated files.' 'man:Print the man page (roff), or write every page with --dir.' 'plugins:List plugins: id, kind, enabled, surfaces.' 'run:Run a shell command, archive its output and print it filtered; exits with the command'\''s code.' 'stats:Report tokens per tool, Bash family and MCP group from the agents'\'' transcripts, with rtok'\''s rows.' 'task') ;;
     'agents') items=('info:One or more hosts in detail: apps, files, and each module'\''s state.' 'install:Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.' 'list:Every host rtok knows: whether its apps are here, and what of rtok each one has.' 'uninstall:Take rtok out of hosts: only entries that are still rtok'\''s; one you changed asks first.' 'update:Rewrite rtok'\''s entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).' 'usage:Tokens and estimated cost per agent and month (or day), from the agents'\'' logs or rtok.') ;;
     'config') items=('get:Print the effective value of one key or table.' 'init:Write the reference config file (every key commented out at its default) and print its path.' 'path:Print the path of the user config file.' 'set:Set a key in the user config file, keeping its comments; the result is checked first.' 'show:Print every effective key and value; secrets are redacted.' 'validate:Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.') ;;
     'docs') items=('fetch:Download a dependency'\''s docs at its lockfile-pinned version and index them for docs_query.') ;;
     'logs') items=('export:Print the same lines as rtok logs without numbers or colour.' 'watch:Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.') ;;
+    'task') items=('claim:Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.' 'conflict:Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.' 'create:Create a task under the next free id and print the id.' 'dep:Record that this task waits on another. A cycle is refused and nothing is written.' 'export:Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.' 'init:Write [tasks] into this checkout'\''s .rtok.toml and seed the counter from existing tasks.' 'list:The plan: open and in-progress tasks, subtasks under their parent.' 'next:The first ready task: free or stale, not blocked; a leaf when nothing is blocked.' 'parallel:Mark a task safe to run beside any other task.' 'priority:Set priority from 0 (highest) to 4. 2 is the default and is not stored.' 'ready:Tasks that can be claimed, highest priority first.' 'release:Clear the assignee and set the task open. Only the holder, unless --force.' 'show:One task: title, status, parent, subtasks, link and description.' 'status:Print a task'\''s status, or set it; done and closed move it out of the plan.' 'sync:Raise the id counters to the adapter'\''s highest ids and report drift; never writes the adapter.') ;;
   esac
 }
 
@@ -41,6 +42,21 @@ _rtok_options() {
     'plugins') items=('--json:Print JSON.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'run') items=('--agent:Sub-agent id from PreToolUse; scopes the dedup pointer.' '--no-ref:Do not print the reference line after a cut.' '--config:The config file to load instead of the user'\''s.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
     'stats') items=('--since:The window: 30d, 12h; [stats] since when omitted.' '--json:Print the report as JSON.' '--plugin:One plugin: a catalogue plugin'\''s own page, or the report for its rows.' '--save-baseline:Save the report as this baseline instead of printing it.' '--compare:Print the change against this saved baseline.' '--calibrate:Fit [estimator] chars per token with Anthropic'\''s count_tokens (ANTHROPIC_API_KEY).' '--cache:Prompt-cache health per session from the proxy'\''s usage rows.' '--price:Add the cost of the proxy'\''s usage rows at [stats.prices].' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task claim') items=('--agent:The rtok agent id; defaults to RTOK_AGENT_ID.' '--json:Print the task as JSON, with changed.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task conflict') items=('--remove:Take the conflict off instead.' '--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task create') items=('-d:Description: why the task exists and what done means.' '--description:Description: why the task exists and what done means.' '--body-file:Read the description from this file (- for stdin).' '--parent:Make it a subtask of this task, e.g. R2 → R2.1.' '--json:Print the task as JSON instead of the id.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task dep') items=('--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task export') items=('--dry-run:Print the planned creates, updates and closes and send nothing.' '--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task init') items=('--adapter:disk, github or gitlab (default: disk, or what the file already says).' '--prefix:Task id prefix, 1–8 ASCII letters (default: the project name'\''s first letter).' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task list') items=('--status:Only these statuses (comma-separated: open, in-progress, done, closed).' '--all:Done and closed tasks too.' '--parent:Only the subtasks of this task.' '--json:JSON instead of the table.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task next') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task parallel') items=('--off:Take the mark off instead.' '--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task priority') items=('--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task ready') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task release') items=('--agent:The rtok agent id; defaults to RTOK_AGENT_ID.' '--force:Release a task held by someone else.' '--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task show') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task status') items=('--force:Finish a parent even though subtasks are still open.' '--json:Print the task as JSON.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
+    'task sync') items=('--json:JSON instead of the text.' '--config:The config file to use instead of ~/.rtok/config.toml.' '-h:Show help.' '--help:Show help.' '--version:Show version.') ;;
   esac
 }
 
@@ -70,6 +86,21 @@ _rtok_values() {
     'man') items=('--dir') ;;
     'run') items=('--agent' '--config') ;;
     'stats') items=('--since' '--plugin' '--save-baseline' '--compare' '--config') ;;
+    'task claim') items=('--agent' '--config') ;;
+    'task conflict') items=('--config') ;;
+    'task create') items=('-d' '--description' '--body-file' '--parent' '--config') ;;
+    'task dep') items=('--config') ;;
+    'task export') items=('--config') ;;
+    'task init') items=('--adapter' '--prefix' '--config') ;;
+    'task list') items=('--status' '--parent' '--config') ;;
+    'task next') items=('--config') ;;
+    'task parallel') items=('--config') ;;
+    'task priority') items=('--config') ;;
+    'task ready') items=('--config') ;;
+    'task release') items=('--agent' '--config') ;;
+    'task show') items=('--config') ;;
+    'task status') items=('--config') ;;
+    'task sync') items=('--config') ;;
   esac
 }
 

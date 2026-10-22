@@ -11,4 +11,8 @@
     <ProjectReference Include="../../packages/Pyrlyn.CommandLine.Docs/src/Pyrlyn.CommandLine.Docs.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- The task tests' real-repository helper, one copy. -->
+    <Compile Include="../Rtok.Tasks.Tests/GitRepo.cs" Link="GitRepo.cs" />
+  </ItemGroup>
 </Project>

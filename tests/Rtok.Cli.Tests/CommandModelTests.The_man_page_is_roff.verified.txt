@@ -115,3 +115,63 @@ See \fBrtok\-run\fR(1).
 \fBstats\fR
 Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
 See \fBrtok\-stats\fR(1).
+.TP
+\fBtask claim\fR
+Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last\-write\-wins.
+See \fBrtok\-task\-claim\fR(1).
+.TP
+\fBtask conflict\fR
+Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.
+See \fBrtok\-task\-conflict\fR(1).
+.TP
+\fBtask create\fR
+Create a task under the next free id and print the id.
+See \fBrtok\-task\-create\fR(1).
+.TP
+\fBtask dep\fR
+Record that this task waits on another. A cycle is refused and nothing is written.
+See \fBrtok\-task\-dep\fR(1).
+.TP
+\fBtask export\fR
+Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.
+See \fBrtok\-task\-export\fR(1).
+.TP
+\fBtask init\fR
+Write [tasks] into this checkout's .rtok.toml and seed the counter from existing tasks.
+See \fBrtok\-task\-init\fR(1).
+.TP
+\fBtask list\fR
+The plan: open and in\-progress tasks, subtasks under their parent.
+See \fBrtok\-task\-list\fR(1).
+.TP
+\fBtask next\fR
+The first ready task: free or stale, not blocked; a leaf when nothing is blocked.
+See \fBrtok\-task\-next\fR(1).
+.TP
+\fBtask parallel\fR
+Mark a task safe to run beside any other task.
+See \fBrtok\-task\-parallel\fR(1).
+.TP
+\fBtask priority\fR
+Set priority from 0 (highest) to 4. 2 is the default and is not stored.
+See \fBrtok\-task\-priority\fR(1).
+.TP
+\fBtask ready\fR
+Tasks that can be claimed, highest priority first.
+See \fBrtok\-task\-ready\fR(1).
+.TP
+\fBtask release\fR
+Clear the assignee and set the task open. Only the holder, unless \-\-force.
+See \fBrtok\-task\-release\fR(1).
+.TP
+\fBtask show\fR
+One task: title, status, parent, subtasks, link and description.
+See \fBrtok\-task\-show\fR(1).
+.TP
+\fBtask status\fR
+Print a task's status, or set it; done and closed move it out of the plan.
+See \fBrtok\-task\-status\fR(1).
+.TP
+\fBtask sync\fR
+Raise the id counters to the adapter's highest ids and report drift; never writes the adapter.
+See \fBrtok\-task\-sync\fR(1).

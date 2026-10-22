@@ -3,11 +3,12 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins run stats' ;;
+        '') echo 'agents bench completions config docs doctor expand filter hook logs man plugins run stats task' ;;
         'agents') echo 'info install list uninstall update usage' ;;
         'config') echo 'get init path set show validate' ;;
         'docs') echo 'fetch' ;;
         'logs') echo 'export watch' ;;
+        'task') echo 'claim conflict create dep export init list next parallel priority ready release show status sync' ;;
     esac
 }
 
@@ -40,6 +41,21 @@ _rtok_options() {
         'plugins') echo '--json -h --help --version' ;;
         'run') echo '--agent --no-ref --config -h --help --version' ;;
         'stats') echo '--since --json --plugin --save-baseline --compare --calibrate --cache --price --config -h --help --version' ;;
+        'task claim') echo '--agent --json --config -h --help --version' ;;
+        'task conflict') echo '--remove --json --config -h --help --version' ;;
+        'task create') echo '-d --description --body-file --parent --json --config -h --help --version' ;;
+        'task dep') echo '--json --config -h --help --version' ;;
+        'task export') echo '--dry-run --json --config -h --help --version' ;;
+        'task init') echo '--adapter --prefix --config -h --help --version' ;;
+        'task list') echo '--status --all --parent --json --config -h --help --version' ;;
+        'task next') echo '--json --config -h --help --version' ;;
+        'task parallel') echo '--off --json --config -h --help --version' ;;
+        'task priority') echo '--json --config -h --help --version' ;;
+        'task ready') echo '--json --config -h --help --version' ;;
+        'task release') echo '--agent --force --json --config -h --help --version' ;;
+        'task show') echo '--json --config -h --help --version' ;;
+        'task status') echo '--force --json --config -h --help --version' ;;
+        'task sync') echo '--json --config -h --help --version' ;;
     esac
 }
 
@@ -69,6 +85,21 @@ _rtok_values() {
         'man') echo '--dir' ;;
         'run') echo '--agent --config' ;;
         'stats') echo '--since --plugin --save-baseline --compare --config' ;;
+        'task claim') echo '--agent --config' ;;
+        'task conflict') echo '--config' ;;
+        'task create') echo '-d --description --body-file --parent --config' ;;
+        'task dep') echo '--config' ;;
+        'task export') echo '--config' ;;
+        'task init') echo '--adapter --prefix --config' ;;
+        'task list') echo '--status --parent --config' ;;
+        'task next') echo '--config' ;;
+        'task parallel') echo '--config' ;;
+        'task priority') echo '--config' ;;
+        'task ready') echo '--config' ;;
+        'task release') echo '--agent --config' ;;
+        'task show') echo '--config' ;;
+        'task status') echo '--config' ;;
+        'task sync') echo '--config' ;;
     esac
 }
 

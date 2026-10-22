@@ -41,6 +41,7 @@ app.UseFilter<ExitCodeFilter>();
 app.Add<AgentsCommands>("agents");
 app.Add<ConfigCommands>("config");
 app.Add<DocsCommands>("docs");
+app.Add<TaskCommands>("task");
 app.Add<PluginsCommands>();
 app.Add("run", RunCommands.RunAsync);
 app.Add("filter", RunCommands.Filter);

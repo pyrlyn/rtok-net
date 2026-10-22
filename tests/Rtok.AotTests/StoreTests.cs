@@ -173,6 +173,25 @@ public sealed class StoreTests : IDisposable
         store.PluginStateSet("dedup", "k", "a");
         store.PluginStateSet("dedup", "k", "b");
         Assert.Equal("b", store.PluginStateGet("dedup", "k"));
+
+        Assert.Equal(
+            1,
+            store.WithTaskCounters(
+                "p",
+                c =>
+                {
+                    c.SetLast("", c.Last("") + 1);
+                    c.SetLast("", c.Last("") + 0);
+                    return c.Last("");
+                }
+            )
+        );
+        store.UpsertTaskClaim("p", "R1", "a1", "One");
+        store.UpsertTaskClaim("p", "R1", "a1", "Again");
+        Assert.Equal("Again", store.LatestTaskClaim("p", "a1")?.Title);
+        store.ClearTaskClaim("p", "R1");
+        Assert.Null(store.AgentLastSeen("a1"));
+        Assert.Null(store.ResolveAgent("a"));
     }
 
     private static void AssertWritten(StoreOptions options, long call, long child, long hook)

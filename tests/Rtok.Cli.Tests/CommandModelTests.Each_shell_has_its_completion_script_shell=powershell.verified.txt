@@ -4,11 +4,12 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats')
+        '' = @('agents', 'bench', 'completions', 'config', 'docs', 'doctor', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run', 'stats', 'task')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
         'logs' = @('export', 'watch')
+        'task' = @('claim', 'conflict', 'create', 'dep', 'export', 'init', 'list', 'next', 'parallel', 'priority', 'ready', 'release', 'show', 'status', 'sync')
     }
     $options = @{
         '' = @('-h', '--help', '--version')
@@ -38,6 +39,21 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'plugins' = @('--json', '-h', '--help', '--version')
         'run' = @('--agent', '--no-ref', '--config', '-h', '--help', '--version')
         'stats' = @('--since', '--json', '--plugin', '--save-baseline', '--compare', '--calibrate', '--cache', '--price', '--config', '-h', '--help', '--version')
+        'task claim' = @('--agent', '--json', '--config', '-h', '--help', '--version')
+        'task conflict' = @('--remove', '--json', '--config', '-h', '--help', '--version')
+        'task create' = @('-d', '--description', '--body-file', '--parent', '--json', '--config', '-h', '--help', '--version')
+        'task dep' = @('--json', '--config', '-h', '--help', '--version')
+        'task export' = @('--dry-run', '--json', '--config', '-h', '--help', '--version')
+        'task init' = @('--adapter', '--prefix', '--config', '-h', '--help', '--version')
+        'task list' = @('--status', '--all', '--parent', '--json', '--config', '-h', '--help', '--version')
+        'task next' = @('--json', '--config', '-h', '--help', '--version')
+        'task parallel' = @('--off', '--json', '--config', '-h', '--help', '--version')
+        'task priority' = @('--json', '--config', '-h', '--help', '--version')
+        'task ready' = @('--json', '--config', '-h', '--help', '--version')
+        'task release' = @('--agent', '--force', '--json', '--config', '-h', '--help', '--version')
+        'task show' = @('--json', '--config', '-h', '--help', '--version')
+        'task status' = @('--force', '--json', '--config', '-h', '--help', '--version')
+        'task sync' = @('--json', '--config', '-h', '--help', '--version')
     }
     $values = @(
         'agents info|--config'
@@ -88,6 +104,31 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'stats|--save-baseline'
         'stats|--compare'
         'stats|--config'
+        'task claim|--agent'
+        'task claim|--config'
+        'task conflict|--config'
+        'task create|-d'
+        'task create|--description'
+        'task create|--body-file'
+        'task create|--parent'
+        'task create|--config'
+        'task dep|--config'
+        'task export|--config'
+        'task init|--adapter'
+        'task init|--prefix'
+        'task init|--config'
+        'task list|--status'
+        'task list|--parent'
+        'task list|--config'
+        'task next|--config'
+        'task parallel|--config'
+        'task priority|--config'
+        'task ready|--config'
+        'task release|--agent'
+        'task release|--config'
+        'task show|--config'
+        'task status|--config'
+        'task sync|--config'
     )
     $hints = @{
         '|bench' = 'Run each bench task with claude -p under each [bench.configs] settings file and print mean tokens and cost per config.'
@@ -292,6 +333,111 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'stats|-h' = 'Show help.'
         'stats|--help' = 'Show help.'
         'stats|--version' = 'Show version.'
+        'task|claim' = 'Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.'
+        'task|conflict' = 'Record that two tasks touch the same files, so they should not run at once. Symmetric; ready flags a task whose partner is in progress.'
+        'task|create' = 'Create a task under the next free id and print the id.'
+        'task|dep' = 'Record that this task waits on another. A cycle is refused and nothing is written.'
+        'task|export' = 'Mirror the disk tasks one way into an issue tracker; the files stay the source of truth. A second run with nothing changed sends no write.'
+        'task|init' = 'Write [tasks] into this checkout''s .rtok.toml and seed the counter from existing tasks.'
+        'task|list' = 'The plan: open and in-progress tasks, subtasks under their parent.'
+        'task|next' = 'The first ready task: free or stale, not blocked; a leaf when nothing is blocked.'
+        'task|parallel' = 'Mark a task safe to run beside any other task.'
+        'task|priority' = 'Set priority from 0 (highest) to 4. 2 is the default and is not stored.'
+        'task|ready' = 'Tasks that can be claimed, highest priority first.'
+        'task|release' = 'Clear the assignee and set the task open. Only the holder, unless --force.'
+        'task|show' = 'One task: title, status, parent, subtasks, link and description.'
+        'task|status' = 'Print a task''s status, or set it; done and closed move it out of the plan.'
+        'task|sync' = 'Raise the id counters to the adapter''s highest ids and report drift; never writes the adapter.'
+        'task claim|--agent' = 'The rtok agent id; defaults to RTOK_AGENT_ID.'
+        'task claim|--json' = 'Print the task as JSON, with changed.'
+        'task claim|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task claim|-h' = 'Show help.'
+        'task claim|--help' = 'Show help.'
+        'task claim|--version' = 'Show version.'
+        'task conflict|--remove' = 'Take the conflict off instead.'
+        'task conflict|--json' = 'Print the task as JSON.'
+        'task conflict|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task conflict|-h' = 'Show help.'
+        'task conflict|--help' = 'Show help.'
+        'task conflict|--version' = 'Show version.'
+        'task create|-d' = 'Description: why the task exists and what done means.'
+        'task create|--description' = 'Description: why the task exists and what done means.'
+        'task create|--body-file' = 'Read the description from this file (- for stdin).'
+        'task create|--parent' = 'Make it a subtask of this task, e.g. R2 → R2.1.'
+        'task create|--json' = 'Print the task as JSON instead of the id.'
+        'task create|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task create|-h' = 'Show help.'
+        'task create|--help' = 'Show help.'
+        'task create|--version' = 'Show version.'
+        'task dep|--json' = 'Print the task as JSON.'
+        'task dep|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task dep|-h' = 'Show help.'
+        'task dep|--help' = 'Show help.'
+        'task dep|--version' = 'Show version.'
+        'task export|--dry-run' = 'Print the planned creates, updates and closes and send nothing.'
+        'task export|--json' = 'JSON instead of the text.'
+        'task export|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task export|-h' = 'Show help.'
+        'task export|--help' = 'Show help.'
+        'task export|--version' = 'Show version.'
+        'task init|--adapter' = 'disk, github or gitlab (default: disk, or what the file already says).'
+        'task init|--prefix' = 'Task id prefix, 1–8 ASCII letters (default: the project name''s first letter).'
+        'task init|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task init|-h' = 'Show help.'
+        'task init|--help' = 'Show help.'
+        'task init|--version' = 'Show version.'
+        'task list|--status' = 'Only these statuses (comma-separated: open, in-progress, done, closed).'
+        'task list|--all' = 'Done and closed tasks too.'
+        'task list|--parent' = 'Only the subtasks of this task.'
+        'task list|--json' = 'JSON instead of the table.'
+        'task list|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task list|-h' = 'Show help.'
+        'task list|--help' = 'Show help.'
+        'task list|--version' = 'Show version.'
+        'task next|--json' = 'JSON instead of the text.'
+        'task next|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task next|-h' = 'Show help.'
+        'task next|--help' = 'Show help.'
+        'task next|--version' = 'Show version.'
+        'task parallel|--off' = 'Take the mark off instead.'
+        'task parallel|--json' = 'Print the task as JSON.'
+        'task parallel|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task parallel|-h' = 'Show help.'
+        'task parallel|--help' = 'Show help.'
+        'task parallel|--version' = 'Show version.'
+        'task priority|--json' = 'Print the task as JSON.'
+        'task priority|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task priority|-h' = 'Show help.'
+        'task priority|--help' = 'Show help.'
+        'task priority|--version' = 'Show version.'
+        'task ready|--json' = 'JSON instead of the text.'
+        'task ready|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task ready|-h' = 'Show help.'
+        'task ready|--help' = 'Show help.'
+        'task ready|--version' = 'Show version.'
+        'task release|--agent' = 'The rtok agent id; defaults to RTOK_AGENT_ID.'
+        'task release|--force' = 'Release a task held by someone else.'
+        'task release|--json' = 'Print the task as JSON.'
+        'task release|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task release|-h' = 'Show help.'
+        'task release|--help' = 'Show help.'
+        'task release|--version' = 'Show version.'
+        'task show|--json' = 'JSON instead of the text.'
+        'task show|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task show|-h' = 'Show help.'
+        'task show|--help' = 'Show help.'
+        'task show|--version' = 'Show version.'
+        'task status|--force' = 'Finish a parent even though subtasks are still open.'
+        'task status|--json' = 'Print the task as JSON.'
+        'task status|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task status|-h' = 'Show help.'
+        'task status|--help' = 'Show help.'
+        'task status|--version' = 'Show version.'
+        'task sync|--json' = 'JSON instead of the text.'
+        'task sync|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'task sync|-h' = 'Show help.'
+        'task sync|--help' = 'Show help.'
+        'task sync|--version' = 'Show version.'
     }
     $cmd = ''
     $skip = $false

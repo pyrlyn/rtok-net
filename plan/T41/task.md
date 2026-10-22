@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 4
-readiness: 0%
-agent:
+readiness: 80%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T41. Tasks: `rtok task` with disk, GitHub and GitLab adapters
@@ -36,6 +36,17 @@ Tests:
 Spec: catalog A22, catalog B7 in [docs/port/catalog.md](../../docs/port/catalog.md).
 
 Ports: rtok closed T405, T441, T441.1, T441.2, T441.3, T441.4, T441.5, T441.6, T441.7, T441.8, T441.10, T441.11, T441.12, T441.13.1, T441.13.2, T441.13.3, T441.13.4, T441.13.5, T441.13.6, T441.13.7, T442, T541, T586, T601, T615, T904.
+
+Plan:
+1. `src/Rtok.Tasks`: TaskId, status, the task model and the JSON the CLI and MCP share; counters and claims behind interfaces.
+2. Adapters: disk (front-matter files, `.claim.lock`), GitHub (REST, sub-issues, pacing, Projects v2 GraphQL), GitLab (REST v4).
+3. `rtok task` commands in `Rtok.Cli`.
+4. When T8 lands: `task_counters` and `task_claims` on the store. When T15 lands: the MCP `task_*` tools over the same JSON. When the worktree task lands: `worktree add` writes the task list id.
+5. Tests: unit and property tests for TaskId, adapter tests on a temp dir and WireMock fakes of GitHub and GitLab, CLI and MCP JSON equality.
+
+Waits on: T8 (store), T15 (MCP), T16 (worktrees).
+
+Progress: steps 1 to 3 and the store half of step 4 are on branch `T41-tasks`, with sync, init and export (GitHub, Linear); the origin is read through LibGit2Sharp (N21) and the `task-file` fuzz target is wired. Left: the MCP `task_*` tools and their JSON-equality test (T15), `worktree add` writing the task list id (T16), and the Linux RID publishes once `eng/publish.sh` is fixed on main.
 
 Fuzz: `task-file` in `tests/Rtok.Fuzz`: any front-matter task file and TaskId string parses or refuses, and a parsed file serializes back byte-identical.
 

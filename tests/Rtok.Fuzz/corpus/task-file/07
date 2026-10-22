@@ -1,0 +1,18 @@
+---
+id: A1.2
+title: "x: y # z"
+status: in-progress
+parent: A1
+created_at: 1
+updated_at: 2
+priority: 0
+assignee: 5691aa16
+blocked_by:
+  - #3
+  - A2
+  - A2
+conflicts_with: [A4]
+---
+Body
+---
+more
