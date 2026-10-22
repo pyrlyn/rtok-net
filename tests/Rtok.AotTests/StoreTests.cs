@@ -128,6 +128,29 @@ public sealed class StoreTests : IDisposable
     }
 
     [Fact]
+    public void Doc_methods_search_the_fts_table_on_precompiled_queries()
+    {
+        using var store = RtokStore.Open(Options);
+        var crate = new Rtok.Store.Model.DocCrate
+        {
+            Name = "n",
+            Version = "1",
+            Sha256 = "a",
+        };
+        DocEntry[] items = [new("n::A", "fn", "alpha body"), new("n::B", "fn", "beta alpha alpha")];
+
+        Assert.Equal(2, store.SyncDocCrate(crate, items));
+        Assert.Null(store.SyncDocCrate(crate, items));
+        Assert.True(store.DocCrateCached("n", "1"));
+        var hits = store.SearchDocItems("n", "1", "alpha", 5);
+        Assert.Equal(["n::B", "n::A"], hits.Select(i => i.Path), StringComparer.Ordinal);
+        Assert.Equal("alpha body", store.GetDocItem(hits[1].Id)?.Docs);
+        Assert.Equal(1, store.ReplaceDocCrate(crate, [items[0]]));
+        store.DeleteDocCrate("n", "1");
+        Assert.Empty(store.SearchDocItems("n", "1", "alpha", 5));
+    }
+
+    [Fact]
     public void A_store_rtok_net_did_not_create_is_refused()
     {
         var options = Options;

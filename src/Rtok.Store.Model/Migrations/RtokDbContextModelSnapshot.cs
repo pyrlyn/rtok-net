@@ -394,6 +394,28 @@ namespace Rtok.Store.Model.Migrations
                     b.ToTable("doc_items", (string)null);
                 });
 
+            modelBuilder.Entity("Rtok.Store.Model.DocItemMatch", b =>
+                {
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("doc_items_fts");
+
+                    b.Property<double>("Rank")
+                        .HasColumnType("REAL")
+                        .HasColumnName("rank");
+
+                    b.Property<long>("RowId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("rowid");
+
+                    b.HasIndex("RowId");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("doc_items_fts", (string)null);
+                });
+
             modelBuilder.Entity("Rtok.Store.Model.Extractor", b =>
                 {
                     b.Property<string>("Root")
@@ -1757,6 +1779,17 @@ namespace Rtok.Store.Model.Migrations
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Rtok.Store.Model.DocItemMatch", b =>
+                {
+                    b.HasOne("Rtok.Store.Model.DocItem", "Item")
+                        .WithMany()
+                        .HasForeignKey("RowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Rtok.Store.Model.LlmModel", b =>

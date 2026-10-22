@@ -21,6 +21,7 @@
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../Rtok.Hooks/Rtok.Hooks.csproj" />
     <ProjectReference Include="../Rtok.Log/Rtok.Log.csproj" />
+    <ProjectReference Include="../Rtok.Plugins.Docs/Rtok.Plugins.Docs.csproj" />
     <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
     <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
     <ProjectReference Include="../Rtok.Store.Model/Rtok.Store.Model.csproj" />

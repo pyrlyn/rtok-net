@@ -26,6 +26,11 @@
       Type="Rtok.Plugins.Cmd.CmdPlugin"
       Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',cmd,'))"
     />
+    <RtokPlugin
+      Include="$(MSBuildThisFileDirectory)../src/Rtok.Plugins.Docs/Rtok.Plugins.Docs.csproj"
+      Type="Rtok.Plugins.Docs.DocsPlugin"
+      Condition="'$(_RtokAllPlugins)' == 'true' or $(_RtokPluginIds.Contains(',docs,'))"
+    />
   </ItemGroup>
 
   <!-- The CLI's run and filter commands call the cmd plugin only when it is linked. -->

@@ -1,0 +1,2 @@
+﻿[{"id":2,"path":"serde::Deserialize","kind":"trait","snippet":"A data structure that can be deserialized from any data format supported by Serde. Deserialize is the entry point."},{"id":3,"path":"serde::de::Visitor","kind":"trait","snippet":"Walks a Deserialize input one value at a time."}]
+{"id":2,"path":"serde::Deserialize","kind":"trait","docs":"A data structure that can be deserialized from any data format supported by Serde. Deserialize is the entry point."}

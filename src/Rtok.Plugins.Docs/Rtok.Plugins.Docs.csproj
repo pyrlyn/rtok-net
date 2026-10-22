@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The docs plugin: offline dependency docs from lockfile-pinned versions (plan T42). -->
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Rtok.Plugin.Sdk/src/Rtok.Plugin.Sdk.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.Config.Layered/src/Pyrlyn.Config.Layered.csproj" />
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+    <PackageReference Include="Tomlyn" />
+    <PackageReference Include="ZstdSharp.Port" />
+    <InternalsVisibleTo Include="Rtok.Plugins.Docs.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
+  </ItemGroup>
+</Project>

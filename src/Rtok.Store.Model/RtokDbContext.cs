@@ -63,6 +63,7 @@ public sealed class RtokDbContext : DbContext
     public DbSet<GraphEvent> GraphEvents => Set<GraphEvent>();
     public DbSet<DocCrate> DocCrates => Set<DocCrate>();
     public DbSet<DocItem> DocItems => Set<DocItem>();
+    public DbSet<DocItemMatch> DocItemMatches => Set<DocItemMatch>();
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<WorktreeClaim> WorktreeClaims => Set<WorktreeClaim>();
@@ -491,6 +492,15 @@ public sealed class RtokDbContext : DbContext
         {
             e.ToTable("doc_items");
             e.HasIndex(x => new { x.CrateName, x.Version });
+        });
+        // The migrations create doc_items_fts (EF cannot model FTS5); EF only reads it.
+        b.Entity<DocItemMatch>(e =>
+        {
+            e.HasNoKey().ToView("doc_items_fts");
+            e.Property(x => x.RowId).HasColumnName("rowid");
+            e.Property(x => x.Query).HasColumnName("doc_items_fts");
+            e.Property(x => x.Rank).HasColumnName("rank");
+            e.HasOne(x => x.Item).WithMany().HasForeignKey(x => x.RowId);
         });
     }
 

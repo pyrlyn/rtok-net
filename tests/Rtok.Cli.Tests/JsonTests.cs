@@ -26,6 +26,7 @@ public sealed class JsonTests
         ["config set"] = "writes a key",
         ["config path"] = "prints one path, for $(rtok config path)",
         ["config validate"] = "its exit code is the answer",
+        ["docs fetch"] = "downloads docs and prints one status line",
         ["hook"] = "speaks the host's hook protocol",
         ["completions"] = "prints or installs a shell script",
         ["man"] = "prints or writes roff pages",

@@ -4,9 +4,9 @@
 local value = clink.argmatcher():addarg(clink.filematches)
 
 -- rtok run
-local node_23 = clink.argmatcher()
-node_23:addflags({ "--agent" .. value, "--no-ref", "--config" .. value, "-h", "--help", "--version" })
-node_23:adddescriptions({
+local node_25 = clink.argmatcher()
+node_25:addflags({ "--agent" .. value, "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_25:adddescriptions({
     ["--agent"] = "Sub-agent id from PreToolUse; scopes the dedup pointer.",
     ["--no-ref"] = "Do not print the reference line after a cut.",
     ["--config"] = "The config file to load instead of the user's.",
@@ -16,43 +16,43 @@ node_23:adddescriptions({
 })
 
 -- rtok plugins
-local node_22 = clink.argmatcher()
-node_22:addflags({ "--json", "-h", "--help", "--version" })
-node_22:adddescriptions({
+local node_24 = clink.argmatcher()
+node_24:addflags({ "--json", "-h", "--help", "--version" })
+node_24:adddescriptions({
     ["--json"] = "Print JSON.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_22:nofiles()
+node_24:nofiles()
 
 -- rtok man
-local node_21 = clink.argmatcher()
-node_21:addflags({ "--dir" .. value, "-h", "--help", "--version" })
-node_21:adddescriptions({
+local node_23 = clink.argmatcher()
+node_23:addflags({ "--dir" .. value, "-h", "--help", "--version" })
+node_23:adddescriptions({
     ["--dir"] = "Write rtok.1 and a page for every subcommand into this directory, and print their paths.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_21:nofiles()
+node_23:nofiles()
 
 -- rtok logs watch
-local node_20 = clink.argmatcher()
-node_20:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
-node_20:adddescriptions({
+local node_22 = clink.argmatcher()
+node_22:addflags({ "--lines" .. value, "--config" .. value, "-h", "--help", "--version" })
+node_22:adddescriptions({
     ["--lines"] = "How many lines the screen keeps; [log] lines when omitted.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_20:nofiles()
+node_22:nofiles()
 
 -- rtok logs export
-local node_19 = clink.argmatcher()
-node_19:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_19:adddescriptions({
+local node_21 = clink.argmatcher()
+node_21:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_21:adddescriptions({
     ["--lines"] = "How many lines; [log] lines when omitted.",
     ["--json"] = "Print the lines as a JSON array, newest first.",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
@@ -60,13 +60,13 @@ node_19:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_19:nofiles()
+node_21:nofiles()
 
 -- rtok logs
-local node_18 = clink.argmatcher()
-node_18:addarg({ "export" .. node_19, "watch" .. node_20 })
-node_18:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
-node_18:adddescriptions({
+local node_20 = clink.argmatcher()
+node_20:addarg({ "export" .. node_21, "watch" .. node_22 })
+node_20:addflags({ "--lines" .. value, "--json", "--config" .. value, "-h", "--help", "--version" })
+node_20:adddescriptions({
     ["export"] = "Print the same lines as rtok logs without numbers or colour.",
     ["watch"] = "Show rtok logs, then follow the log until Ctrl-C: repainted on a terminal, appended when piped.",
     ["--lines"] = "How many lines; [log] lines when omitted.",
@@ -76,12 +76,12 @@ node_18:adddescriptions({
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
 })
-node_18:nofiles()
+node_20:nofiles()
 
 -- rtok hook
-local node_17 = clink.argmatcher()
-node_17:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
-node_17:adddescriptions({
+local node_19 = clink.argmatcher()
+node_19:addflags({ "--host" .. value, "--serve", "-h", "--help", "--version" })
+node_19:adddescriptions({
     ["--host"] = "The host id, when the host is not inferred from the payload.",
     ["--serve"] = "Run the resident hook server that rtok-hook talks to.",
     ["-h"] = "Show help.",
@@ -90,9 +90,9 @@ node_17:adddescriptions({
 })
 
 -- rtok filter
-local node_16 = clink.argmatcher()
-node_16:addflags({ "--stdin", "--cmd" .. value, "--archive", "--no-ref", "--config" .. value, "-h", "--help", "--version" })
-node_16:adddescriptions({
+local node_18 = clink.argmatcher()
+node_18:addflags({ "--stdin", "--cmd" .. value, "--archive", "--no-ref", "--config" .. value, "-h", "--help", "--version" })
+node_18:adddescriptions({
     ["--stdin"] = "Read the payload from stdin (OpenCode tool.execute.after).",
     ["--cmd"] = "Command family hint (git status, cargo test, …).",
     ["--archive"] = "Archive stdin and print the expand trailer (same path as run).",
@@ -101,6 +101,24 @@ node_16:adddescriptions({
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
     ["--version"] = "Show version.",
+})
+node_18:nofiles()
+
+-- rtok docs fetch
+local node_17 = clink.argmatcher()
+node_17:addflags({ "--config" .. value, "-h", "--help", "--version" })
+node_17:adddescriptions({
+    ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
+    ["-h"] = "Show help.",
+    ["--help"] = "Show help.",
+    ["--version"] = "Show version.",
+})
+
+-- rtok docs
+local node_16 = clink.argmatcher()
+node_16:addarg({ "fetch" .. node_17 })
+node_16:adddescriptions({
+    ["fetch"] = "Download a dependency's docs at its lockfile-pinned version and index them for docs_query.",
 })
 node_16:nofiles()
 
@@ -300,7 +318,7 @@ node_1:nofiles()
 
 -- rtok
 local node_0 = clink.argmatcher("rtok")
-node_0:addarg({ "agents" .. node_1, "completions" .. node_8, "config" .. node_9, "filter" .. node_16, "hook" .. node_17, "logs" .. node_18, "man" .. node_21, "plugins" .. node_22, "run" .. node_23 })
+node_0:addarg({ "agents" .. node_1, "completions" .. node_8, "config" .. node_9, "docs" .. node_16, "filter" .. node_18, "hook" .. node_19, "logs" .. node_20, "man" .. node_23, "plugins" .. node_24, "run" .. node_25 })
 node_0:addflags({ "-h", "--help", "--version" })
 node_0:adddescriptions({
     ["completions"] = "Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).",

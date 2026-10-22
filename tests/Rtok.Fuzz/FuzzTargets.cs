@@ -51,7 +51,7 @@ internal static class FuzzTargets
         new("usage-logs", "T38", UsageLogs.Run),
         new("worktree-arg", "T40", null),
         new("task-file", "T41", null),
-        new("lockfiles", "T42", null),
+        new("lockfiles", "T42", Targets.Lockfiles.Run),
         new("ws-message", "T44", null),
         new("demon-state", "T46", null),
         new("otlp-encode", "T47", null),

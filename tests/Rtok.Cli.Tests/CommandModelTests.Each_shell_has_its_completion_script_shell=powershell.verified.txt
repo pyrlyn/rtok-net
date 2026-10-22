@@ -4,9 +4,10 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'completions', 'config', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
+        '' = @('agents', 'completions', 'config', 'docs', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
+        'docs' = @('fetch')
         'logs' = @('export', 'watch')
     }
     $options = @{
@@ -24,6 +25,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config set' = @('--dry-run', '--config', '-h', '--help', '--version')
         'config show' = @('--sources', '--json', '--config', '-h', '--help', '--version')
         'config validate' = @('--config', '-h', '--help', '--version')
+        'docs fetch' = @('--config', '-h', '--help', '--version')
         'filter' = @('--stdin', '--cmd', '--archive', '--no-ref', '--config', '-h', '--help', '--version')
         'hook' = @('--host', '--serve', '-h', '--help', '--version')
         'logs' = @('--lines', '--json', '--config', '-h', '--help', '--version')
@@ -52,6 +54,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config set|--config'
         'config show|--config'
         'config validate|--config'
+        'docs fetch|--config'
         'filter|--cmd'
         'filter|--config'
         'hook|--host'
@@ -173,6 +176,11 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config validate|-h' = 'Show help.'
         'config validate|--help' = 'Show help.'
         'config validate|--version' = 'Show version.'
+        'docs|fetch' = 'Download a dependency''s docs at its lockfile-pinned version and index them for docs_query.'
+        'docs fetch|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'docs fetch|-h' = 'Show help.'
+        'docs fetch|--help' = 'Show help.'
+        'docs fetch|--version' = 'Show version.'
         'filter|--stdin' = 'Read the payload from stdin (OpenCode tool.execute.after).'
         'filter|--cmd' = 'Command family hint (git status, cargo test, …).'
         'filter|--archive' = 'Archive stdin and print the expand trailer (same path as run).'

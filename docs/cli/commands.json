@@ -555,6 +555,28 @@
       ]
     },
     {
+      "path": "docs fetch",
+      "aliases": [],
+      "description": "Download a dependency's docs at its lockfile-pinned version and index them for docs_query.\nCargo.lock crates come from docs.rs, packages.lock.json packages from nuget.org.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The dependency, as the lockfile names it."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "filter",
       "aliases": [],
       "description": "Filter stdin as the output of a command, without running it.",

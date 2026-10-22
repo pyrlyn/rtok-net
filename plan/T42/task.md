@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P3
 complexity: 3
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T42. docs plugin: offline dependency docs
@@ -35,3 +35,10 @@ Ports: rtok closed T455.
 Fuzz: `lockfiles` in `tests/Rtok.Fuzz`: each lockfile resolver and the `llms.txt` reader over any bytes give pinned versions or none.
 
 Check: Ingest and query fixtures pass, and an unchanged re-ingest keeps doc ids.
+
+Plan:
+1. Store: an EF-mapped read-only view of `doc_items_fts` (MATCH via its hidden column, bm25 `rank`) and doc methods on `RtokStore` (sync by SHA, replace, delete, search, get); JIT and AOT store tests.
+2. `src/Rtok.Plugins.Docs`: lockfile resolvers (`Cargo.lock`, `packages.lock.json`), `llms.txt` and linked local docs under `local:<canonical cwd>`, rustdoc JSON and nupkg XML-doc indexers, `DocsService` (resolve, query with a Measurement, get, fetch), `DocsPlugin` (Mcp|Cli, off by default).
+3. `rtok docs fetch <name>` in `Rtok.Cli`; CLI goldens refreshed.
+4. `tests/Rtok.Plugins.Docs.Tests` per the list above (WireMock upstream); fuzz target `lockfiles` with a corpus.
+5. Gates, `done.md`.
