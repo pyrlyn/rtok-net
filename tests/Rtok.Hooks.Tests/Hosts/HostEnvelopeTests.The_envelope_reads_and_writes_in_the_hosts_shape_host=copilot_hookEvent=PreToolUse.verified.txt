@@ -1,0 +1,17 @@
+﻿adapted: True
+input:
+{
+  "timestamp": 1792656000000,
+  "cwd": "/home/dev/app",
+  "session_id": "5d0e7c1a-3b9f-4e2d-8a6c-1f2e3d4c5b6a",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "git status",
+    "description": "Show working tree status"
+  },
+  "hook_event_name": "PreToolUse"
+}
+deny:
+{"permissionDecision":"deny","permissionDecisionReason":"no shell here"}
+rewrite:
+{"modifiedArgs":{"command":"rtok read README.md"},"permissionDecisionReason":"rtok read"}

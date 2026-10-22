@@ -28,6 +28,13 @@ public sealed record StoreOptions(string DbPath)
     /// <summary>Where EF Core logs; null logs nothing.</summary>
     public ILoggerFactory? LoggerFactory { get; init; }
 
+    /// <summary>A write transaction or <see cref="RtokStore.BeginBatch"/> that finds another
+    /// writer's lock gives up after <see cref="Busy"/> with <see cref="StoreLockedException"/>.
+    /// Without it the driver retries a busy statement for a whole second at least, whatever
+    /// <see cref="Busy"/> says. The hook's policy (rtok LOCK_WAIT); it writes only inside a
+    /// batch.</summary>
+    public bool FailFast { get; init; }
+
     /// <summary>The clock behind every <c>ts</c> column.</summary>
     public TimeProvider Time { get; init; } = TimeProvider.System;
 }

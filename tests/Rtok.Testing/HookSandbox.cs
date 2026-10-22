@@ -76,6 +76,18 @@ public sealed class HookSandbox : IDisposable
             File.Delete(Endpoint.LockPath);
         }
         catch (IOException) { }
-        _dir.Dispose();
+        // A resident on its way out can still write its store and log into the home.
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                _dir.Dispose();
+                return;
+            }
+            catch (IOException) when (attempt < 50)
+            {
+                Thread.Sleep(100);
+            }
+        }
     }
 }

@@ -38,6 +38,35 @@ public sealed partial class RtokStore
         scope.Commit();
     }
 
+    /// <summary>Marks the session ended now (<c>sessions.ended_at</c>), inserting it when no
+    /// hook saw it start. A repeat end moves the time on.</summary>
+    public void EndSession(string id, long? hostId)
+    {
+        using var scope = EnterWrite();
+        var db = scope.Db;
+        var sessionId = id;
+        var row = db.Sessions.FirstOrDefault(s => s.Id == sessionId);
+        if (row is null)
+        {
+            db.Sessions.Add(
+                new Session
+                {
+                    Id = id,
+                    HostId = hostId,
+                    StartedAt = Now,
+                    EndedAt = Now,
+                }
+            );
+        }
+        else
+        {
+            row.HostId ??= hostId;
+            row.EndedAt = Now;
+        }
+        db.SaveChanges();
+        scope.Commit();
+    }
+
     /// <summary>The provider and model ids for two slugs, inserted on first sight; a new
     /// provider is named by its slug.</summary>
     public (long ProviderId, long ModelId) UpsertModel(string providerSlug, string modelSlug)

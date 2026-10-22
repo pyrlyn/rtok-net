@@ -1,0 +1,51 @@
+﻿[
+  {
+    "event": "PreToolUse",
+    "matcher": "Bash",
+    "command": "rtok hook PreToolUse",
+    "timeout": 5
+  },
+  {
+    "event": "PreToolUse",
+    "matcher": "Read",
+    "command": "rtok hook PreToolUse",
+    "timeout": 5
+  },
+  {
+    "event": "PreToolUse",
+    "matcher": "Skill",
+    "command": "rtok hook PreToolUse",
+    "timeout": 5
+  },
+  {
+    "event": "PostToolUse",
+    "matcher": "*",
+    "command": "rtok hook PostToolUse",
+    "timeout": 5
+  },
+  {
+    "event": "UserPromptSubmit",
+    "command": "rtok hook UserPromptSubmit",
+    "timeout": 5
+  },
+  {
+    "event": "SessionStart",
+    "command": "rtok hook SessionStart",
+    "timeout": 5
+  },
+  {
+    "event": "PreCompact",
+    "command": "rtok hook PreCompact",
+    "timeout": 5
+  },
+  {
+    "event": "PostCompact",
+    "command": "rtok hook PostCompact",
+    "timeout": 5
+  },
+  {
+    "event": "SessionEnd",
+    "command": "rtok hook SessionEnd",
+    "timeout": 5
+  }
+]

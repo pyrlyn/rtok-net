@@ -1,0 +1,15 @@
+﻿{
+  cline: [
+    PreToolUse,
+    PostToolUse,
+    TaskStart,
+    UserPromptSubmit,
+    SessionEnd
+  ],
+  commandcode: [
+    PreToolUse,
+    PostToolUse,
+    SessionStart,
+    Stop
+  ]
+}

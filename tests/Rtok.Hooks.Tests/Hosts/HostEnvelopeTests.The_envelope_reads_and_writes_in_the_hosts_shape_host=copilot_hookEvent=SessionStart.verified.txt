@@ -1,0 +1,12 @@
+﻿adapted: True
+input:
+{
+  "timestamp": 1792655980000,
+  "cwd": "/home/dev/app",
+  "source": "new",
+  "initialPrompt": "Fix the failing test in tests/test_app.py",
+  "session_id": "5d0e7c1a-3b9f-4e2d-8a6c-1f2e3d4c5b6a",
+  "hook_event_name": "SessionStart"
+}
+context:
+{"additionalContext":"rtok context"}

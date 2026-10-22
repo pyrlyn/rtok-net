@@ -17,27 +17,22 @@ internal static class HookCommand
         bool serve = false
     ) => serve ? Serve(cancellationToken) : Once(hookEvent, host);
 
-    // In place, as the client's fallback runs it: always exit 0 with the no-op reply on a miss.
+    // In place, as the client's fallback runs it: always exit 0, with the no-op reply on a miss.
     private static int Once(string hookEvent, string host)
     {
         using var stdout = Console.OpenStandardOutput();
+        if (hookEvent is "WorktreeCreate" or "WorktreeRemove")
+        {
+            // D31: the plugin's worktree script falls back to the host's own worktree on a
+            // non-zero exit. rtok makes none yet (T40.1).
+            Console.Error.WriteLine($"rtok hook {hookEvent}: rtok does not manage worktrees yet");
+            return 1;
+        }
         try
         {
-            byte[]? stdin;
-            using (var input = Console.OpenStandardInput())
-            {
-                stdin = HookWire.ReadCapped(input);
-            }
-            if (stdin is null)
-            {
-                Console.Error.WriteLine(
-                    $"rtok hook: stdin over {HookWire.MaxInput} bytes, skipped"
-                );
-                stdout.Write(HookWire.NoOp);
-                return 0;
-            }
-            var request = HookRequest.Current(hookEvent, host, stdin);
-            stdout.Write(HookHandlers.NoOp(request, replay: false).Span);
+            using var pipeline = new HookPipeline(Options());
+            using var input = Console.OpenStandardInput();
+            stdout.Write(pipeline.RunInPlace(hookEvent, host, input, Environment.CurrentDirectory));
         }
 #pragma warning disable CA1031 // Fail open: no failure may reach the host.
         catch (Exception)
@@ -47,6 +42,9 @@ internal static class HookCommand
         }
         return 0;
     }
+
+    private static HookPipelineOptions Options() =>
+        new() { Plugins = LinkedPlugins.Create, Errors = Console.Error };
 
     private static int Serve(CancellationToken ct)
     {
@@ -64,7 +62,8 @@ internal static class HookCommand
         {
             HookClientLink.Ensure(Environment.GetEnvironmentVariable("PATH"), exe);
         }
-        var exit = HookResident.Run(endpoint, HookHandlers.NoOp, ct);
+        using var pipeline = new HookPipeline(Options());
+        var exit = HookResident.Run(endpoint, pipeline.Handle, ct);
         if (exit == ResidentExit.AlreadyRunning)
         {
             Console.Error.WriteLine(

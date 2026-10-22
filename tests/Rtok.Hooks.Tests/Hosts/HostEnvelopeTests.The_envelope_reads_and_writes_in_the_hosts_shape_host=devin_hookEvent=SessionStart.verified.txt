@@ -1,0 +1,10 @@
+﻿adapted: True
+input:
+{
+  "session_id": "devin-5f4e3d2c1b0a",
+  "hook_event_name": "SessionStart",
+  "source": "startup",
+  "cwd": "/home/dev/app"
+}
+context:
+{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"rtok context"}}

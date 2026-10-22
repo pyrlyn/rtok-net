@@ -1,11 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- The hook runtime: the resident server, the rtok-hook PATH link and the hook command line.
-       T13 adds the dispatch behind HookHandler. -->
+  <!-- The hook runtime: the resident server, the rtok-hook PATH link, the hook command line,
+       the host adapters and writers, and the pipeline from a host's bytes to its reply. -->
   <PropertyGroup>
     <RootNamespace>Rtok.Hooks</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Hooks.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="../Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Process/Rtok.Process.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
     <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
   </ItemGroup>
 </Project>

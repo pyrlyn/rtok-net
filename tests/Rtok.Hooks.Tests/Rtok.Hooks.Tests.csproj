@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- JIT lane: the hook wire, the resident and the rtok-hook PATH link (T14). -->
+  <!-- JIT lane: the hook wire, the resident and the rtok-hook PATH link (T14); the event table,
+       the host envelopes and the hook pipeline (T13). -->
   <ItemGroup>
     <PackageReference Include="CsCheck" />
+    <PackageReference Include="Verify.XunitV3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Rtok.Hooks/Rtok.Hooks.csproj" />

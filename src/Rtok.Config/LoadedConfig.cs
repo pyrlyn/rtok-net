@@ -66,4 +66,10 @@ public sealed class LoadedConfig
         }
         return node;
     }
+
+    /// <summary>The value at a dotted key as JSON (<see cref="ConfigJson.Find"/>), the lookup
+    /// behind <c>IHost.ConfigJson</c>.</summary>
+    /// <param name="key">The dotted key, such as <c>plugins.inject</c>.</param>
+    /// <returns>The element, or null when absent.</returns>
+    public System.Text.Json.JsonElement? Json(string key) => ConfigJson.Find(this, key);
 }

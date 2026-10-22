@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -13,6 +14,7 @@ public sealed partial class RtokStore : IDisposable
     private readonly SqliteConnection _connection;
     private readonly RtokDbContext _db;
     private readonly StoreOptions _options;
+    private IDbContextTransaction? _batch;
 
     private RtokStore(StoreOptions options, SqliteConnection connection, RtokDbContext db)
     {
@@ -23,6 +25,13 @@ public sealed partial class RtokStore : IDisposable
 
     /// <summary>The database file, as a full path.</summary>
     public string DbPath => _options.DbPath;
+
+    /// <summary>Write transactions committed through this instance, a batch counting once.</summary>
+    internal long Commits { get; private set; }
+
+    /// <summary>True when <paramref name="e"/> says another connection holds the writer lock:
+    /// <see cref="StoreLockedException"/>, or SQLite's busy or locked error inside it.</summary>
+    public static bool IsLocked(Exception? e) => Pragmas.IsLocked(e);
 
     /// <summary>Opens or creates the store: an owner-only directory and file, the refusal of a
     /// file rtok-net did not make (README N15) before anything is written to it, then WAL,
@@ -80,10 +89,86 @@ public sealed partial class RtokStore : IDisposable
         }
     }
 
+    /// <summary>
+    /// Runs every write until <see cref="StoreBatch.Commit"/> in one transaction, so a hook's
+    /// rows cost one commit and a locked store is found before any work (rtok T428, T525). Under
+    /// <see cref="StoreOptions.FailFast"/> this is where <see cref="StoreLockedException"/> is
+    /// thrown. Each write inside the batch is a savepoint: one that fails leaves no rows and the
+    /// batch goes on.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A batch is already open.</exception>
+    public StoreBatch BeginBatch()
+    {
+        lock (_gate)
+        {
+            if (_batch is not null)
+            {
+                throw new InvalidOperationException("a store batch is already open");
+            }
+            _batch = BeginWrite(_db, _connection, _options);
+        }
+        return new StoreBatch(this);
+    }
+
+    internal void EndBatch(bool commit)
+    {
+        lock (_gate)
+        {
+            var batch = _batch;
+            _batch = null;
+            try
+            {
+                if (commit && batch is not null)
+                {
+                    batch.Commit();
+                    Commits++;
+                }
+            }
+            finally
+            {
+                batch?.Dispose();
+                _db.ChangeTracker.Clear();
+            }
+        }
+    }
+
+    /// <summary>
+    /// A write transaction that takes the writer lock up front, so a read-then-write cannot race
+    /// another writer's upgrade (rtok T208). Microsoft.Data.Sqlite begins with
+    /// <c>BEGIN IMMEDIATE</c> and retries a busy lock for a second at least; under
+    /// <see cref="StoreOptions.FailFast"/> the transaction begins deferred (the driver's spelling
+    /// is <see cref="IsolationLevel.ReadUncommitted"/>) and <see cref="Pragmas.TakeWriteLock"/>
+    /// waits only <see cref="StoreOptions.Busy"/>.
+    /// </summary>
+    internal static IDbContextTransaction BeginWrite(
+        RtokDbContext db,
+        SqliteConnection connection,
+        StoreOptions options
+    )
+    {
+        if (!options.FailFast)
+        {
+            return db.Database.BeginTransaction();
+        }
+        var transaction = db.Database.BeginTransaction(IsolationLevel.ReadUncommitted);
+        try
+        {
+            Pragmas.TakeWriteLock(connection);
+            return transaction;
+        }
+        catch
+        {
+            transaction.Dispose();
+            throw;
+        }
+    }
+
     public void Dispose()
     {
         lock (_gate)
         {
+            _batch?.Dispose();
+            _batch = null;
             _db.Dispose();
             _connection.Dispose();
         }
@@ -108,9 +193,12 @@ public sealed partial class RtokStore : IDisposable
 
     private readonly ref struct Scope
     {
+        private const string Savepoint = "rtok_write";
+
         private readonly RtokStore _store;
         private readonly Lock.Scope _lock;
         private readonly IDbContextTransaction? _transaction;
+        private readonly Nested? _nested;
         private readonly bool _maintenance;
 
         public Scope(RtokStore store, bool write, bool maintenance)
@@ -124,7 +212,15 @@ public sealed partial class RtokStore : IDisposable
                     Pragmas.BusyTimeout(store._connection, store._options.MaintenanceBusy);
                     _maintenance = true;
                 }
-                _transaction = write ? store._db.Database.BeginTransaction() : null;
+                if (write && store._batch is { } batch)
+                {
+                    batch.CreateSavepoint(Savepoint);
+                    _nested = new Nested(batch);
+                }
+                else if (write)
+                {
+                    _transaction = BeginWrite(store._db, store._connection, store._options);
+                }
             }
             catch
             {
@@ -135,16 +231,35 @@ public sealed partial class RtokStore : IDisposable
 
         public RtokDbContext Db => _store._db;
 
-        public void Commit() => _transaction?.Commit();
+        public void Commit()
+        {
+            if (_nested is { } nested)
+            {
+                nested.Transaction.ReleaseSavepoint(Savepoint);
+                nested.Released = true;
+            }
+            else if (_transaction is not null)
+            {
+                _transaction.Commit();
+                _store.Commits++;
+            }
+        }
 
         public void Dispose()
         {
             try
             {
+                if (_nested is { Released: false } nested)
+                {
+                    nested.Transaction.RollbackToSavepoint(Savepoint);
+                    nested.Transaction.ReleaseSavepoint(Savepoint);
+                }
                 _transaction?.Dispose();
             }
             finally
             {
+                // Inside a batch too: a savepoint rollback leaves the entities this write added
+                // tracked, and the next save would try them again.
                 _store._db.ChangeTracker.Clear();
                 Restore();
             }
@@ -164,5 +279,13 @@ public sealed partial class RtokStore : IDisposable
                 _lock.Dispose();
             }
         }
+    }
+
+    /// <summary>A write inside a batch: its savepoint, released on commit.</summary>
+    private sealed class Nested(IDbContextTransaction transaction)
+    {
+        public IDbContextTransaction Transaction { get; } = transaction;
+
+        public bool Released { get; set; }
     }
 }

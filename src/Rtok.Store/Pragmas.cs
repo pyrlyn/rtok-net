@@ -4,8 +4,8 @@ using Microsoft.Data.Sqlite;
 
 namespace Rtok.Store;
 
-/// <summary>Every PRAGMA the store runs, in one place: EF has no API for them, and they are the
-/// only SQL the store writes itself (README N7).</summary>
+/// <summary>Every PRAGMA the store runs and the fail-fast writer lock, in one place: EF has no
+/// API for them, and they are the only SQL the store writes itself (README N7).</summary>
 internal static class Pragmas
 {
     /// <summary>SQLite's "database is locked" and "database table is locked".</summary>
@@ -38,6 +38,43 @@ internal static class Pragmas
         }
         Execute(connection, "PRAGMA synchronous = NORMAL;");
         ForeignKeys(connection, on: true);
+    }
+
+    /// <summary>Takes the writer lock inside a deferred transaction with a write that changes
+    /// nothing. It runs on the raw handle, so SQLite's busy timeout is the only wait: the driver's
+    /// own retry loop sleeps 150 ms at a time for at least a second.</summary>
+    /// <exception cref="StoreLockedException">Another connection holds the lock.</exception>
+    public static void TakeWriteLock(SqliteConnection connection)
+    {
+        var rc = SQLitePCL.raw.sqlite3_exec(
+            connection.Handle,
+            "DELETE FROM kv WHERE 0;",
+            null,
+            null,
+            out var error
+        );
+        if (rc is Busy or Locked)
+        {
+            throw new StoreLockedException(error ?? "database is locked");
+        }
+        if (rc != 0)
+        {
+            throw new SqliteException(error, rc);
+        }
+    }
+
+    /// <summary>True when <paramref name="e"/> or an exception inside it is SQLite's busy or
+    /// locked error.</summary>
+    public static bool IsLocked(Exception? e)
+    {
+        for (; e is not null; e = e.InnerException)
+        {
+            if (e is StoreLockedException or SqliteException { SqliteErrorCode: Busy or Locked })
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void ForeignKeys(DbConnection connection, bool on) =>

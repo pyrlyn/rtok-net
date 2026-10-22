@@ -1,4 +1,5 @@
 using System.Data.Common;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Rtok.Store.Model;
@@ -48,13 +49,14 @@ internal static class MigrationRunner
     /// <summary>Applies the pending migrations in one write transaction, with foreign keys off as
     /// EF's table rebuilds expect and checked before the commit.</summary>
     public static void Migrate(
-        DbConnection connection,
+        SqliteConnection connection,
         RtokDbContext db,
         StoreOptions options,
         string path
     )
     {
-        if (HasHistory(db) && Applied(db).IsSupersetOf(Known))
+        var history = HasHistory(db);
+        if (history && Applied(db).IsSupersetOf(Known))
         {
             return;
         }
@@ -62,7 +64,10 @@ internal static class MigrationRunner
         Pragmas.ForeignKeys(connection, on: false);
         try
         {
-            using var transaction = db.Database.BeginTransaction();
+            // A store without history is new: it has no kv table to take the lock with yet.
+            using var transaction = history
+                ? RtokStore.BeginWrite(db, connection, options)
+                : db.Database.BeginTransaction();
             var dbTransaction = transaction.GetDbTransaction();
             Execute(connection, dbTransaction, Script(HistoryScript), options);
             // Read again under the write lock: another process may have migrated meanwhile.

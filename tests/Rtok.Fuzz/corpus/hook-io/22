@@ -1,0 +1,1 @@
+{"hook_event_name":"PostToolUse","sessionId":"grok-7a6b5c4d","toolName":"run_terminal_command","toolInput":{"command":"git status"},"toolResult":{"output_for_prompt":"On branch main\nnothing to commit, working tree clean\n","exit_code":0},"toolUseId":"call_9","workspaceRoot":"/home/dev/app"}

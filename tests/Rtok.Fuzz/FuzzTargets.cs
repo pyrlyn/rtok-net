@@ -24,7 +24,7 @@ internal static class FuzzTargets
         new("cli-argv", "T11", CliArgv.Run),
         new("change-preview", "T12.2", ChangePreviewText.Run),
         new("trash-info", "T12.7", TrashInfo.Run),
-        new("hook-io", "T13", null),
+        new("hook-io", "T13", HookIo.Run),
         new("hook-frame", "T14", HookFrame.Run),
         new("mcp-jsonrpc", "T15", null),
         new("bash-rewrite", "T17", BashRewriteText.Run),

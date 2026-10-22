@@ -1,0 +1,1 @@
+{"session_id":"devin-5f4e3d2c1b0a","hook_event_name":"PostToolUse","tool_name":"exec","tool_input":{"command":"git status"},"tool_response":{"output":"On branch main\nnothing to commit, working tree clean\n","exit_code":0},"tool_use_id":"tc_01"}

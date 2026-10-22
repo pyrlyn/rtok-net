@@ -1,0 +1,1 @@
+{"hook_event_name":"PreToolUse","sessionId":"grok-7a6b5c4d","toolName":"run_terminal_command","toolInput":{"command":"git status"},"toolUseId":"call_9","permissionMode":"default","workspaceRoot":"/home/dev/app"}

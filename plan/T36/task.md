@@ -17,6 +17,7 @@ Done when:
 
 Tests:
 - `Rtok.Agents.Tests` unit: each `plugins/<host>` manifest (claude's 9-entry `hooks.json`, codex, cursor, kimi, grok, zcode, antigravity, kilo, devin, cline, gemini `hooks/hooks.json`) lists exactly the events the hook-event table gives that host.
+- `Rtok.Agents.Tests` unit (from T13): every `plugins/*/hooks.json` equals the manifest `Rtok.Hooks.Events.HookManifests.For(host)` generates from the event table, byte for byte.
 - `Rtok.Agents.Tests` unit: every shipped hook command is the resolver line in its host's form: the POSIX line with no brace group, Cursor's `{ …; }` (bare in the Windows copy), Codex's `commandWindows`, and Copilot's PowerShell twin.
 - `Rtok.Agents.Tests` Verify: the missing-rtok note naming `ketch install pyrlyn/rtok` appears only on each host's session-start event, in its shape (Claude `hookSpecificOutput.additionalContext`, Copilot `additionalContext`, Cursor `additional_context`), and never for Grok.
 - `Rtok.Agents.Tests` unit: `gemini-extension.json` has `mcpServers.rtok = {command: rtok, args: [mcp]}` and no `trust` field, and every plugin README links the host's official docs.

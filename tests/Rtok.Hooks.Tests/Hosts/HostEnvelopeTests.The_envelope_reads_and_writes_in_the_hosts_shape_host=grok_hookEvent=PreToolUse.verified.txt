@@ -1,0 +1,17 @@
+﻿adapted: True
+input:
+{
+  "hook_event_name": "PreToolUse",
+  "session_id": "grok-7a6b5c4d",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "git status"
+  },
+  "tool_use_id": "call_9",
+  "permission_mode": "default",
+  "cwd": "/home/dev/app"
+}
+deny:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"no shell here"}}
+rewrite:
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecisionReason":"rtok read","updatedInput":{"command":"rtok read README.md"}}}

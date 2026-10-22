@@ -1,0 +1,1 @@
+{"session_id":"019a3f2e-7c41-7d20-9b8e-5f6a1c2d3e4f","transcript_path":"/home/dev/.codex/sessions/2026/10/22/rollout-019a3f2e-7c41-7d20-9b8e-5f6a1c2d3e4f.jsonl","cwd":"/home/dev/app","hook_event_name":"PreToolUse","model":"gpt-5-codex","permission_mode":"default","tool_name":"Bash","tool_input":{"command":"git status"},"tool_use_id":"call_Kx2b9QeLwP4m"}

@@ -1,0 +1,19 @@
+﻿adapted: True
+input:
+{
+  "hook_event_name": "PostToolUse",
+  "session_id": "grok-7a6b5c4d",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "git status"
+  },
+  "tool_response": {
+    "output_for_prompt": "On branch main\nnothing to commit, working tree clean\n",
+    "exit_code": 0,
+    "stdout": "On branch main\nnothing to commit, working tree clean\n"
+  },
+  "tool_use_id": "call_9",
+  "cwd": "/home/dev/app"
+}
+context:
+{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"rtok context"}}

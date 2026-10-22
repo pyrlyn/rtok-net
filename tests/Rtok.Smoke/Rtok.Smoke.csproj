@@ -7,5 +7,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <!-- Its SQLite connection holds the store's write lock against the published hook. -->
+    <ProjectReference Include="../../src/Rtok.Store/Rtok.Store.csproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,10 @@
+﻿adapted: True
+input:
+{
+  "session_id": "devin-5f4e3d2c1b0a",
+  "hook_event_name": "UserPromptSubmit",
+  "prompt": "Fix the failing test in tests/test_app.py",
+  "cwd": "/home/dev/app"
+}
+context:
+{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"rtok context"}}

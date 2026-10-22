@@ -1,5 +1,10 @@
 ﻿[
+  post_compact.json,
   post_tool_use.json,
+  pre_compact.json,
   pre_tool_use.json,
-  session_start.json
+  session_end.json,
+  session_start.json,
+  subagent_start.json,
+  user_prompt_submit.json
 ]
