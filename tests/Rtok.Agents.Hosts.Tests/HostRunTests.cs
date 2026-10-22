@@ -139,11 +139,16 @@ public sealed class HostRunTests
     }
 
     [Fact]
-    public void Install_without_mcp_writes_nothing()
+    public void Install_without_mcp_writes_only_the_hooks()
     {
         var home = With(McpOs.Linux, "claude");
         var text = home.Run(Plain with { Mcp = false }).Run(Request("claude", McpMode.Install));
-        Assert.Contains("CLI: Claude Code — already installed\n", text, StringComparison.Ordinal);
+        Assert.Contains("10 additions\n", text, StringComparison.Ordinal);
+        Assert.Contains(
+            "rtok hook",
+            home.Read(home.At(".claude/settings.json")),
+            StringComparison.Ordinal
+        );
         Assert.Null(home.Read(home.At(".claude.json")));
     }
 

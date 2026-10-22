@@ -12,7 +12,7 @@ namespace Rtok.Agents.Hosts;
 public static class HostContexts
 {
     /// <summary>The context: this machine's home and disk, <c>[setup]</c>'s switches and the MCP
-    /// files the user moved.</summary>
+    /// and hook files the user moved.</summary>
     /// <param name="loaded">The loaded config.</param>
     /// <param name="ask">Asks the user; null where nobody can answer.</param>
     /// <returns>The context.</returns>
@@ -21,30 +21,29 @@ public static class HostContexts
         ArgumentNullException.ThrowIfNull(loaded);
         var setup = loaded.Config.Setup;
         var fs = new FileSystem();
-        var paths = SetupPaths.Of(
-            key =>
-                loaded.TryGet(key, out var entry)
-                && entry.Source.Kind != ConfigSourceKind.Defaults
-                && entry.Value is string path
-                    ? path
-                    : null,
-            fs
-        );
+        string? UserSet(string key) =>
+            loaded.TryGet(key, out var entry)
+            && entry.Source.Kind != ConfigSourceKind.Defaults
+            && entry.Value is string path
+                ? path
+                : null;
         var settings = new HostSettings(
             setup.DryRun,
             setup.Yes,
             setup.Backup,
             (int)Math.Min(setup.BackupFiles, int.MaxValue),
             setup.Mcp,
-            ask
+            ask,
+            (long)Math.Min(setup.HookTimeoutS, long.MaxValue)
         );
         return new HostContext(
             HostEnvironment.Current(),
-            new McpDisk(fs, HostFile.Write),
+            new McpDisk(fs, HostFile.Write, HostFile.Delete),
             HostCommands.Run,
             RtokBinary.Current,
             settings,
-            paths
+            SetupPaths.Of(UserSet, fs),
+            SetupPaths.HooksOf(UserSet, fs)
         );
     }
 }

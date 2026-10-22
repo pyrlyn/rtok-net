@@ -1,18 +1,22 @@
 ﻿CLI: Claude Code
   app     /Users/u/bin/claude (1.0.0 (fake))
-  config  /Users/u/.claude.json
+  config  /Users/u/.claude/settings.json, /Users/u/.claude.json
+  ✓ hooks   installed
   ✓ mcp     cli  entry ~/.claude.json
 Desktop: Claude Desktop
   app     /Users/u/Applications/Claude.app (-)
   config  /Users/u/Library/Application Support/Claude/claude_desktop_config.json
+  − hooks   not supported: Claude Desktop has no hook events
   ✗ mcp     desktop  stale (runs `rtok serve`, want `rtok mcp --host claude`)
 CLI: Goose CLI
   app     /Users/u/bin/goose (1.0.0 (fake))
   config  /Users/u/.config/goose/config.yaml
+  − hooks   not supported: Goose runs hooks from Open Plugins directories with its own event names, tool names and decision shape; rtok has no adapter for that payload yet
   ✓ mcp     installed
 Desktop: Goose — not found
   app     -
   config  /Users/u/.config/goose/config.yaml
 CLI: aider
   app     /Users/u/bin/aider (1.0.0 (fake))
+  − hooks   not supported: aider has no hook events; it reads .aider.conf.yml and .env
   − mcp     not supported: aider has no MCP support

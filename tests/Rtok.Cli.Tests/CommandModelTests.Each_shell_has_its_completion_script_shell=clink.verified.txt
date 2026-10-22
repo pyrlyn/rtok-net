@@ -636,7 +636,7 @@ node_4:nofiles()
 
 -- rtok agents install
 local node_3 = clink.argmatcher()
-node_3:addflags({ "--dry-run", "--yes", "--mcp", "--cli", "--gui", "--desktop", "--all", "--config" .. value, "-h", "--help", "--version" })
+node_3:addflags({ "--dry-run", "--yes", "--mcp", "--cli", "--gui", "--desktop", "--all", "--replace", "--config" .. value, "-h", "--help", "--version" })
 node_3:adddescriptions({
     ["--dry-run"] = "Print what would change; write nothing.",
     ["--yes"] = "Answer yes to every question.",
@@ -645,6 +645,7 @@ node_3:adddescriptions({
     ["--gui"] = "Only the desktop apps.",
     ["--desktop"] = "Only the desktop apps.",
     ["--all"] = "Every app of the host (the default without --cli or --desktop).",
+    ["--replace"] = "Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).",
     ["--config"] = "The config file to use instead of ~/.rtok/config.toml.",
     ["-h"] = "Show help.",
     ["--help"] = "Show help.",
@@ -667,7 +668,7 @@ local node_1 = clink.argmatcher()
 node_1:addarg({ "info" .. node_2, "install" .. node_3, "junk" .. node_4, "list" .. node_7, "uninstall" .. node_8, "update" .. node_9, "usage" .. node_10 })
 node_1:adddescriptions({
     ["info"] = "One or more hosts in detail: apps, files, and each module's state.",
-    ["install"] = "Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.",
+    ["install"] = "Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.",
     ["list"] = "Every host rtok knows: whether its apps are here, and what of rtok each one has.",
     ["uninstall"] = "Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.",
     ["update"] = "Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).",

@@ -1,3 +1,4 @@
+using Rtok.Hook.Contracts;
 using Rtok.Hooks.Events;
 
 namespace Rtok.Hooks.Tests.Events;

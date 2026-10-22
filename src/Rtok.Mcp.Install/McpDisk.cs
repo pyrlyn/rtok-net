@@ -10,7 +10,8 @@ namespace Rtok.Mcp.Install;
 /// </summary>
 /// <param name="fs">Where files are read.</param>
 /// <param name="write">Where files are written; by default straight into <paramref name="fs"/>, gated by the run.</param>
-public sealed class McpDisk(IFileSystem fs, HostWrite? write = null)
+/// <param name="delete">How files are deleted; by default straight from <paramref name="fs"/>, gated by the run.</param>
+public sealed class McpDisk(IFileSystem fs, HostWrite? write = null, HostDelete? delete = null)
 {
     private static readonly UTF8Encoding Strict = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -71,5 +72,20 @@ public sealed class McpDisk(IFileSystem fs, HostWrite? write = null)
             Fs.Directory.CreateDirectory(dir);
         }
         Fs.File.WriteAllText(path, body);
+    }
+
+    /// <summary>Deletes <paramref name="path"/> when <paramref name="apply"/> lets <paramref name="report"/> write.</summary>
+    public void Delete(Apply apply, string path, string report)
+    {
+        ArgumentNullException.ThrowIfNull(apply);
+        if (delete is not null)
+        {
+            delete(apply, path, report);
+            return;
+        }
+        if (apply.Writes(report) && Fs.File.Exists(path))
+        {
+            Fs.File.Delete(path);
+        }
     }
 }

@@ -3,13 +3,13 @@ using System.IO.Abstractions;
 namespace Rtok.Agents.Hosts.Mcp;
 
 /// <summary>
-/// The <c>[setup.&lt;host&gt;]</c> path keys the user set, as the MCP file each one moves, keyed
-/// <c>&lt;host&gt;.&lt;surface&gt;</c> (rtok <c>mcp::surfaces</c>). A key left at its default moves
-/// nothing: the host table's own default stands.
+/// The <c>[setup.&lt;host&gt;]</c> path keys the user set, as the MCP or hooks file each one moves,
+/// keyed <c>&lt;host&gt;.&lt;surface&gt;</c> (rtok <c>mcp::surfaces</c>, <c>agents::*::settings_path</c>).
+/// A key left at its default moves nothing: the host table's own default stands.
 /// </summary>
 public static class SetupPaths
 {
-    /// <summary>How one key names the MCP file: the file itself, a file in the directory, or a file beside it.</summary>
+    /// <summary>How one key names the file: the file itself, a file in the directory, or a file beside it.</summary>
     private enum Derive
     {
         File,
@@ -89,9 +89,37 @@ public static class SetupPaths
         ("setup.reasonix.dir", "reasonix", ["cli"], Derive.Dir, ["config.toml"]),
     ];
 
+    /// <summary>The same for the file each host keeps its hooks in (rtok's hook installers).</summary>
+    private static readonly (
+        string Key,
+        string Host,
+        string[] Surfaces,
+        Derive How,
+        string[] Names
+    )[] HookRows =
+    [
+        ("setup.claude.settings_path", "claude", ["cli"], Derive.File, []),
+        ("setup.codebuddy.dir", "codebuddy", ["cli"], Derive.Dir, ["settings.json"]),
+        ("setup.codebuddy.workbuddy_dir", "codebuddy", ["desktop"], Derive.Dir, ["settings.json"]),
+        ("setup.codewhale.dir", "codewhale", ["cli"], Derive.Dir, ["config.toml"]),
+        ("setup.codex.config_path", "codex", ["cli"], Derive.Sibling, ["hooks.json"]),
+        ("setup.commandcode.dir", "commandcode", ["cli"], Derive.Dir, ["settings.json"]),
+        ("setup.copilot.dir", "copilot", ["cli", "desktop"], Derive.Dir, ["hooks/rtok.json"]),
+        ("setup.cursor.hooks_path", "cursor", ["cli", "desktop"], Derive.File, []),
+        ("setup.devin.config_path", "devin", ["cli", "desktop"], Derive.File, []),
+        ("setup.gemini.dir", "gemini", ["cli"], Derive.Dir, ["settings.json"]),
+        ("setup.kimi.config_path", "kimi", ["cli", "desktop"], Derive.File, []),
+        ("setup.qwen.dir", "qwen", ["cli"], Derive.Dir, ["settings.json"]),
+        ("setup.zcode.config_path", "zcode", ["desktop"], Derive.File, []),
+    ];
+
     /// <summary>Every config key that can move an MCP file.</summary>
     public static IReadOnlyList<string> Keys { get; } =
     [.. Rows.Select(r => r.Key).Distinct(StringComparer.Ordinal)];
+
+    /// <summary>Every config key that can move a hooks file.</summary>
+    public static IReadOnlyList<string> HookKeys { get; } =
+    [.. HookRows.Select(r => r.Key).Distinct(StringComparer.Ordinal)];
 
     /// <summary>The MCP files the user moved.</summary>
     /// <param name="userSet">A path key's expanded value when the user set it; null when it is at its default.</param>
@@ -99,12 +127,26 @@ public static class SetupPaths
     public static IReadOnlyDictionary<string, string> Of(
         Func<string, string?> userSet,
         IFileSystem fs
+    ) => Moved(Rows, userSet, fs);
+
+    /// <summary>The hooks files the user moved, keyed as <see cref="Of"/> keys them.</summary>
+    /// <param name="userSet">A path key's expanded value when the user set it; null when it is at its default.</param>
+    /// <param name="fs">Paths are joined with its rules.</param>
+    public static IReadOnlyDictionary<string, string> HooksOf(
+        Func<string, string?> userSet,
+        IFileSystem fs
+    ) => Moved(HookRows, userSet, fs);
+
+    private static Dictionary<string, string> Moved(
+        (string Key, string Host, string[] Surfaces, Derive How, string[] Names)[] rows,
+        Func<string, string?> userSet,
+        IFileSystem fs
     )
     {
         ArgumentNullException.ThrowIfNull(userSet);
         ArgumentNullException.ThrowIfNull(fs);
         var paths = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var (key, host, surfaces, how, names) in Rows)
+        foreach (var (key, host, surfaces, how, names) in rows)
         {
             if (userSet(key) is not { Length: > 0 } value)
             {

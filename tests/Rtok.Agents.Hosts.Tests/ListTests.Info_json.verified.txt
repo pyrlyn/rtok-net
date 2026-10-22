@@ -7,9 +7,15 @@
     app: /Users/u/bin/claude,
     version: 1.0.0 (fake),
     config: [
+      /Users/u/.claude/settings.json,
       /Users/u/.claude.json
     ],
     modules: [
+      {
+        name: hooks,
+        state: installed,
+        note: 
+      },
       {
         name: mcp,
         state: installed,
@@ -36,6 +42,11 @@
       /Users/u/Library/Application Support/Claude/claude_desktop_config.json
     ],
     modules: [
+      {
+        name: hooks,
+        state: not_supported,
+        note: : Claude Desktop has no hook events
+      },
       {
         name: mcp,
         state: installed,
@@ -64,6 +75,11 @@
     ],
     modules: [
       {
+        name: hooks,
+        state: not_supported,
+        note: : Goose runs hooks from Open Plugins directories with its own event names, tool names and decision shape; rtok has no adapter for that payload yet
+      },
+      {
         name: mcp,
         state: installed,
         note: 
@@ -89,6 +105,11 @@
     app: /Users/u/bin/aider,
     version: 1.0.0 (fake),
     modules: [
+      {
+        name: hooks,
+        state: not_supported,
+        note: : aider has no hook events; it reads .aider.conf.yml and .env
+      },
       {
         name: mcp,
         state: not_supported,

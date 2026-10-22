@@ -1,4 +1,4 @@
-namespace Rtok.Hooks.Events;
+namespace Rtok.Hook.Contracts;
 
 /// <summary>One hook a host fires and the <c>rtok hook</c> event it runs.</summary>
 /// <param name="Host">The host id, as <c>--host</c> spells it.</param>

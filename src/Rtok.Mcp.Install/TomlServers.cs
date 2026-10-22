@@ -70,7 +70,7 @@ internal static class TomlServers
     }
 
     /// <summary>A span of text to cut, and what goes in its place.</summary>
-    private sealed record Cut(int Start, int End, bool Header, string Insert = "");
+    internal sealed record Cut(int Start, int End, bool Header = false, string Insert = "");
 
     /// <summary>
     /// Every piece of text that defines the entry: tables at or under <c>&lt;key&gt;.rtok</c>, and
@@ -79,7 +79,7 @@ internal static class TomlServers
     /// </summary>
     private static List<Cut> Cuts(McpSpec spec, string text)
     {
-        var doc = Syntax(spec, text);
+        var doc = Syntax(spec.Path, text);
         string[] entry = [.. spec.KeyPath, spec.Server.Name];
         var cuts = new List<Cut>();
         foreach (var kv in doc.KeyValues)
@@ -124,11 +124,14 @@ internal static class TomlServers
     private static Cut Lines(string text, SyntaxNode node, bool header) =>
         new(LineStart(text, node.Span.Offset), LineEnd(text, End(node)), header);
 
-    /// <summary>Cuts the spans back to front; a cut that ends the file takes the blank line before it too.</summary>
-    private static string Splice(string text, List<Cut> cuts)
+    /// <summary>
+    /// Cuts the spans back to front (of two at one offset, the longer first, so an insert there
+    /// lands beside it); a cut that ends the file takes the blank line before it too.
+    /// </summary>
+    internal static string Splice(string text, List<Cut> cuts)
     {
         var edited = text;
-        foreach (var cut in cuts.OrderByDescending(c => c.Start))
+        foreach (var cut in cuts.OrderByDescending(c => c.Start).ThenByDescending(c => c.End))
         {
             var start = cut.Start;
             if (cut.Insert.Length == 0 && cut.End == edited.Length)
@@ -194,29 +197,30 @@ internal static class TomlServers
         }
     }
 
-    private static DocumentSyntax Syntax(McpSpec spec, string text)
+    /// <exception cref="InvalidDataException">The text is not TOML.</exception>
+    internal static DocumentSyntax Syntax(string path, string text)
     {
         DocumentSyntax doc;
         try
         {
-            doc = SyntaxParser.Parse(text, spec.Path, validate: true);
+            doc = SyntaxParser.Parse(text, path, validate: true);
         }
         catch (ArgumentOutOfRangeException e)
         {
             // Tomlyn throws on a \u escape that names a surrogate.
-            throw new InvalidDataException($"{spec.Path}: invalid escape: {e.Message}", e);
+            throw new InvalidDataException($"{path}: invalid escape: {e.Message}", e);
         }
         if (doc.HasErrors)
         {
             var error = doc.Diagnostics.First(d => d.Kind == DiagnosticMessageKind.Error);
             throw new InvalidDataException(
-                $"{spec.Path}:{error.Span.Start.Line + 1}:{error.Span.Start.Column + 1}: {error.Message}"
+                $"{path}:{error.Span.Start.Line + 1}:{error.Span.Start.Column + 1}: {error.Message}"
             );
         }
         return doc;
     }
 
-    private static string[] Parts(KeySyntax key) =>
+    internal static string[] Parts(KeySyntax key) =>
         [Part(key.Key), .. key.DotKeys.Select(d => Part(d.Key))];
 
     private static string Part(BareKeyOrStringValueSyntax? key) =>

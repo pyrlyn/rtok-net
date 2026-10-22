@@ -46,6 +46,36 @@ public static class HostFile
         AtomicFile.Write(path, body, new AtomicWriteOptions { CreateParent = true });
     }
 
+    /// <summary>
+    /// Delete the file at <paramref name="path"/>, gated as <see cref="Write"/> is and backed up
+    /// first when asked; a missing file is left missing. A symlink goes, not what it points to.
+    /// </summary>
+    public static void Delete(Apply apply, string path, string report)
+    {
+        ArgumentNullException.ThrowIfNull(apply);
+        if (!apply.Writes(report))
+        {
+            return;
+        }
+        RefuseTilde(path);
+        if (!File.Exists(path))
+        {
+            return;
+        }
+        if (apply.Backup)
+        {
+            if (apply.Run is { } run)
+            {
+                run.Take(path);
+            }
+            else
+            {
+                Backups.Take(path, apply.BackupFiles);
+            }
+        }
+        File.Delete(path);
+    }
+
     /// <summary><see cref="Write"/> for a JSON document: two-space indent and the trailing newline host files carry.</summary>
     public static void WriteJson(Apply apply, string path, JsonNode root, string report)
     {

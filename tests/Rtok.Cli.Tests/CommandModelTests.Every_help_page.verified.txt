@@ -3,7 +3,7 @@ Usage: [command] [-h|--help] [--version]
 
 Commands:
   agents info          One or more hosts in detail: apps, files, and each module's state.
-  agents install       Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
+  agents install       Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.
   agents junk clear    Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.
   agents junk list     Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.
   agents list          Every host rtok knows: whether its apps are here, and what of rtok each one has.
@@ -67,7 +67,7 @@ Options:
 $ rtok agents install --help
 Usage: agents install [arguments...] [options...] [-h|--help] [--version]
 
-Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.
+Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.
 
 Arguments:
   [0] <string>    The hosts, comma-separated: claude,codex.
@@ -79,6 +79,7 @@ Options:
   --cli                 Only the CLI apps.
   --gui, --desktop      Only the desktop apps.
   --all                 Every app of the host (the default without --cli or --desktop).
+  --replace             Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok agents junk clear --help

@@ -46,7 +46,7 @@ internal sealed partial class AgentsCommands
         return spelled;
     }
 
-    /// <summary>Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.</summary>
+    /// <summary>Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.</summary>
     /// <param name="host">The hosts, comma-separated: claude,codex.</param>
     /// <param name="dryRun">Print what would change; write nothing.</param>
     /// <param name="yes">Answer yes to every question.</param>
@@ -54,6 +54,7 @@ internal sealed partial class AgentsCommands
     /// <param name="cli">Only the CLI apps.</param>
     /// <param name="desktop">--gui, Only the desktop apps.</param>
     /// <param name="all">Every app of the host (the default without --cli or --desktop).</param>
+    /// <param name="replace">Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).</param>
     /// <param name="config">The config file to use instead of ~/.rtok/config.toml.</param>
     [Command("install")]
     public int Install(
@@ -64,6 +65,7 @@ internal sealed partial class AgentsCommands
         bool cli = false,
         bool desktop = false,
         bool all = false,
+        bool replace = false,
         string? config = null
     ) =>
         Apply(
@@ -77,7 +79,8 @@ internal sealed partial class AgentsCommands
                 ("setup.dry_run", dryRun, "--dry-run"),
                 ("setup.yes", yes, "--yes"),
                 ("setup.mcp", mcp, "--mcp")
-            )
+            ),
+            replace
         );
 
     /// <summary>Take rtok out of hosts: only entries that are still rtok's; one you changed asks first.</summary>
@@ -171,13 +174,14 @@ internal sealed partial class AgentsCommands
         bool desktop,
         bool all,
         string? config,
-        IReadOnlyList<ConfigFlag> flags
+        IReadOnlyList<ConfigFlag> flags,
+        bool replace = false
     ) =>
         Run(() =>
         {
             var run = new HostRun(Context(Load(config, flags)));
             _stdout.Write(
-                run.Run(new HostRequest(AgentHosts.Parse(host), mode, cli, desktop, all))
+                run.Run(new HostRequest(AgentHosts.Parse(host), mode, cli, desktop, all, replace))
             );
         });
 

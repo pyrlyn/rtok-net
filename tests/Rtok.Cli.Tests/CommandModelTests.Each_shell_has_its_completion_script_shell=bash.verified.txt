@@ -17,7 +17,7 @@ _rtok_options() {
     case $1 in
         '') echo '-h --help --version' ;;
         'agents info') echo '--json --config -h --help --version' ;;
-        'agents install') echo '--dry-run --yes --mcp --cli --gui --desktop --all --config -h --help --version' ;;
+        'agents install') echo '--dry-run --yes --mcp --cli --gui --desktop --all --replace --config -h --help --version' ;;
         'agents junk clear') echo '--yes --include --kind --agent --older-than --trash --session-days --min-size --json --config -h --help --version' ;;
         'agents junk list') echo '--json --bytes --all --items --sort --min-size --config -h --help --version' ;;
         'agents list') echo '--json --config -h --help --version' ;;

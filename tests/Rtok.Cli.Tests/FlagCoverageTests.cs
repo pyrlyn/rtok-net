@@ -24,6 +24,7 @@ public sealed class FlagCoverageTests
         "desktop",
         "gui", // `--desktop`
         "all", // `agents`: every host; `task list`: one call's filter
+        "replace", // `agents install claude`: one migration off the tools rtok replaces
         "save-baseline", // `stats`: save one report under a name
         "calibrate", // `stats`: fit [estimator] once
         "cache", // `stats`: the cache page of one call

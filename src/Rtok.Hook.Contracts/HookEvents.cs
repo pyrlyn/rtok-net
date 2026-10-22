@@ -1,9 +1,9 @@
-namespace Rtok.Hooks.Events;
+namespace Rtok.Hook.Contracts;
 
 /// <summary>
 /// The canonical hook-event table: every hook each host fires and the <c>rtok hook</c> event it
 /// runs (rtok <c>agents::hook_events</c>). Installers and the plugin manifests
-/// (<see cref="HookManifests"/>) are written from it; row order is the order a host's config
+/// (<c>Rtok.Hooks.Events.HookManifests</c>) are written from it; row order is the order a host's config
 /// lists its entries. Cursor's <c>subagentStart</c> is left out on purpose (its reply has no
 /// context field), and so is <c>beforeSubmitPrompt</c> (its reply is only
 /// <c>{continue, user_message}</c>).

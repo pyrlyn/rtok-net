@@ -1,5 +1,6 @@
 using System.Text;
 using Rtok.Agent.Sdk;
+using Rtok.Agents.Hosts.Hooks;
 using Rtok.Agents.Hosts.Mcp;
 using Rtok.Mcp.Install;
 
@@ -7,8 +8,8 @@ namespace Rtok.Agents.Hosts;
 
 /// <summary>
 /// <c>rtok agents install|update|uninstall|list|info</c> over the host table: one block per app
-/// (rtok <c>agents::run</c>, <c>agents::block</c>). Only the modules built so far take part: MCP
-/// now; hooks, proxy, plugin and restart come with T35.3–T35.6.
+/// (rtok <c>agents::run</c>, <c>agents::block</c>). Only the modules built so far take part: hooks
+/// and MCP now; proxy, plugin and restart come with T35.4–T35.6.
 /// </summary>
 /// <param name="ctx">The home, disk, binary and switches of this run.</param>
 public sealed class HostRun(HostContext ctx)
@@ -85,7 +86,11 @@ public sealed class HostRun(HostContext ctx)
             .. AgentHosts
                 .All.Where(h =>
                     h.Variants.Any(v =>
-                        ctx.Probe.Present(v) && new McpModule(h, v, ctx).Installed()
+                        ctx.Probe.Present(v)
+                        && (
+                            new HooksModule(h, v, ctx).Installed()
+                            || new McpModule(h, v, ctx).Installed()
+                        )
                     )
                 )
                 .Select(h => h.Id),
@@ -120,6 +125,7 @@ public sealed class HostRun(HostContext ctx)
                 h.Variants.Select(v =>
                 {
                     var mcp = new McpModule(h, v, ctx);
+                    var hooks = new HooksModule(h, v, ctx);
                     var app = ctx.Probe.AppPath(v);
                     var present = app is not null;
                     return new AgentListRow(
@@ -129,8 +135,8 @@ public sealed class HostRun(HostContext ctx)
                         present,
                         app,
                         present && versions ? ctx.Probe.Version(v) : null,
-                        [.. mcp.Files.Distinct(StringComparer.Ordinal)],
-                        present ? Modules(h, v, mcp) : [],
+                        Files(hooks, mcp),
+                        present ? Modules(h, v, hooks, mcp) : [],
                         present ? mcp.Rows() : []
                     );
                 })
@@ -158,25 +164,32 @@ public sealed class HostRun(HostContext ctx)
                 continue;
             }
             var mcp = new McpModule(host, v, ctx);
-            if (request.Mode == McpMode.Update && !mcp.Installed())
+            var hooks = new HooksModule(host, v, ctx);
+            if (request.Mode == McpMode.Update && !hooks.Installed() && !mcp.Installed())
             {
                 text.Append(Block(host, v, Outcome.NotInstalled));
                 continue;
             }
-            var reports = mcp.Apply(request.Mode, apply);
+            var replace =
+                request.Replace
+                && request.Mode == McpMode.Install
+                && host.Id is "claude"
+                && hooks.Files.Count > 0;
+            IReadOnlyList<string> reports = replace
+                ? [ClaudeReplace.Run(ctx, apply, hooks.Files[0].Path)]
+                :
+                [
+                    .. hooks.Apply(request.Mode == McpMode.Remove, apply),
+                    .. mcp.Apply(request.Mode, apply),
+                ];
             done = v.Name;
             changed |= reports.Any(r =>
                 !string.Equals(r, Apply.NoChanges, StringComparison.Ordinal)
             );
             text.Append(Block(host, v, Outcome.Applied, request.Mode, reports));
-            if (
-                request.Mode != McpMode.Remove
-                && !ctx.Settings.DryRun
-                && Expected(host, v)
-                && !mcp.Installed()
-            )
+            if (request.Mode != McpMode.Remove && !replace && !ctx.Settings.DryRun)
             {
-                text.Append("  warning: mcp did not read back as installed\n");
+                ReadBack(text, host, v, hooks, mcp);
             }
         }
         if (!any)
@@ -186,9 +199,28 @@ public sealed class HostRun(HostContext ctx)
         return changed;
     }
 
-    /// <summary>Whether an install should leave rtok's MCP entry on this app.</summary>
-    private bool Expected(AgentHost host, HostVariant v) =>
-        ctx.Settings.Mcp && host.Mcp.Of(v.Kind).Level == SupportLevel.Yes;
+    /// <summary>Warns about each module an install should have left on this app and did not.</summary>
+    private void ReadBack(
+        StringBuilder text,
+        AgentHost host,
+        HostVariant v,
+        HooksModule hooks,
+        McpModule mcp
+    )
+    {
+        if (hooks.Support.Level == SupportLevel.Yes && hooks.Files.Count > 0 && !hooks.Installed())
+        {
+            text.Append("  warning: hooks did not read back as installed\n");
+        }
+        if (ctx.Settings.Mcp && host.Mcp.Of(v.Kind).Level == SupportLevel.Yes && !mcp.Installed())
+        {
+            text.Append("  warning: mcp did not read back as installed\n");
+        }
+    }
+
+    /// <summary>The files the modules edit, each once: hooks first, as the modules print.</summary>
+    private static List<string> Files(HooksModule hooks, McpModule mcp) =>
+        [.. hooks.Files.Select(f => f.Path).Concat(mcp.Files).Distinct(StringComparer.Ordinal)];
 
     private string Block(
         AgentHost host,
@@ -230,7 +262,8 @@ public sealed class HostRun(HostContext ctx)
                 : "  app     -\n"
         );
         var mcp = new McpModule(host, v, ctx);
-        var files = mcp.Files.Distinct(StringComparer.Ordinal).ToList();
+        var hooks = new HooksModule(host, v, ctx);
+        var files = Files(hooks, mcp);
         if (files.Count > 0)
         {
             text.Append("  config  ").AppendJoin(", ", files).Append('\n');
@@ -247,7 +280,7 @@ public sealed class HostRun(HostContext ctx)
         {
             text.Append(report).Append('\n');
         }
-        AppendModules(text, host, v, mcp);
+        AppendModules(text, host, v, hooks, mcp);
         return text.ToString();
     }
 
@@ -256,11 +289,12 @@ public sealed class HostRun(HostContext ctx)
         StringBuilder text,
         AgentHost host,
         HostVariant v,
+        HooksModule hooks,
         McpModule mcp
     )
     {
         var rows = mcp.Rows();
-        foreach (var row in Modules(host, v, mcp))
+        foreach (var row in Modules(host, v, hooks, mcp))
         {
             if (string.Equals(row.Name, McpModule.Name, StringComparison.Ordinal) && rows.Count > 0)
             {
@@ -277,22 +311,29 @@ public sealed class HostRun(HostContext ctx)
         }
     }
 
-    /// <summary>The rows of the modules this build installs: MCP.</summary>
-    private static IReadOnlyList<ModuleRow> Modules(AgentHost host, HostVariant v, McpModule mcp)
-    {
-        var support = host.Mcp.Of(v.Kind);
-        var row = mcp.Installed()
-            ? new ModuleRow(McpModule.Name, ModuleState.Installed, "")
+    /// <summary>The rows of the modules this build installs: hooks, then MCP.</summary>
+    private static IReadOnlyList<ModuleRow> Modules(
+        AgentHost host,
+        HostVariant v,
+        HooksModule hooks,
+        McpModule mcp
+    ) =>
+        [
+            Row(HooksModule.Name, hooks.Support, hooks.Installed()),
+            Row(McpModule.Name, host.Mcp.Of(v.Kind), mcp.Installed()),
+        ];
+
+    private static ModuleRow Row(string name, Support support, bool installed) =>
+        installed
+            ? new ModuleRow(name, ModuleState.Installed, "")
             : support.Level switch
             {
-                SupportLevel.Yes => new ModuleRow(McpModule.Name, ModuleState.NotInstalled, ""),
+                SupportLevel.Yes => new ModuleRow(name, ModuleState.NotInstalled, ""),
                 SupportLevel.Flag or SupportLevel.Offer => new ModuleRow(
-                    McpModule.Name,
+                    name,
                     ModuleState.NotInstalled,
                     $" ({support.Note})"
                 ),
-                _ => new ModuleRow(McpModule.Name, ModuleState.NotSupported, $": {support.Note}"),
+                _ => new ModuleRow(name, ModuleState.NotSupported, $": {support.Note}"),
             };
-        return [row];
-    }
 }

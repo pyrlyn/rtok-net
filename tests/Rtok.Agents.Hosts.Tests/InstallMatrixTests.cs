@@ -1,3 +1,7 @@
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using Pyrlyn.Config.Layered;
+using Rtok.Agents.Hosts.Hooks;
 using Rtok.Agents.Hosts.Mcp;
 using Rtok.Mcp.Install;
 
@@ -5,10 +9,11 @@ namespace Rtok.Agents.Hosts.Tests;
 
 /// <summary>
 /// Every host on a fake home per OS: install, install again, update, uninstall. The second
-/// install and the update change no byte, every app with MCP support ends with exactly one rtok
-/// entry per surface that serves, and uninstall leaves no trace of rtok.
+/// install and the update change no byte, every app with hooks has rtok's, every app with MCP
+/// support ends with exactly one rtok entry per surface that serves, and uninstall leaves no
+/// trace of rtok.
 /// </summary>
-public sealed class InstallMatrixTests
+public sealed partial class InstallMatrixTests
 {
     public static TheoryData<McpOs> Systems => [McpOs.Linux, McpOs.MacOS, McpOs.Windows];
 
@@ -35,19 +40,17 @@ public sealed class InstallMatrixTests
         var second = run.Run(Request(present, McpMode.Install));
         AssertNotes(second, " — already installed");
         Assert.Equal(installed, Files(home));
+        AssertOneHookPerEvent(installed);
 
-        // `agents update` with no host: the hosts rtok is in, which are those with MCP support.
-        var withMcp = present
+        // `agents update` with no host: the hosts rtok is in, those with hooks or MCP support.
+        var withRtok = present
             .Where(id =>
                 AgentHosts
                     .Find(id)!
-                    .Variants.Any(v =>
-                        ctx.Probe.Present(v)
-                        && AgentHosts.Find(id)!.Mcp.Of(v.Kind).Level == SupportLevel.Yes
-                    )
+                    .Variants.Any(v => ctx.Probe.Present(v) && Writes(AgentHosts.Find(id)!, v, ctx))
             )
             .ToList();
-        Assert.Equal(withMcp, run.Installed());
+        Assert.Equal(withRtok, run.Installed());
         var update = run.Run(Request(run.Installed(), McpMode.Update));
         AssertNotes(update, " — already current");
         Assert.Equal(installed, Files(home));
@@ -67,6 +70,11 @@ public sealed class InstallMatrixTests
         {
             foreach (var v in host.Variants.Where(ctx.Probe.Present))
             {
+                var hooks = new HooksModule(host, v, ctx);
+                Assert.True(
+                    WritesHooks(host, v, ctx) == hooks.Installed(),
+                    $"{host.Id} {v.Name}: hooks installed {hooks.Installed()}"
+                );
                 var mcp = new McpModule(host, v, ctx);
                 var expected = host.Mcp.Of(v.Kind).Level == SupportLevel.Yes;
                 Assert.True(
@@ -85,6 +93,75 @@ public sealed class InstallMatrixTests
             }
         }
     }
+
+    /// <summary>No file holds two rtok hooks for one (event, matcher) pair.</summary>
+    private static void AssertOneHookPerEvent(SortedDictionary<string, string> files)
+    {
+        foreach (var (path, text) in files)
+        {
+            var hooks =
+                path.EndsWith(".json", StringComparison.Ordinal) ? Hooks(JsonNode.Parse(text), "")
+                : path.EndsWith(".toml", StringComparison.Ordinal)
+                    ? Hooks(TomlText.ToJson(TomlText.Parse(text, path)), "")
+                : [];
+            var twice = hooks
+                .GroupBy(h => h, StringComparer.Ordinal)
+                .Where(g => g.Skip(1).Any())
+                .Select(g => $"{path}: {g.Key}")
+                .ToList();
+            Assert.Empty(twice);
+        }
+    }
+
+    /// <summary>The (rtok event, matcher) of every hook command under <paramref name="node"/>.</summary>
+    private static IEnumerable<string> Hooks(JsonNode? node, string matcher)
+    {
+        switch (node)
+        {
+            case JsonObject o:
+                var m =
+                    o["matcher"] is JsonValue v && v.TryGetValue<string>(out var s) ? s : matcher;
+                foreach (var (key, value) in o)
+                {
+                    if (
+                        key is "command" or "bash"
+                        && value is JsonValue c
+                        && c.TryGetValue<string>(out var cmd)
+                        && RtokHook().Match(cmd) is { Success: true } hit
+                    )
+                    {
+                        yield return $"{hit.Groups["ev"].Value} {m}";
+                        continue;
+                    }
+                    foreach (var h in Hooks(value, m))
+                    {
+                        yield return h;
+                    }
+                }
+                break;
+            case JsonArray a:
+                foreach (var h in a.SelectMany(x => Hooks(x, matcher)))
+                {
+                    yield return h;
+                }
+                break;
+        }
+    }
+
+    [GeneratedRegex(
+        @"rtok(?:\.exe)?""? hook (?<ev>\w+)",
+        RegexOptions.ExplicitCapture,
+        matchTimeoutMilliseconds: 1000
+    )]
+    private static partial Regex RtokHook();
+
+    private static bool Writes(AgentHost host, HostVariant v, HostContext ctx) =>
+        WritesHooks(host, v, ctx) || host.Mcp.Of(v.Kind).Level == SupportLevel.Yes;
+
+    /// <summary>Cline's hooks are plugin links, which come with T35.5.</summary>
+    private static bool WritesHooks(AgentHost host, HostVariant v, HostContext ctx) =>
+        host.Hooks.Of(v.Kind).Level == SupportLevel.Yes
+        && new HooksModule(host, v, ctx).Files.Count > 0;
 
     private static HostRequest Request(IReadOnlyList<string> hosts, McpMode mode) =>
         new(hosts, mode, Cli: false, Desktop: false, All: false);

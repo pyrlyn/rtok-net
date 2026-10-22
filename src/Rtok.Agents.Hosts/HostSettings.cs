@@ -9,11 +9,13 @@ namespace Rtok.Agents.Hosts;
 /// <param name="BackupFiles">Backup generations kept per file; 0 keeps all.</param>
 /// <param name="Mcp">Install and update register rtok's MCP server.</param>
 /// <param name="Ask">Asks the user; null where nobody can answer, which declines.</param>
+/// <param name="HookTimeoutS">The timeout written into each hook entry, in seconds (<c>setup.hook_timeout_s</c>).</param>
 public sealed record HostSettings(
     bool DryRun = false,
     bool Yes = false,
     bool Backup = true,
     int BackupFiles = Backups.DefaultKeep,
     bool Mcp = true,
-    Prompt? Ask = null
+    Prompt? Ask = null,
+    long HookTimeoutS = 5
 );

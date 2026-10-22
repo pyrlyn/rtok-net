@@ -42,7 +42,7 @@
     {
       "path": "agents install",
       "aliases": [],
-      "description": "Install rtok into hosts: its MCP server entry, keeping every other byte of their configs.",
+      "description": "Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.",
       "arguments": [
         {
           "type": "string",
@@ -102,6 +102,15 @@
           ],
           "type": null,
           "description": "Every app of the host (the default without --cli or --desktop).",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--replace"
+          ],
+          "type": null,
+          "description": "Claude Code: take out the token hooks and MCP servers of the tools rtok replaces instead (needs --yes or --dry-run).",
           "default": null,
           "required": false
         },

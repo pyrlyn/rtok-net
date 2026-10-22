@@ -2,6 +2,7 @@ using System.Buffers;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using Rtok.Hook.Contracts;
 
 namespace Rtok.Hooks.Events;
 
@@ -158,43 +159,23 @@ public static class HookManifests
     // Copilot's and Cursor's shape: the command is the entry.
     private static void Flat(Utf8JsonWriter w, string host, HookEventRow row)
     {
+        var args = $"hook {row.RtokEvent} --host {host}";
         var start = row.RtokEvent is "SessionStart";
         w.WriteStartObject();
         if (host is "copilot")
         {
+            var note = start ? $"{{\"additionalContext\":\"{Missing}\"}}" : null;
             w.WriteString("type", "command");
-            w.WriteString(
-                "bash",
-                Resolver(host, row.RtokEvent)
-                    + (
-                        start
-                            ? $"true && printf '%s' '{{\"additionalContext\":\"{Missing}\"}}'; exit 0"
-                            : "true; exit 0"
-                    )
-            );
-            w.WriteString(
-                "powershell",
-                "$r = (Get-Command rtok -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source; "
-                    + "if (-not $r) { $k = Join-Path $env:USERPROFILE '.ketch\\bin\\rtok.exe'; if (Test-Path -LiteralPath $k) { $r = $k } }; "
-                    + $"if ($r) {{ & $r hook {row.RtokEvent} --host copilot; exit $LASTEXITCODE }}; "
-                    + (start ? $"'{{\"additionalContext\":\"{Missing}\"}}'; exit 0" : "exit 0")
-            );
+            w.WriteString("bash", HookLines.Posix(args, note));
+            w.WriteString("powershell", HookLines.PowerShell(args, note));
             w.WriteNumber("timeoutSec", 5);
         }
         else
         {
             Matcher(w, row);
             // Braced: Cursor appends a heredoc to the command.
-            w.WriteString(
-                "command",
-                "{ "
-                    + Resolver(host, row.RtokEvent)
-                    + (
-                        start
-                            ? $"true && printf '%s' '{{\"additional_context\":\"{Missing}\"}}'; exit 0; }}"
-                            : "true; exit 0; }"
-                    )
-            );
+            var note = start ? $"{{\"additional_context\":\"{Missing}\"}}" : null;
+            w.WriteString("command", $"{{ {HookLines.Posix(args, note)}; }}");
         }
         w.WriteEndObject();
     }
@@ -213,7 +194,7 @@ public static class HookManifests
             "gemini" => $"rtok hook {rtokEvent} --host gemini",
             // Qwen speaks Claude's envelope, so it needs no --host.
             "qwen" => $"rtok hook {rtokEvent}",
-            "devin" => Resolver(host, rtokEvent) + "true; exit 0",
+            "devin" => HookLines.Posix($"hook {rtokEvent} --host devin"),
             _ => Resolver(host, rtokEvent) + "exit 0",
         };
 
