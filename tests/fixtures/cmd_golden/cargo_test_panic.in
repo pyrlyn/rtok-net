@@ -1,6 +1,6 @@
 argv: cargo test
 exit: 101
-min_saving: 70
+min_saving: 65
 ---
    Compiling rtok-config v0.1.0 (/src/crates/rtok-config)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 4.21s

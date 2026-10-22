@@ -1,0 +1,6 @@
+﻿On branch main diverged +2 -3 (origin/main)
+A  src/new.rs
+M  src/lib.rs
+ M src/main.rs
+ D docs/old.md
+?? notes.txt

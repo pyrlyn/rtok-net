@@ -7,7 +7,11 @@ public sealed class DispatchTests
 {
     private static readonly CmdSettings Settings = CmdSettings.Builtin();
 
-    private const string Failed = "test a::bad ... FAILED\ntest result: FAILED. 1 failed\n";
+    // Passing lines in front, so the cargo formatter has something to drop: a formatter's
+    // text is never longer than its input.
+    private const string Failed =
+        "test a::ok1 ... ok\ntest a::ok2 ... ok\ntest a::ok3 ... ok\n"
+        + "test a::bad ... FAILED\ntest result: FAILED. 3 passed; 1 failed\n";
 
     private static string[] Words(string s) =>
         s.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
@@ -52,13 +56,9 @@ public sealed class DispatchTests
         Assert.Contains("omitted (expand id)", got, StringComparison.Ordinal);
     }
 
-    // The tests below need the family formatter arms; T18 removes the skips.
-    internal const string PendingT18 = "family formatter arms: T18";
-
     [Fact]
     public void One_line_git_status_keeps_its_own_family()
     {
-        Assert.Skip(PendingT18);
         var (_, kind) = Families.Compress(Settings, ["git status"], "clean\n", 0, "id");
         Assert.NotEqual("rule", kind, StringComparer.Ordinal);
     }
@@ -69,7 +69,6 @@ public sealed class DispatchTests
     [InlineData("cd crates/rtok && cargo test")]
     public void Same_program_chain_keeps_its_own_family_not_script(string cmd)
     {
-        Assert.Skip(PendingT18);
         var (got, kind) = Families.Compress(
             Settings,
             [cmd],
@@ -95,7 +94,6 @@ public sealed class DispatchTests
         string output
     )
     {
-        Assert.Skip(PendingT18);
         var (got, kind) = Families.Compress(Settings, [cmd], output, 0, "id");
         Assert.Equal("formatter", kind);
         Assert.Contains("FAILED", got, StringComparison.Ordinal);

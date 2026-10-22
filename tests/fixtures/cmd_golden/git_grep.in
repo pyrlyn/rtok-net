@@ -1,0 +1,12 @@
+argv: git grep -n -i todo
+exit: 0
+min_saving: 5
+---
+README.md:88:- TODO: document the proxy surface
+src/Rtok.Cli/Program.cs:41:        // TODO: move the banner into Rtok.Core
+src/Rtok.Cli/Program.cs:97:        // todo: drop once T9 lands
+src/Rtok.Plugins.Cmd/Families.cs:12:    // TODO(T18): family formatter arms
+src/Rtok.Plugins.Cmd/Families.cs:230:        // TODO: one place for the JSON skip
+src/Rtok.Plugins.Cmd/Families.cs:301:        // Todo: peel `uv run` like `mise exec`
+docs/port/catalog.md:5:TODO: B12 wording
+docs/port/catalog.md:77:| A4 | TODO | formatters |

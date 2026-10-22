@@ -1,0 +1,22 @@
+src/config/loader.rs
+12:let cfg = parse_config(&raw_0, Mode::Strict)?;
+40:let cfg = parse_config(&raw_1, Mode::Strict)?;
+41:let cfg = parse_config(&raw_2, Mode::Strict)?;
+88:let cfg = parse_config(&raw_3, Mode::Strict)?;
+120:let cfg = parse_config(&raw_4, Mode::Strict)?;
+121:let cfg = parse_config(&raw_5, Mode::Strict)?;
+122:let cfg = parse_config(&raw_6, Mode::Strict)?;
+150:let cfg = parse_config(&raw_7, Mode::Strict)?;
+177:let cfg = parse_config(&raw_8, Mode::Strict)?;
+203:let cfg = parse_config(&raw_9, Mode::Strict)?;
+240:let cfg = parse_config(&raw_10, Mode::Strict)?;
+241:let cfg = parse_config(&raw_11, Mode::Strict)?;
+… +3 more
+src/config/mod.rs
+57:…ment) -> Result<Config> { let merged = paths.iter().map(|p| parse_config(&std::fs::read_to_string(p)?, Mode::Lenient)).collect::<Res…
+91:parse_config(text, Mode::Strict)
+src/main.rs:23
+src/plugins/cmd/rules.rs:14,15,90
+src/plugins/cmd/run.rs:201
+src/plugins/read/mod.rs:33,34,35,36
+tests/config_contract.rs:10,22,31,47,58,66,71,80,95,101,112,130,…+2

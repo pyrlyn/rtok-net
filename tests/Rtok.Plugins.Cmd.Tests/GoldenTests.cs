@@ -14,59 +14,6 @@ public sealed class GoldenTests
     // Fixed rates, so a config default change cannot shift the floors.
     private static readonly EstimatorRates SavingRates = new(3.5f, 4.2f, 3.0f, 1.0f);
 
-    // Fixtures whose output comes from a family formatter arm or the mise / loop tidy in
-    // front of the route (T18). T18 empties this set.
-    private static readonly HashSet<string> PendingT18 = new(StringComparer.Ordinal)
-    {
-        "cargo_build",
-        "cargo_build_ok",
-        "cargo_clippy",
-        "cargo_test",
-        "cargo_test_panic",
-        "df",
-        "docker_ps",
-        "for_poll",
-        "gh_checks",
-        "gh_pr_view",
-        "gh_run_log",
-        "git_diff",
-        "git_diff_big",
-        "git_log",
-        "git_log_long",
-        "git_show",
-        "git_status",
-        "git_status_many",
-        "git_status_staged",
-        "go_test",
-        "grep_group",
-        "jest",
-        "just_command",
-        "just_git",
-        "just_recipe",
-        "kubectl_get",
-        "ls_la",
-        "ls_many",
-        "mise_exec",
-        "mise_install",
-        "mise_run",
-        "mise_run_install",
-        "mise_x",
-        "mise_x_git",
-        "podman_ps",
-        "ps_aux",
-        "py_recursion",
-        "pytest",
-        "pytest_fail",
-        "python3_unittest",
-        "python_recursion",
-        "sqlite3",
-        "tree",
-        "until_pending",
-        "vitest",
-        "wc",
-        "while_check",
-    };
-
     private static string Dir => RepoPaths.Fixture("cmd_golden");
 
     public static TheoryData<string> Fixtures()
@@ -83,11 +30,6 @@ public sealed class GoldenTests
     [MemberData(nameof(Fixtures))]
     public void Fixture_compresses_to_its_out_and_clears_its_floor(string name)
     {
-        if (PendingT18.Contains(name))
-        {
-            Assert.Skip("family formatter arm: T18");
-        }
-
         var (argv, exit, minSaving, output) = ParseIn(
             File.ReadAllText(Path.Combine(Dir, name + ".in"))
         );
@@ -103,6 +45,35 @@ public sealed class GoldenTests
         Assert.True(pct >= minSaving, $"saving {pct}% below floor {minSaving}%");
     }
 
+    // Every formatter arm is proven by a golden it formats: the fixture names the arm's bin and
+    // subcommand, and the compressed text is the formatter's, not the rule's.
+    [Fact]
+    public void Every_formatter_arm_has_a_golden()
+    {
+        var covered = new HashSet<(string, string)>();
+        foreach (var path in Directory.EnumerateFiles(Dir, "*.in"))
+        {
+            var (argv, exit, _, output) = ParseIn(File.ReadAllText(path));
+            var (_, kind) = Families.Compress(CmdSettings.Builtin(), argv, output, exit, "id");
+            if (kind is "formatter")
+            {
+                var family = Families.FamilyArgv(argv);
+                covered.Add((Families.Bin(family), Families.Sub(family)));
+            }
+        }
+
+        var missing = FamilyFormatters
+            .Arms.Where(a =>
+                !covered.Any(c =>
+                    string.Equals(c.Item1, a.Bin, StringComparison.Ordinal)
+                    && (a.Sub is "*" || string.Equals(c.Item2, a.Sub, StringComparison.Ordinal))
+                )
+            )
+            .Select(a => $"{a.Bin} {a.Sub}")
+            .ToList();
+        Assert.Empty(missing);
+    }
+
     [Fact]
     public void Every_fixture_has_an_out_and_there_are_ten_families()
     {
@@ -110,10 +81,6 @@ public sealed class GoldenTests
         Assert.True(ins.Length >= 10);
         Assert.All(ins, p => Assert.True(File.Exists(Path.ChangeExtension(p, ".out")), p));
     }
-
-    [Fact]
-    public void Pending_sets_name_real_fixtures() =>
-        Assert.All(PendingT18, n => Assert.True(File.Exists(Path.Combine(Dir, n + ".in")), n));
 
     [Fact]
     public void Cat_keeps_the_aws_key_line()

@@ -19,7 +19,6 @@ public sealed class StdinFilterTests
     [Fact]
     public void Git_status_from_stdin_drops_boilerplate()
     {
-        Assert.Skip(DispatchTests.PendingT18);
         const string raw = """
             On branch main
             Changes not staged for commit:

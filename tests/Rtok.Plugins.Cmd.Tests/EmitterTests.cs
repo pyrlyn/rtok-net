@@ -269,7 +269,6 @@ public sealed class EmitterTests
     [Fact]
     public void Emit_under_the_cap_still_counts_a_shrink()
     {
-        Assert.Skip(DispatchTests.PendingT18);
         var host = new MemoryHost();
         var lines = new List<string> { "running 50 tests" };
         lines.AddRange(Enumerable.Range(0, 50).Select(i => $"test a::ok{i} ... ok"));

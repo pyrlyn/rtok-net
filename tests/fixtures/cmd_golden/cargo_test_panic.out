@@ -4,3 +4,4 @@ assertion `left == right` failed: bench: intentional failure
  right: 3
 FAILED: bench_fail::bench_fails
 cargo test: 5 passed, 1 failed (1 suite)
+error: test failed, to rerun pass `-p rtok-config --lib`

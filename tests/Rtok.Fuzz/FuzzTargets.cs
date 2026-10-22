@@ -29,7 +29,7 @@ internal static class FuzzTargets
         new("mcp-jsonrpc", "T15", null),
         new("bash-rewrite", "T17", BashRewriteText.Run),
         new("cmd-filter", "T17", CmdFilter.Run),
-        new("cmd-formatters", "T18", null),
+        new("cmd-formatters", "T18", CmdFormatters.Run),
         new("read-roots", "T19", null),
         new("text-ops", "T19", null),
         new("guard-key", "T20", null),

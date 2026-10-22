@@ -1,0 +1,47 @@
+﻿8 files, +64 -64
+crates/m0/src/lib.rs +1 -1
+@@ -10,40 +10,40 @@ fn func_0
+ ⋯ 2 unchanged
+ c2
+-old0
++new0
+ t0
+ ⋯ 35 unchanged
+crates/m1/src/lib.rs +3 -3
+@@ -10,40 +10,40 @@ fn func_1
+ ⋯ 2 unchanged
+ c2
+-old0
++new0
+-old1
++new1
+-old2
++new2
+ t0
+ ⋯ 33 unchanged
+crates/m2/src/lib.rs +5 -5
+@@ -10,40 +10,40 @@ fn func_2
+ ⋯ 2 unchanged
+ c2
+-old0
++new0
+-old1
++new1
+-old2
++new2
+-old3
++new3
+-old4
++new4
+ t0
+ ⋯ 31 unchanged
+crates/m3/src/lib.rs +7 -7
+  @@ -10,40 +10,40 @@ fn func_3
+crates/m4/src/lib.rs +9 -9
+  @@ -10,40 +10,40 @@ fn func_4
+crates/m5/src/lib.rs +11 -11
+  @@ -10,40 +10,40 @@ fn func_5
+crates/m6/src/lib.rs +13 -13
+  @@ -10,40 +10,40 @@ fn func_6
+crates/m7/src/lib.rs +15 -15
+  @@ -10,40 +10,40 @@ fn func_7

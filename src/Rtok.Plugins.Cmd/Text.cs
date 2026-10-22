@@ -98,6 +98,18 @@ internal static class Text
     public static string? StripPrefix(string text, string prefix) =>
         text.StartsWith(prefix, StringComparison.Ordinal) ? text[prefix.Length..] : null;
 
+    /// <summary><paramref name="text"/> with every leading repeat of <paramref name="prefix"/>
+    /// removed (Rust's <c>trim_start_matches</c>).</summary>
+    public static string TrimStartMatches(string text, string prefix)
+    {
+        while (prefix.Length > 0 && text.StartsWith(prefix, StringComparison.Ordinal))
+        {
+            text = text[prefix.Length..];
+        }
+
+        return text;
+    }
+
     /// <summary>Split at the first <paramref name="separator"/>.</summary>
     public static bool SplitOnce(string text, string separator, out string left, out string right)
     {

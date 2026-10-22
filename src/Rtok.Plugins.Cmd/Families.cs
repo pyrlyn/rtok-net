@@ -227,7 +227,7 @@ internal static class Families
             return (compact, Text.Bytes(compact) < Text.Bytes(output) ? "rule" : "unmatched");
         }
 
-        if (!matched.Multi && FamilyFormatters.Format(matched.Argv, output) is { } formatted)
+        if (!matched.Multi && FamilyFormatters.Format(matched.Argv, output, exit) is { } formatted)
         {
             return (formatted, "formatter");
         }

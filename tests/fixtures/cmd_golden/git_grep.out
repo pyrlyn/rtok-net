@@ -1,0 +1,11 @@
+README.md:88:- TODO: document the proxy surface
+docs/port/catalog.md
+5:TODO: B12 wording
+77:| A4 | TODO | formatters |
+src/Rtok.Cli/Program.cs
+41:// TODO: move the banner into Rtok.Core
+97:// todo: drop once T9 lands
+src/Rtok.Plugins.Cmd/Families.cs
+12:// TODO(T18): family formatter arms
+230:    // TODO: one place for the JSON skip
+301:    // Todo: peel `uv run` like `mise exec`
