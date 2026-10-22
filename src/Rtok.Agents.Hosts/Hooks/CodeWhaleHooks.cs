@@ -11,18 +11,18 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// <c>timeout_secs</c> (rtok <c>codewhale::insert_ours</c>). <c>enabled</c> is set only when absent,
 /// so a user's <c>enabled = false</c> stays, and stays after remove.
 /// </summary>
-internal sealed class CodeWhaleHooks(string path, HostContext ctx) : HookFile(path)
+internal sealed class CodeWhaleHooks(string path, HostContext ctx) : OwnedFile(path)
 {
     private const string Event = "message_submit";
     private const string Args = "hook UserPromptSubmit --host codewhale";
 
     private long Timeout => ctx.Settings.HookTimeoutS;
 
-    public override bool Holds(string text) => Tables(new TomlHooks(Path, text)).Exists(Ours);
+    public override bool Holds(string text) => Tables(new TomlEdit(Path, text)).Exists(Ours);
 
     public override (string Report, string Text) Install(string text)
     {
-        var toml = new TomlHooks(Path, text);
+        var toml = new TomlEdit(Path, text);
         if (Tables(toml).Exists(Ours))
         {
             return (Agent.Sdk.Apply.NoChanges, text);
@@ -60,7 +60,7 @@ internal sealed class CodeWhaleHooks(string path, HostContext ctx) : HookFile(pa
 
     public override (string Report, string Text) Remove(string text, Apply apply)
     {
-        var toml = new TomlHooks(Path, text);
+        var toml = new TomlEdit(Path, text);
         var kept = new List<string>();
         var removed = 0;
         foreach (var t in Tables(toml).Where(Ours))
@@ -77,7 +77,7 @@ internal sealed class CodeWhaleHooks(string path, HostContext ctx) : HookFile(pa
     }
 
     /// <summary>The <c>[[hooks.hooks]]</c> tables; hooks spelled any other way are refused.</summary>
-    private static List<TomlHooks.Table> Tables(TomlHooks toml)
+    private static List<TomlEdit.Table> Tables(TomlEdit toml)
     {
         if (toml.Model.TryGetValue("hooks", out var hooks))
         {
@@ -92,7 +92,7 @@ internal sealed class CodeWhaleHooks(string path, HostContext ctx) : HookFile(pa
         return toml.Tables("hooks", "hooks");
     }
 
-    private bool Ours(TomlHooks.Table t) =>
+    private bool Ours(TomlEdit.Table t) =>
         t.Str("event") is Event
         && t.Str("command") is { } c
         && HookText.Runs(ctx, c, Args, resolver: false);

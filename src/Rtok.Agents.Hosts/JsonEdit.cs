@@ -2,18 +2,18 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Pyrlyn.Jsonc;
 
-namespace Rtok.Agents.Hosts.Hooks;
+namespace Rtok.Agents.Hosts;
 
 /// <summary>
-/// A host's JSON hooks file under edit: Pyrlyn.Jsonc changes one value at a time and keeps
+/// A host's JSON file under edit (hooks, proxy): Pyrlyn.Jsonc changes one value at a time and keeps
 /// every other byte and comment. Errors name the file and leave it as it is.
 /// </summary>
-internal sealed class HookJson
+internal sealed class JsonEdit
 {
     private readonly string path;
 
     /// <exception cref="InvalidDataException">The text is not JSONC.</exception>
-    public HookJson(string path, string text)
+    public JsonEdit(string path, string text)
     {
         this.path = path;
         try

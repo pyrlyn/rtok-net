@@ -17,7 +17,7 @@ internal sealed class HooksModule(AgentHost host, HostVariant variant, HostConte
     public Support Support { get; } = host.Hooks.Of(variant.Kind);
 
     /// <summary>The files rtok's hooks live in on this app.</summary>
-    public IReadOnlyList<HookFile> Files { get; } =
+    public IReadOnlyList<OwnedFile> Files { get; } =
         host.Hooks.Of(variant.Kind).Level == SupportLevel.No ? [] : For(host, variant, ctx);
 
     /// <summary>Whether rtok has a hook in any of them.</summary>
@@ -31,14 +31,12 @@ internal sealed class HooksModule(AgentHost host, HostVariant variant, HostConte
             ? []
             : [.. Files.Select(f => f.Apply(remove, apply, ctx.Disk))];
 
-    private static IReadOnlyList<HookFile> For(AgentHost host, HostVariant v, HostContext ctx)
+    private static IReadOnlyList<OwnedFile> For(AgentHost host, HostVariant v, HostContext ctx)
     {
         string Path(string fallback) =>
-            ctx.HookPaths.GetValueOrDefault($"{host.Id}.{v.SurfaceName}") is { Length: > 0 } set
-                ? set
-                : ctx.Probe.Expand(fallback);
+            ctx.PathOf(ctx.HookPaths, $"{host.Id}.{v.SurfaceName}", fallback);
         var windows = ctx.Env.Os == McpOs.Windows;
-        HookFile? file = host.Id switch
+        OwnedFile? file = host.Id switch
         {
             "claude" => Nested(ctx, "claude", Path("~/.claude/settings.json")),
             "qwen" => Nested(ctx, "qwen", Path("~/.qwen/settings.json")),

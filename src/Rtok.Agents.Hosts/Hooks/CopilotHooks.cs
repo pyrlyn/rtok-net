@@ -10,7 +10,7 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// [{type, bash, powershell, timeoutSec}]}}</c> (rtok <c>copilot::write_hooks</c>). Install writes
 /// it when it differs, remove deletes it.
 /// </summary>
-internal sealed class CopilotHooks(string path, HostContext ctx) : HookFile(path)
+internal sealed class CopilotHooks(string path, HostContext ctx) : OwnedFile(path)
 {
     private const string Note =
         "{\"additionalContext\":\"rtok is not installed; run ketch install pyrlyn/rtok to enable it.\"}";

@@ -3,7 +3,7 @@ Usage: [command] [-h|--help] [--version]
 
 Commands:
   agents info          One or more hosts in detail: apps, files, and each module's state.
-  agents install       Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.
+  agents install       Install rtok into hosts: its hooks, MCP server entry and (--proxy) base URL, keeping every other byte of their configs.
   agents junk clear    Remove agent junk, each item checked again first: a dry run unless --yes; exit 1 when some stays.
   agents junk list     Per agent: its folders and sizes, the junk kinds in them, and what clear would free; read-only.
   agents list          Every host rtok knows: whether its apps are here, and what of rtok each one has.
@@ -71,7 +71,7 @@ Options:
 $ rtok agents install --help
 Usage: agents install [arguments...] [options...] [-h|--help] [--version]
 
-Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.
+Install rtok into hosts: its hooks, MCP server entry and (--proxy) base URL, keeping every other byte of their configs.
 
 Arguments:
   [0] <string>    The hosts, comma-separated: claude,codex.
@@ -80,6 +80,7 @@ Options:
   --dry-run             Print what would change; write nothing.
   --yes                 Answer yes to every question.
   --mcp                 Register rtok's MCP server.
+  --proxy               Point the host's model base URL at rtok's proxy.
   --cli                 Only the CLI apps.
   --gui, --desktop      Only the desktop apps.
   --all                 Every app of the host (the default without --cli or --desktop).
@@ -149,6 +150,7 @@ Arguments:
 
 Options:
   --dry-run             Print what would change; write nothing.
+  --proxy               Also point the model base URL at rtok's proxy (kept where it already is).
   --cli                 Only the CLI apps.
   --gui, --desktop      Only the desktop apps.
   --all                 Every app of the host (the default without --cli or --desktop).

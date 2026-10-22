@@ -42,7 +42,7 @@
     {
       "path": "agents install",
       "aliases": [],
-      "description": "Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.",
+      "description": "Install rtok into hosts: its hooks, MCP server entry and (--proxy) base URL, keeping every other byte of their configs.",
       "arguments": [
         {
           "type": "string",
@@ -74,6 +74,15 @@
           ],
           "type": null,
           "description": "Register rtok's MCP server.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--proxy"
+          ],
+          "type": null,
+          "description": "Point the host's model base URL at rtok's proxy.",
           "default": null,
           "required": false
         },
@@ -377,6 +386,15 @@
           ],
           "type": null,
           "description": "Print what would change; write nothing.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--proxy"
+          ],
+          "type": null,
+          "description": "Also point the model base URL at rtok's proxy (kept where it already is).",
           "default": null,
           "required": false
         },

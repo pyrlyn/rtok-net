@@ -4,14 +4,14 @@ using Tomlyn.Model;
 using Tomlyn.Syntax;
 using Cut = Rtok.Mcp.Install.TomlServers.Cut;
 
-namespace Rtok.Agents.Hosts.Hooks;
+namespace Rtok.Agents.Hosts;
 
 /// <summary>
-/// A TOML hooks file under edit, as text: Tomlyn's syntax tree finds the <c>[[…]]</c> tables
-/// and their values, and every edit splices only those bytes (the way
+/// A TOML file under edit (hooks, proxy), as text: Tomlyn's syntax tree finds the tables and
+/// their values, and every edit splices only those bytes (the way
 /// <see cref="TomlServers"/> edits MCP tables). Edits are collected, then applied at once.
 /// </summary>
-internal sealed class TomlHooks
+internal sealed class TomlEdit
 {
     private readonly string path;
     private readonly string bom;
@@ -20,7 +20,7 @@ internal sealed class TomlHooks
     private readonly List<string> blocks = [];
 
     /// <exception cref="InvalidDataException">The text is not TOML.</exception>
-    public TomlHooks(string path, string text)
+    public TomlEdit(string path, string text)
     {
         this.path = path;
         // Tomlyn's offsets start after a BOM.
@@ -39,7 +39,7 @@ internal sealed class TomlHooks
     /// <summary>The values of the text as read.</summary>
     public TomlTable Model { get; }
 
-    /// <summary>One <c>[[name]]</c> table: its lines and its single-part keys.</summary>
+    /// <summary>One <c>[name]</c> or <c>[[name]]</c> table: its lines and its single-part keys.</summary>
     public sealed record Table(int Start, int End, IReadOnlyDictionary<string, KeyValueSyntax> Keys)
     {
         public string? Str(string key) =>
@@ -50,13 +50,16 @@ internal sealed class TomlHooks
     }
 
     /// <summary>The <c>[[&lt;name&gt;]]</c> tables, in file order.</summary>
-    public List<Table> Tables(params string[] name)
+    public List<Table> Tables(params string[] name) => Tables(true, name);
+
+    /// <summary>The <c>[&lt;name&gt;]</c> tables (<paramref name="arrays"/> false) or <c>[[&lt;name&gt;]]</c> ones, in file order.</summary>
+    public List<Table> Tables(bool arrays, params string[] name)
     {
         var found = new List<Table>();
         foreach (var t in Doc.Tables)
         {
             if (
-                t is not TableArraySyntax
+                t is TableArraySyntax != arrays
                 || !TomlServers.Parts(t.Name!).AsSpan().SequenceEqual(name, StringComparer.Ordinal)
             )
             {
@@ -102,6 +105,55 @@ internal sealed class TomlHooks
         cuts.Add(new Cut(at, at, Insert: $"{lead}{key} = {formatted}{Nl}"));
     }
 
+    /// <summary>The root key <paramref name="key"/> (before the first table); null when absent.</summary>
+    public KeyValueSyntax? Root(string key) =>
+        Doc.KeyValues.FirstOrDefault(kv =>
+            TomlServers.Parts(kv.Key!) is [var k] && string.Equals(k, key, StringComparison.Ordinal)
+        );
+
+    /// <summary>What follows <paramref name="kv"/>'s value on its line, trimmed: its comment.</summary>
+    public string Tail(KeyValueSyntax kv) =>
+        text[TomlServers.End(kv.Value!)..TomlServers.LineEnd(text, TomlServers.End(kv.Value!))]
+            .Trim();
+
+    /// <summary>Rewrites <paramref name="kv"/>'s value and the rest of its line to <paramref name="rest"/>.</summary>
+    public void SetLine(KeyValueSyntax kv, string rest)
+    {
+        var end = TomlServers.LineEnd(text, TomlServers.End(kv.Value!));
+        while (end > 0 && text[end - 1] is '\n' or '\r')
+        {
+            end--;
+        }
+        cuts.Add(new Cut(kv.Value!.Span.Offset, end, Insert: rest));
+    }
+
+    /// <summary>Takes the root key <paramref name="kv"/>'s line out.</summary>
+    public void DropLine(KeyValueSyntax kv) =>
+        cuts.Add(
+            new Cut(
+                TomlServers.LineStart(text, kv.Span.Offset),
+                TomlServers.LineEnd(text, TomlServers.End(kv.Value!))
+            )
+        );
+
+    /// <summary>Inserts a root <paramref name="line"/>: after the last root key, else before the first table, else at the end.</summary>
+    public void InsertRoot(string line)
+    {
+        if (Doc.KeyValues.ChildrenCount > 0)
+        {
+            InsertAfter(Doc.KeyValues.GetChild(Doc.KeyValues.ChildrenCount - 1)!, line);
+            return;
+        }
+        if (Doc.Tables.ChildrenCount > 0)
+        {
+            var at = TomlServers.LineStart(text, Doc.Tables.GetChild(0)!.Span.Offset);
+            cuts.Add(new Cut(at, at, Insert: line + Nl));
+            return;
+        }
+        var lead = text.Length > 0 && !text.EndsWith('\n') ? Nl : "";
+        cuts.Add(new Cut(text.Length, text.Length, Insert: lead + line + Nl));
+    }
+
     /// <summary>Inserts <paramref name="line"/> right after the line holding <paramref name="node"/>.</summary>
     public void InsertAfter(SyntaxNode node, string line)
     {
@@ -110,14 +162,20 @@ internal sealed class TomlHooks
         cuts.Add(new Cut(at, at, Insert: lead + line + Nl));
     }
 
-    /// <summary>Appends a <c>[[&lt;name&gt;]]</c> table of <paramref name="values"/>, a blank line before it.</summary>
+    /// <summary>Appends a table headed <paramref name="header"/> of <paramref name="values"/>, a blank line before it.</summary>
     public void Append(string header, IEnumerable<(string Key, object Value)> values) =>
-        blocks.Add(
-            string.Join(
-                Nl,
-                [header, .. values.Select(v => $"{v.Key} = {TomlText.Format(v.Value)}")]
-            ) + Nl
-        );
+        blocks.Add(Block(header, values));
+
+    /// <summary>Puts a table headed <paramref name="header"/> of <paramref name="values"/> where <paramref name="table"/> is.</summary>
+    public void Replace(
+        Table table,
+        string header,
+        IEnumerable<(string Key, object Value)> values
+    ) => cuts.Add(new Cut(table.Start, table.End, Insert: Block(header, values)));
+
+    private string Block(string header, IEnumerable<(string Key, object Value)> values) =>
+        string.Join(Nl, [header, .. values.Select(v => $"{v.Key} = {TomlText.Format(v.Value)}")])
+        + Nl;
 
     /// <summary>The edited text; it must still parse.</summary>
     /// <exception cref="InvalidDataException">The edit would break the file.</exception>
@@ -139,7 +197,7 @@ internal sealed class TomlHooks
         catch (InvalidDataException e)
         {
             throw new InvalidDataException(
-                $"{path}: editing rtok's hooks would break the file ({e.Message}); rtok leaves it as it is",
+                $"{path}: editing rtok's entries would break the file ({e.Message}); rtok leaves it as it is",
                 e
             );
         }

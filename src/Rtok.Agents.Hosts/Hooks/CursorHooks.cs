@@ -10,7 +10,7 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// <c>cursor::insert_ours</c>). Off Windows the resolver is braced, <c>{ …; }</c>, since Cursor
 /// appends the payload heredoc to the last command of the line.
 /// </summary>
-internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
+internal sealed class CursorHooks(string path, HostContext ctx) : OwnedFile(path)
 {
     // An earlier build wrote UserPromptSubmit here; its reply has no context field (rtok T390.1).
     private static readonly HookEventRow Retired = new(
@@ -28,16 +28,16 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
 
     public override bool Holds(string text)
     {
-        var doc = new HookJson(Path, text);
-        return Owned.Any(r => HookJson.Items(doc.Array("hooks", r.HostEvent)).Any(Ours));
+        var doc = new JsonEdit(Path, text);
+        return Owned.Any(r => JsonEdit.Items(doc.Array("hooks", r.HostEvent)).Any(Ours));
     }
 
     public override (string Report, string Text) Install(string text)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         doc.Object("hooks");
         var lines = new List<string>();
-        var retired = HookJson.Items(doc.Array("hooks", Retired.HostEvent)).ToList();
+        var retired = JsonEdit.Items(doc.Array("hooks", Retired.HostEvent)).ToList();
         if (retired.Exists(Ours))
         {
             Drop(doc, Retired.HostEvent, retired, _ => true);
@@ -48,12 +48,12 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
             var cmd = Command(row.RtokEvent);
             var found = false;
             var i = 0;
-            foreach (var e in HookJson.Items(doc.Array("hooks", row.HostEvent)).ToList())
+            foreach (var e in JsonEdit.Items(doc.Array("hooks", row.HostEvent)).ToList())
             {
                 if (Ours(e))
                 {
                     found = true;
-                    if (!string.Equals(HookJson.Str(e, "command"), cmd, StringComparison.Ordinal))
+                    if (!string.Equals(JsonEdit.Str(e, "command"), cmd, StringComparison.Ordinal))
                     {
                         doc.Set(["hooks", row.HostEvent, i, "command"], cmd);
                         lines.Add($"~ {row.HostEvent} {cmd}");
@@ -76,11 +76,11 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
 
     public override (string Report, string Text) Remove(string text, Apply apply)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         var (lines, kept) = (new List<string>(), new List<string>());
         foreach (var row in Owned)
         {
-            var entries = HookJson.Items(doc.Array("hooks", row.HostEvent)).ToList();
+            var entries = JsonEdit.Items(doc.Array("hooks", row.HostEvent)).ToList();
             var suffix = $" hook {row.RtokEvent} --host cursor";
             if (
                 Drop(
@@ -90,8 +90,8 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
                     e =>
                         HookText.Takes(
                             apply,
-                            HookJson.Count(e) == 1
-                                && HookJson.Str(e, "command") is { } c
+                            JsonEdit.Count(e) == 1
+                                && JsonEdit.Str(e, "command") is { } c
                                 && (
                                     c.EndsWith(suffix, StringComparison.Ordinal)
                                     || string.Equals(
@@ -119,7 +119,7 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
 
     /// <summary>Removes rtok's entries of <paramref name="hostEvent"/> that <paramref name="take"/> lets go; true when any went.</summary>
     private bool Drop(
-        HookJson doc,
+        JsonEdit doc,
         string hostEvent,
         List<System.Text.Json.JsonElement> entries,
         Func<System.Text.Json.JsonElement, bool> take
@@ -154,6 +154,6 @@ internal sealed class CursorHooks(string path, HostContext ctx) : HookFile(path)
 
     /// <summary>An entry whose command runs rtok for any event rtok owns here.</summary>
     private bool Ours(System.Text.Json.JsonElement entry) =>
-        HookJson.Str(entry, "command") is { } c
+        JsonEdit.Str(entry, "command") is { } c
         && Owned.Any(r => HookText.Runs(ctx, c, $"hook {r.RtokEvent} --host cursor"));
 }

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Pyrlyn.Config.Layered;
 using Rtok.Agents.Hosts.Hooks;
 using Rtok.Agents.Hosts.Mcp;
+using Rtok.Agents.Hosts.Proxy;
 using Rtok.Mcp.Install;
 
 namespace Rtok.Agents.Hosts.Tests;
@@ -61,6 +62,70 @@ public sealed partial class InstallMatrixTests
             Files(home),
             f => Assert.DoesNotContain("rtok", f.Value, StringComparison.Ordinal)
         );
+    }
+
+    /// <summary>
+    /// <c>--proxy</c> on every host: the base URL lands exactly where the proxy is supported, a
+    /// second install changes no byte, uninstall takes it all back, and a foreign base URL put
+    /// in its place survives uninstall byte for byte.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(Systems))]
+    public void Proxy_install_twice_and_uninstall_keep_a_foreign_base_url(McpOs os)
+    {
+        var home = new FakeHome(os);
+        home.InstallAll();
+        home.PutRtokOnPath();
+        var ctx = home.Context(new HostSettings(Backup: false, Proxy: true));
+        var run = new HostRun(ctx);
+        var all = AgentHosts.All.Select(h => h.Id).ToList();
+        var present = all.Where(id => AgentHosts.Find(id)!.Variants.Any(ctx.Probe.Present))
+            .ToList();
+
+        var first = run.Run(Request(present, McpMode.Install));
+        Assert.DoesNotContain("warning", first, StringComparison.Ordinal);
+        var proxies = new List<ProxyModule>();
+        foreach (var host in AgentHosts.All)
+        {
+            foreach (var v in host.Variants.Where(ctx.Probe.Present))
+            {
+                var proxy = new ProxyModule(host, v, ctx);
+                var expected = proxy.Support.Level != SupportLevel.No;
+                Assert.True(
+                    expected == proxy.Installed(),
+                    $"{host.Id} {v.Name}: proxy installed {proxy.Installed()}"
+                );
+                if (expected)
+                {
+                    proxies.Add(proxy);
+                }
+            }
+        }
+        Assert.Equal(5, proxies.Count);
+        var installed = Files(home);
+        AssertNotes(run.Run(Request(present, McpMode.Install)), " — already installed");
+        Assert.Equal(installed, Files(home));
+
+        run.Run(Request(all, McpMode.Remove));
+        Assert.All(proxies, p => Assert.False(p.Installed()));
+        Assert.All(
+            Files(home),
+            f => Assert.DoesNotContain(":8790", f.Value, StringComparison.Ordinal)
+        );
+
+        var foreign = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var file in proxies.SelectMany(p => p.Files))
+        {
+            var (_, text) = file.Install(home.Read(file.Path) ?? "");
+            foreign[file.Path] = text.Replace(
+                "http://127.0.0.1:8790",
+                "https://api.example",
+                StringComparison.Ordinal
+            );
+            home.Write(file.Path, foreign[file.Path]);
+        }
+        run.Run(Request(all, McpMode.Remove));
+        Assert.All(foreign, f => Assert.Equal(f.Value, home.Read(f.Key)));
     }
 
     /// <summary>Each present app with MCP support has rtok's entry, one per surface, and it serves.</summary>

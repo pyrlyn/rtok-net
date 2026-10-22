@@ -21,5 +21,10 @@ public sealed class AgentsCommandsTests
 
     [Fact]
     public void Every_path_key_is_a_config_key() =>
-        Assert.Empty(SetupPaths.Keys.Except(ConfigSchema.LeafKeys, StringComparer.Ordinal));
+        Assert.Empty(
+            SetupPaths
+                .Keys.Concat(SetupPaths.HookKeys)
+                .Concat(SetupPaths.ProxyKeys)
+                .Except(ConfigSchema.LeafKeys, StringComparer.Ordinal)
+        );
 }

@@ -14,6 +14,7 @@ public sealed class HostContext
     /// <param name="settings">The run's switches.</param>
     /// <param name="paths">MCP files the user moved, keyed <c>&lt;host&gt;.&lt;surface&gt;</c> (<see cref="Mcp.SetupPaths"/>).</param>
     /// <param name="hookPaths">Hook files the user moved, keyed the same way (<see cref="Mcp.SetupPaths.HooksOf"/>).</param>
+    /// <param name="proxyPaths">Proxy files the user moved, keyed the same way (<see cref="Mcp.SetupPaths.ProxyOf"/>).</param>
     public HostContext(
         HostEnvironment env,
         McpDisk disk,
@@ -21,10 +22,12 @@ public sealed class HostContext
         RtokBinary rtok,
         HostSettings settings,
         IReadOnlyDictionary<string, string>? paths = null,
-        IReadOnlyDictionary<string, string>? hookPaths = null
+        IReadOnlyDictionary<string, string>? hookPaths = null,
+        IReadOnlyDictionary<string, string>? proxyPaths = null
     )
     {
         HookPaths = hookPaths ?? new Dictionary<string, string>(StringComparer.Ordinal);
+        ProxyPaths = proxyPaths ?? new Dictionary<string, string>(StringComparer.Ordinal);
         ArgumentNullException.ThrowIfNull(env);
         ArgumentNullException.ThrowIfNull(disk);
         ArgumentNullException.ThrowIfNull(rtok);
@@ -72,6 +75,13 @@ public sealed class HostContext
 
     /// <summary>Hook files the user moved, keyed <c>&lt;host&gt;.&lt;surface&gt;</c>.</summary>
     public IReadOnlyDictionary<string, string> HookPaths { get; }
+
+    /// <summary>Proxy files the user moved, keyed <c>&lt;host&gt;.&lt;surface&gt;</c>.</summary>
+    public IReadOnlyDictionary<string, string> ProxyPaths { get; }
+
+    /// <summary>The file <paramref name="moved"/> holds for <paramref name="key"/>, else <paramref name="fallback"/> expanded.</summary>
+    public string PathOf(IReadOnlyDictionary<string, string> moved, string key, string fallback) =>
+        moved.GetValueOrDefault(key) is { Length: > 0 } set ? set : Probe.Expand(fallback);
 
     /// <summary>A bare <c>rtok</c> is on <c>PATH</c>, so entries that spawn it by name work.</summary>
     public bool RtokOnPath { get; }

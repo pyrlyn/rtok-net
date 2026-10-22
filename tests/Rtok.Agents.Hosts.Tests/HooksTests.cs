@@ -22,7 +22,7 @@ public sealed class HooksTests
 
     private static readonly Apply Write = new();
 
-    private static HookFile File(
+    private static OwnedFile File(
         string host,
         McpOs os = McpOs.Linux,
         HostKind kind = HostKind.Cli,

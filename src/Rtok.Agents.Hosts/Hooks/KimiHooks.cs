@@ -10,20 +10,20 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// (rtok <c>kimi::insert_ours</c>). A stale rtok table is rewritten in place, one on a pair no
 /// longer listed goes; foreign tables are never touched.
 /// </summary>
-internal sealed class KimiHooks(string path, HostContext ctx) : HookFile(path)
+internal sealed class KimiHooks(string path, HostContext ctx) : OwnedFile(path)
 {
     private static IReadOnlyList<HookEventRow> Rows => HookEvents.ForHost("kimi");
 
     private long Timeout => ctx.Settings.HookTimeoutS;
 
-    public override bool Holds(string text) => Tables(new TomlHooks(Path, text)).Exists(Ours);
+    public override bool Holds(string text) => Tables(new TomlEdit(Path, text)).Exists(Ours);
 
     public override (string Report, string Text) Install(string text)
     {
-        var toml = new TomlHooks(Path, text);
+        var toml = new TomlEdit(Path, text);
         var tables = Tables(toml);
         var lines = new List<string>();
-        var kept = new List<TomlHooks.Table>();
+        var kept = new List<TomlEdit.Table>();
         foreach (var t in tables)
         {
             if (Ours(t) && !Listed(t))
@@ -74,7 +74,7 @@ internal sealed class KimiHooks(string path, HostContext ctx) : HookFile(path)
 
     public override (string Report, string Text) Remove(string text, Apply apply)
     {
-        var toml = new TomlHooks(Path, text);
+        var toml = new TomlEdit(Path, text);
         var kept = new List<string>();
         var removed = 0;
         foreach (var t in Tables(toml).Where(Ours))
@@ -92,7 +92,7 @@ internal sealed class KimiHooks(string path, HostContext ctx) : HookFile(path)
     }
 
     /// <summary>The <c>[[hooks]]</c> tables; hooks spelled any other way are refused.</summary>
-    private static List<TomlHooks.Table> Tables(TomlHooks toml)
+    private static List<TomlEdit.Table> Tables(TomlEdit toml)
     {
         if (toml.Model.TryGetValue("hooks", out var hooks) && hooks is not TomlTableArray)
         {
@@ -101,17 +101,17 @@ internal sealed class KimiHooks(string path, HostContext ctx) : HookFile(path)
         return toml.Tables("hooks");
     }
 
-    private static string Event(TomlHooks.Table t) => t.Str("event") ?? "";
+    private static string Event(TomlEdit.Table t) => t.Str("event") ?? "";
 
-    private static string Matcher(TomlHooks.Table t) => t.Str("matcher") ?? "";
+    private static string Matcher(TomlEdit.Table t) => t.Str("matcher") ?? "";
 
-    private static bool Is(TomlHooks.Table t, HookEventRow row) =>
+    private static bool Is(TomlEdit.Table t, HookEventRow row) =>
         string.Equals(Event(t), row.HostEvent, StringComparison.Ordinal)
         && string.Equals(Matcher(t), row.Matcher, StringComparison.Ordinal);
 
-    private static bool Listed(TomlHooks.Table t) => Rows.Any(r => Is(t, r));
+    private static bool Listed(TomlEdit.Table t) => Rows.Any(r => Is(t, r));
 
     /// <summary>A table whose command is rtok's for its own event.</summary>
-    private bool Ours(TomlHooks.Table t) =>
+    private bool Ours(TomlEdit.Table t) =>
         t.Str("command") is { } c && HookText.Runs(ctx, c, $"hook {Event(t)}");
 }

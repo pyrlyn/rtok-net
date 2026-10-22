@@ -11,7 +11,7 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// share: <c>&lt;at&gt;.&lt;event&gt;[] = {matcher?, hooks: [{type: "command", command, &lt;timeout&gt;}]}</c>
 /// (rtok <c>claude::insert_ours_as</c>, <c>strip_ours_as</c>).
 /// </summary>
-internal sealed class NestedHooks(string path) : HookFile(path)
+internal sealed class NestedHooks(string path) : OwnedFile(path)
 {
     /// <summary>Where the event map sits: <c>hooks</c>, or ZCode's <c>hooks.events</c>.</summary>
     public required JsoncSegment[] At { get; init; }
@@ -45,13 +45,13 @@ internal sealed class NestedHooks(string path) : HookFile(path)
 
     public override bool Holds(string text)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         return Hooks(doc).Any(h => h.Ours);
     }
 
     public override (string Report, string Text) Install(string text)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         var enabled = false;
         if (Enable && doc.Get("hooks", "enabled") is not { ValueKind: JsonValueKind.True })
         {
@@ -81,7 +81,7 @@ internal sealed class NestedHooks(string path) : HookFile(path)
 
     public override (string Report, string Text) Remove(string text, Apply apply)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         var kept = new List<string>();
         var gone = Hooks(doc)
             .Where(h =>
@@ -115,7 +115,7 @@ internal sealed class NestedHooks(string path) : HookFile(path)
     );
 
     /// <summary>Rewrites rtok's hooks on <paramref name="row"/>'s pair, or appends one.</summary>
-    private void Put(HookJson doc, HookEventRow row, List<string> lines)
+    private void Put(JsonEdit doc, HookEventRow row, List<string> lines)
     {
         var want = Command(row.RtokEvent);
         var show = $"{row.HostEvent}{HookText.Show(row.Matcher)} {want}";
@@ -133,7 +133,7 @@ internal sealed class NestedHooks(string path) : HookFile(path)
             found = true;
             if (
                 string.Equals(h.Command, want, StringComparison.Ordinal)
-                && HookJson.Is(h.Value, TimeoutKey, Timeout)
+                && JsonEdit.Is(h.Value, TimeoutKey, Timeout)
             )
             {
                 continue;
@@ -168,10 +168,10 @@ internal sealed class NestedHooks(string path) : HookFile(path)
 
     /// <summary>Exactly the hook rtok writes for <paramref name="command"/>.</summary>
     private bool Exact(JsonElement hook, string command) =>
-        HookJson.Count(hook) == 3
-        && HookJson.Str(hook, "type") is "command"
-        && string.Equals(HookJson.Str(hook, "command"), command, StringComparison.Ordinal)
-        && HookJson.Is(hook, TimeoutKey, Timeout);
+        JsonEdit.Count(hook) == 3
+        && JsonEdit.Str(hook, "type") is "command"
+        && string.Equals(JsonEdit.Str(hook, "command"), command, StringComparison.Ordinal)
+        && JsonEdit.Is(hook, TimeoutKey, Timeout);
 
     private bool Listed(string hostEvent, string matcher) =>
         Rows.Any(r =>
@@ -187,7 +187,7 @@ internal sealed class NestedHooks(string path) : HookFile(path)
         ?? (Prune ? hostEvent : null);
 
     /// <summary>Every hook with a string command under <see cref="At"/>, in file order.</summary>
-    private IEnumerable<Found> Hooks(HookJson doc)
+    private IEnumerable<Found> Hooks(JsonEdit doc)
     {
         if (doc.Object(At) is not { } events)
         {
@@ -197,19 +197,19 @@ internal sealed class NestedHooks(string path) : HookFile(path)
         {
             var rtok = RtokEvent(ev.Name);
             var entry = 0;
-            foreach (var e in HookJson.Items(ev.Value))
+            foreach (var e in JsonEdit.Items(ev.Value))
             {
-                var matcher = HookJson.Str(e, "matcher") ?? "";
-                var bare = HookJson.Count(e) == 1;
+                var matcher = JsonEdit.Str(e, "matcher") ?? "";
+                var bare = JsonEdit.Count(e) == 1;
                 var hook = 0;
                 foreach (
                     var h in e.ValueKind == JsonValueKind.Object
                     && e.TryGetProperty("hooks", out var list)
-                        ? HookJson.Items(list)
+                        ? JsonEdit.Items(list)
                         : []
                 )
                 {
-                    if (HookJson.Str(h, "command") is { } command)
+                    if (JsonEdit.Str(h, "command") is { } command)
                     {
                         var ours = rtok is not null && Ours(command, rtok);
                         yield return new Found(

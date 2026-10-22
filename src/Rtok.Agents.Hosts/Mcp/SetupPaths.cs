@@ -3,7 +3,7 @@ using System.IO.Abstractions;
 namespace Rtok.Agents.Hosts.Mcp;
 
 /// <summary>
-/// The <c>[setup.&lt;host&gt;]</c> path keys the user set, as the MCP or hooks file each one moves,
+/// The <c>[setup.&lt;host&gt;]</c> path keys the user set, as the MCP, hooks or proxy file each one moves,
 /// keyed <c>&lt;host&gt;.&lt;surface&gt;</c> (rtok <c>mcp::surfaces</c>, <c>agents::*::settings_path</c>).
 /// A key left at its default moves nothing: the host table's own default stands.
 /// </summary>
@@ -113,6 +113,15 @@ public static class SetupPaths
         ("setup.zcode.config_path", "zcode", ["desktop"], Derive.File, []),
     ];
 
+    /// <summary>The same for the file a host keeps its model base URL in, where it is neither of the above.</summary>
+    private static readonly (
+        string Key,
+        string Host,
+        string[] Surfaces,
+        Derive How,
+        string[] Names
+    )[] ProxyRows = [("setup.aider.config_path", "aider", ["cli"], Derive.File, [])];
+
     /// <summary>Every config key that can move an MCP file.</summary>
     public static IReadOnlyList<string> Keys { get; } =
     [.. Rows.Select(r => r.Key).Distinct(StringComparer.Ordinal)];
@@ -120,6 +129,9 @@ public static class SetupPaths
     /// <summary>Every config key that can move a hooks file.</summary>
     public static IReadOnlyList<string> HookKeys { get; } =
     [.. HookRows.Select(r => r.Key).Distinct(StringComparer.Ordinal)];
+
+    /// <summary>Every config key that can move a proxy file.</summary>
+    public static IReadOnlyList<string> ProxyKeys { get; } = [.. ProxyRows.Select(r => r.Key)];
 
     /// <summary>The MCP files the user moved.</summary>
     /// <param name="userSet">A path key's expanded value when the user set it; null when it is at its default.</param>
@@ -136,6 +148,14 @@ public static class SetupPaths
         Func<string, string?> userSet,
         IFileSystem fs
     ) => Moved(HookRows, userSet, fs);
+
+    /// <summary>The proxy files the user moved, keyed as <see cref="Of"/> keys them.</summary>
+    /// <param name="userSet">A path key's expanded value when the user set it; null when it is at its default.</param>
+    /// <param name="fs">Paths are joined with its rules.</param>
+    public static IReadOnlyDictionary<string, string> ProxyOf(
+        Func<string, string?> userSet,
+        IFileSystem fs
+    ) => Moved(ProxyRows, userSet, fs);
 
     private static Dictionary<string, string> Moved(
         (string Key, string Host, string[] Surfaces, Derive How, string[] Names)[] rows,

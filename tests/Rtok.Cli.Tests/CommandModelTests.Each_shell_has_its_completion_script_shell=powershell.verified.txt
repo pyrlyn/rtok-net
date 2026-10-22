@@ -16,12 +16,12 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     $options = @{
         '' = @('-h', '--help', '--version')
         'agents info' = @('--json', '--config', '-h', '--help', '--version')
-        'agents install' = @('--dry-run', '--yes', '--mcp', '--cli', '--gui', '--desktop', '--all', '--replace', '--config', '-h', '--help', '--version')
+        'agents install' = @('--dry-run', '--yes', '--mcp', '--proxy', '--cli', '--gui', '--desktop', '--all', '--replace', '--config', '-h', '--help', '--version')
         'agents junk clear' = @('--yes', '--include', '--kind', '--agent', '--older-than', '--trash', '--session-days', '--min-size', '--json', '--config', '-h', '--help', '--version')
         'agents junk list' = @('--json', '--bytes', '--all', '--items', '--sort', '--min-size', '--config', '-h', '--help', '--version')
         'agents list' = @('--json', '--config', '-h', '--help', '--version')
         'agents uninstall' = @('--dry-run', '--yes', '--config', '-h', '--help', '--version')
-        'agents update' = @('--dry-run', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
+        'agents update' = @('--dry-run', '--proxy', '--cli', '--gui', '--desktop', '--all', '--config', '-h', '--help', '--version')
         'agents usage' = @('--source', '--host', '--since', '--until', '--daily', '--monthly', '--by', '--tz', '--unpriced', '--json', '--config', '-h', '--help', '--version')
         'batch fetch' = @('--provider', '--url', '--config', '-h', '--help', '--version')
         'batch status' = @('--provider', '--url', '--config', '-h', '--help', '--version')
@@ -193,7 +193,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         '|--help' = 'Show help.'
         '|--version' = 'Show version.'
         'agents|info' = 'One or more hosts in detail: apps, files, and each module''s state.'
-        'agents|install' = 'Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.'
+        'agents|install' = 'Install rtok into hosts: its hooks, MCP server entry and (--proxy) base URL, keeping every other byte of their configs.'
         'agents|list' = 'Every host rtok knows: whether its apps are here, and what of rtok each one has.'
         'agents|uninstall' = 'Take rtok out of hosts: only entries that are still rtok''s; one you changed asks first.'
         'agents|update' = 'Rewrite rtok''s entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).'
@@ -206,6 +206,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents install|--dry-run' = 'Print what would change; write nothing.'
         'agents install|--yes' = 'Answer yes to every question.'
         'agents install|--mcp' = 'Register rtok''s MCP server.'
+        'agents install|--proxy' = 'Point the host''s model base URL at rtok''s proxy.'
         'agents install|--cli' = 'Only the CLI apps.'
         'agents install|--gui' = 'Only the desktop apps.'
         'agents install|--desktop' = 'Only the desktop apps.'
@@ -252,6 +253,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'agents uninstall|--help' = 'Show help.'
         'agents uninstall|--version' = 'Show version.'
         'agents update|--dry-run' = 'Print what would change; write nothing.'
+        'agents update|--proxy' = 'Also point the model base URL at rtok''s proxy (kept where it already is).'
         'agents update|--cli' = 'Only the CLI apps.'
         'agents update|--gui' = 'Only the desktop apps.'
         'agents update|--desktop' = 'Only the desktop apps.'

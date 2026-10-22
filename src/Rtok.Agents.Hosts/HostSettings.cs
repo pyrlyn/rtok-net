@@ -10,6 +10,8 @@ namespace Rtok.Agents.Hosts;
 /// <param name="Mcp">Install and update register rtok's MCP server.</param>
 /// <param name="Ask">Asks the user; null where nobody can answer, which declines.</param>
 /// <param name="HookTimeoutS">The timeout written into each hook entry, in seconds (<c>setup.hook_timeout_s</c>).</param>
+/// <param name="Proxy">Install also points the host's model base URL at rtok's proxy (<c>--proxy</c>).</param>
+/// <param name="ProxyUrl">rtok's proxy as clients dial it (<c>[proxy] bind</c> and <c>port</c>).</param>
 public sealed record HostSettings(
     bool DryRun = false,
     bool Yes = false,
@@ -17,5 +19,7 @@ public sealed record HostSettings(
     int BackupFiles = Backups.DefaultKeep,
     bool Mcp = true,
     Prompt? Ask = null,
-    long HookTimeoutS = 5
+    long HookTimeoutS = 5,
+    bool Proxy = false,
+    string ProxyUrl = "http://127.0.0.1:8790"
 );

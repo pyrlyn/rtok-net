@@ -11,7 +11,7 @@ namespace Rtok.Agents.Hosts.Hooks;
 /// display name (rtok <c>commandcode::insert_ours</c>). A stale rtok hook is rewritten in place,
 /// where rtok would add a second one beside it.
 /// </summary>
-internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(path)
+internal sealed class CommandCodeHooks(string path, HostContext ctx) : OwnedFile(path)
 {
     /// <summary>Command Code's own default; <c>setup.hook_timeout_s</c> does not reach it (rtok).</summary>
     private const long Timeout = 5;
@@ -20,13 +20,13 @@ internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(
 
     public override bool Holds(string text)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         return Rows.Any(r => Defs(doc, r.HostEvent).Exists(d => Hooks(d).Any(Ours)));
     }
 
     public override (string Report, string Text) Install(string text)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         doc.Object("hooks");
         var lines = new List<string>();
         foreach (var row in Rows)
@@ -42,7 +42,7 @@ internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(
             var def = defs.FindIndex(d =>
                 row.Matcher.Length > 0
                     ? string.Equals(
-                        HookJson.Str(d, "matcher"),
+                        JsonEdit.Str(d, "matcher"),
                         row.Matcher,
                         StringComparison.Ordinal
                     )
@@ -63,7 +63,7 @@ internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(
             var hooks = Hooks(defs[def]).ToList();
             if (
                 hooks.Exists(h =>
-                    string.Equals(HookJson.Str(h, "command"), cmd, StringComparison.Ordinal)
+                    string.Equals(JsonEdit.Str(h, "command"), cmd, StringComparison.Ordinal)
                 )
             )
             {
@@ -84,7 +84,7 @@ internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(
     /// <summary>In each event, every rtok hook of the first definition holding one goes (rtok <c>strip_ours</c>).</summary>
     public override (string Report, string Text) Remove(string text, Apply apply)
     {
-        var doc = new HookJson(Path, text);
+        var doc = new JsonEdit(Path, text);
         var lines = new List<string>();
         var gone = new List<(string, int, int)>();
         foreach (var ev in Rows.Select(r => r.HostEvent).Distinct(StringComparer.Ordinal))
@@ -109,17 +109,17 @@ internal sealed class CommandCodeHooks(string path, HostContext ctx) : HookFile(
         return (lines.Count == 0 ? Agent.Sdk.Apply.NoChanges : string.Join('\n', lines), doc.Text);
     }
 
-    private static List<JsonElement> Defs(HookJson doc, string hostEvent) =>
-        HookJson.Items(doc.Array("hooks", hostEvent)).ToList();
+    private static List<JsonElement> Defs(JsonEdit doc, string hostEvent) =>
+        JsonEdit.Items(doc.Array("hooks", hostEvent)).ToList();
 
     private static IEnumerable<JsonElement> Hooks(JsonElement def) =>
         def.ValueKind == JsonValueKind.Object && def.TryGetProperty("hooks", out var list)
-            ? HookJson.Items(list)
+            ? JsonEdit.Items(list)
             : [];
 
     /// <summary>A hook whose command is exactly an rtok bin running an event rtok writes here.</summary>
     private bool Ours(JsonElement hook) =>
-        HookJson.Str(hook, "command") is { } c
+        JsonEdit.Str(hook, "command") is { } c
         && Rows.Any(r =>
             HookText.Runs(ctx, c, $"hook {r.RtokEvent} --host commandcode", resolver: false)
         );

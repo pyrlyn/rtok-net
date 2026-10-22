@@ -2,14 +2,15 @@ using System.Text;
 using Rtok.Agent.Sdk;
 using Rtok.Agents.Hosts.Hooks;
 using Rtok.Agents.Hosts.Mcp;
+using Rtok.Agents.Hosts.Proxy;
 using Rtok.Mcp.Install;
 
 namespace Rtok.Agents.Hosts;
 
 /// <summary>
 /// <c>rtok agents install|update|uninstall|list|info</c> over the host table: one block per app
-/// (rtok <c>agents::run</c>, <c>agents::block</c>). Only the modules built so far take part: hooks
-/// and MCP now; proxy, plugin and restart come with T35.4–T35.6.
+/// (rtok <c>agents::run</c>, <c>agents::block</c>). Only the modules built so far take part: hooks,
+/// MCP and the proxy base URL now; plugin and restart come with T35.5 and T35.6.
 /// </summary>
 /// <param name="ctx">The home, disk, binary and switches of this run.</param>
 public sealed class HostRun(HostContext ctx)
@@ -90,6 +91,7 @@ public sealed class HostRun(HostContext ctx)
                         && (
                             new HooksModule(h, v, ctx).Installed()
                             || new McpModule(h, v, ctx).Installed()
+                            || new ProxyModule(h, v, ctx).Installed()
                         )
                     )
                 )
@@ -126,6 +128,7 @@ public sealed class HostRun(HostContext ctx)
                 {
                     var mcp = new McpModule(h, v, ctx);
                     var hooks = new HooksModule(h, v, ctx);
+                    var proxy = new ProxyModule(h, v, ctx);
                     var app = ctx.Probe.AppPath(v);
                     var present = app is not null;
                     return new AgentListRow(
@@ -135,8 +138,8 @@ public sealed class HostRun(HostContext ctx)
                         present,
                         app,
                         present && versions ? ctx.Probe.Version(v) : null,
-                        Files(hooks, mcp),
-                        present ? Modules(h, v, hooks, mcp) : [],
+                        Files(hooks, mcp, proxy),
+                        present ? Modules(h, v, hooks, mcp, proxy) : [],
                         present ? mcp.Rows() : []
                     );
                 })
@@ -165,7 +168,13 @@ public sealed class HostRun(HostContext ctx)
             }
             var mcp = new McpModule(host, v, ctx);
             var hooks = new HooksModule(host, v, ctx);
-            if (request.Mode == McpMode.Update && !hooks.Installed() && !mcp.Installed())
+            var proxy = new ProxyModule(host, v, ctx);
+            if (
+                request.Mode == McpMode.Update
+                && !hooks.Installed()
+                && !mcp.Installed()
+                && !proxy.Installed()
+            )
             {
                 text.Append(Block(host, v, Outcome.NotInstalled));
                 continue;
@@ -175,12 +184,14 @@ public sealed class HostRun(HostContext ctx)
                 && request.Mode == McpMode.Install
                 && host.Id is "claude"
                 && hooks.Files.Count > 0;
+            var wanted = proxy.Wanted(request.Mode);
             IReadOnlyList<string> reports = replace
                 ? [ClaudeReplace.Run(ctx, apply, hooks.Files[0].Path)]
                 :
                 [
                     .. hooks.Apply(request.Mode == McpMode.Remove, apply),
                     .. mcp.Apply(request.Mode, apply),
+                    .. proxy.Apply(request.Mode, wanted, apply),
                 ];
             done = v.Name;
             changed |= reports.Any(r =>
@@ -189,7 +200,7 @@ public sealed class HostRun(HostContext ctx)
             text.Append(Block(host, v, Outcome.Applied, request.Mode, reports));
             if (request.Mode != McpMode.Remove && !replace && !ctx.Settings.DryRun)
             {
-                ReadBack(text, host, v, hooks, mcp);
+                ReadBack(text, host, v, hooks, mcp, wanted ? proxy : null);
             }
         }
         if (!any)
@@ -205,7 +216,8 @@ public sealed class HostRun(HostContext ctx)
         AgentHost host,
         HostVariant v,
         HooksModule hooks,
-        McpModule mcp
+        McpModule mcp,
+        ProxyModule? proxy
     )
     {
         if (hooks.Support.Level == SupportLevel.Yes && hooks.Files.Count > 0 && !hooks.Installed())
@@ -216,11 +228,21 @@ public sealed class HostRun(HostContext ctx)
         {
             text.Append("  warning: mcp did not read back as installed\n");
         }
+        if (proxy is { Files.Count: > 0 } && !proxy.Installed())
+        {
+            text.Append("  warning: proxy did not read back as installed\n");
+        }
     }
 
-    /// <summary>The files the modules edit, each once: hooks first, as the modules print.</summary>
-    private static List<string> Files(HooksModule hooks, McpModule mcp) =>
-        [.. hooks.Files.Select(f => f.Path).Concat(mcp.Files).Distinct(StringComparer.Ordinal)];
+    /// <summary>The files the modules edit, each once, in the order the modules print.</summary>
+    private static List<string> Files(HooksModule hooks, McpModule mcp, ProxyModule proxy) =>
+        [
+            .. hooks
+                .Files.Select(f => f.Path)
+                .Concat(mcp.Files)
+                .Concat(proxy.Files.Select(f => f.Path))
+                .Distinct(StringComparer.Ordinal),
+        ];
 
     private string Block(
         AgentHost host,
@@ -263,7 +285,8 @@ public sealed class HostRun(HostContext ctx)
         );
         var mcp = new McpModule(host, v, ctx);
         var hooks = new HooksModule(host, v, ctx);
-        var files = Files(hooks, mcp);
+        var proxy = new ProxyModule(host, v, ctx);
+        var files = Files(hooks, mcp, proxy);
         if (files.Count > 0)
         {
             text.Append("  config  ").AppendJoin(", ", files).Append('\n');
@@ -280,7 +303,7 @@ public sealed class HostRun(HostContext ctx)
         {
             text.Append(report).Append('\n');
         }
-        AppendModules(text, host, v, hooks, mcp);
+        AppendModules(text, host, v, hooks, mcp, proxy);
         return text.ToString();
     }
 
@@ -290,11 +313,12 @@ public sealed class HostRun(HostContext ctx)
         AgentHost host,
         HostVariant v,
         HooksModule hooks,
-        McpModule mcp
+        McpModule mcp,
+        ProxyModule proxy
     )
     {
         var rows = mcp.Rows();
-        foreach (var row in Modules(host, v, hooks, mcp))
+        foreach (var row in Modules(host, v, hooks, mcp, proxy))
         {
             if (string.Equals(row.Name, McpModule.Name, StringComparison.Ordinal) && rows.Count > 0)
             {
@@ -311,16 +335,18 @@ public sealed class HostRun(HostContext ctx)
         }
     }
 
-    /// <summary>The rows of the modules this build installs: hooks, then MCP.</summary>
+    /// <summary>The rows of the modules this build installs: hooks, MCP, then the proxy.</summary>
     private static IReadOnlyList<ModuleRow> Modules(
         AgentHost host,
         HostVariant v,
         HooksModule hooks,
-        McpModule mcp
+        McpModule mcp,
+        ProxyModule proxy
     ) =>
         [
             Row(HooksModule.Name, hooks.Support, hooks.Installed()),
             Row(McpModule.Name, host.Mcp.Of(v.Kind), mcp.Installed()),
+            Row(ProxyModule.Name, proxy.Support, proxy.Installed()),
         ];
 
     private static ModuleRow Row(string name, Support support, bool installed) =>

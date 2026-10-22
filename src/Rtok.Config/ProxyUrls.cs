@@ -1,7 +1,6 @@
 using System.Net;
-using Rtok.Config;
 
-namespace Rtok.Proxy;
+namespace Rtok.Config;
 
 /// <summary>The base URLs agents use to reach the proxy (<c>rtok wrap</c>, the host installers).</summary>
 public static class ProxyUrls

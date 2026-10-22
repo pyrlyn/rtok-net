@@ -46,11 +46,12 @@ internal sealed partial class AgentsCommands
         return spelled;
     }
 
-    /// <summary>Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.</summary>
+    /// <summary>Install rtok into hosts: its hooks, MCP server entry and (--proxy) base URL, keeping every other byte of their configs.</summary>
     /// <param name="host">The hosts, comma-separated: claude,codex.</param>
     /// <param name="dryRun">Print what would change; write nothing.</param>
     /// <param name="yes">Answer yes to every question.</param>
     /// <param name="mcp">Register rtok's MCP server.</param>
+    /// <param name="proxy">Point the host's model base URL at rtok's proxy.</param>
     /// <param name="cli">Only the CLI apps.</param>
     /// <param name="desktop">--gui, Only the desktop apps.</param>
     /// <param name="all">Every app of the host (the default without --cli or --desktop).</param>
@@ -62,6 +63,7 @@ internal sealed partial class AgentsCommands
         bool dryRun = false,
         bool yes = false,
         bool mcp = false,
+        bool proxy = false,
         bool cli = false,
         bool desktop = false,
         bool all = false,
@@ -78,7 +80,8 @@ internal sealed partial class AgentsCommands
             Flags(
                 ("setup.dry_run", dryRun, "--dry-run"),
                 ("setup.yes", yes, "--yes"),
-                ("setup.mcp", mcp, "--mcp")
+                ("setup.mcp", mcp, "--mcp"),
+                ("setup.proxy", proxy, "--proxy")
             ),
             replace
         );
@@ -108,6 +111,7 @@ internal sealed partial class AgentsCommands
     /// <summary>Rewrite rtok's entries to what this rtok writes, in the hosts that have rtok (all of them when none is named).</summary>
     /// <param name="host">The hosts, comma-separated; every host with rtok when omitted.</param>
     /// <param name="dryRun">Print what would change; write nothing.</param>
+    /// <param name="proxy">Also point the model base URL at rtok's proxy (kept where it already is).</param>
     /// <param name="cli">Only the CLI apps.</param>
     /// <param name="desktop">--gui, Only the desktop apps.</param>
     /// <param name="all">Every app of the host (the default without --cli or --desktop).</param>
@@ -116,6 +120,7 @@ internal sealed partial class AgentsCommands
     public int Update(
         [Argument] string? host = null,
         bool dryRun = false,
+        bool proxy = false,
         bool cli = false,
         bool desktop = false,
         bool all = false,
@@ -123,7 +128,10 @@ internal sealed partial class AgentsCommands
     ) =>
         Run(() =>
         {
-            var loaded = Load(config, Flags(("setup.dry_run", dryRun, "--dry-run")));
+            var loaded = Load(
+                config,
+                Flags(("setup.dry_run", dryRun, "--dry-run"), ("setup.proxy", proxy, "--proxy"))
+            );
             var run = new HostRun(Context(loaded));
             var hosts = host is null ? run.Installed() : AgentHosts.Parse(host);
             if (hosts.Count == 0)

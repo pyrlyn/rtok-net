@@ -17,7 +17,7 @@ One or more hosts in detail: apps, files, and each module's state.
 See \fBrtok\-agents\-info\fR(1).
 .TP
 \fBagents install\fR
-Install rtok into hosts: its hooks and MCP server entry, keeping every other byte of their configs.
+Install rtok into hosts: its hooks, MCP server entry and (\-\-proxy) base URL, keeping every other byte of their configs.
 See \fBrtok\-agents\-install\fR(1).
 .TP
 \fBagents junk clear\fR

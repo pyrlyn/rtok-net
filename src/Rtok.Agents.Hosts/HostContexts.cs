@@ -12,7 +12,7 @@ namespace Rtok.Agents.Hosts;
 public static class HostContexts
 {
     /// <summary>The context: this machine's home and disk, <c>[setup]</c>'s switches and the MCP
-    /// and hook files the user moved.</summary>
+    /// hook and proxy files the user moved.</summary>
     /// <param name="loaded">The loaded config.</param>
     /// <param name="ask">Asks the user; null where nobody can answer.</param>
     /// <returns>The context.</returns>
@@ -34,7 +34,9 @@ public static class HostContexts
             (int)Math.Min(setup.BackupFiles, int.MaxValue),
             setup.Mcp,
             ask,
-            (long)Math.Min(setup.HookTimeoutS, long.MaxValue)
+            (long)Math.Min(setup.HookTimeoutS, long.MaxValue),
+            setup.Proxy,
+            ProxyUrls.Root(loaded.Config.Proxy)
         );
         return new HostContext(
             HostEnvironment.Current(),
@@ -43,7 +45,8 @@ public static class HostContexts
             RtokBinary.Current,
             settings,
             SetupPaths.Of(UserSet, fs),
-            SetupPaths.HooksOf(UserSet, fs)
+            SetupPaths.HooksOf(UserSet, fs),
+            SetupPaths.ProxyOf(UserSet, fs)
         );
     }
 }

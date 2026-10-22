@@ -18,12 +18,12 @@ _rtok_options() {
     case $1 in
         '') echo '-h --help --version' ;;
         'agents info') echo '--json --config -h --help --version' ;;
-        'agents install') echo '--dry-run --yes --mcp --cli --gui --desktop --all --replace --config -h --help --version' ;;
+        'agents install') echo '--dry-run --yes --mcp --proxy --cli --gui --desktop --all --replace --config -h --help --version' ;;
         'agents junk clear') echo '--yes --include --kind --agent --older-than --trash --session-days --min-size --json --config -h --help --version' ;;
         'agents junk list') echo '--json --bytes --all --items --sort --min-size --config -h --help --version' ;;
         'agents list') echo '--json --config -h --help --version' ;;
         'agents uninstall') echo '--dry-run --yes --config -h --help --version' ;;
-        'agents update') echo '--dry-run --cli --gui --desktop --all --config -h --help --version' ;;
+        'agents update') echo '--dry-run --proxy --cli --gui --desktop --all --config -h --help --version' ;;
         'agents usage') echo '--source --host --since --until --daily --monthly --by --tz --unpriced --json --config -h --help --version' ;;
         'batch fetch') echo '--provider --url --config -h --help --version' ;;
         'batch status') echo '--provider --url --config -h --help --version' ;;
