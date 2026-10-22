@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 5
-readiness: 0%
-agent:
+readiness: 5%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T29. Proxy lanes, batch, flex, routing, cache keys, compressor
@@ -42,3 +42,19 @@ Ports: rtok closed T28.0, T28.1, T28.2, T31.0, T31.1, T31.2, T205, T212, T259, T
 Fuzz: `lane-classify` in `tests/Rtok.Fuzz`: any path and headers give one lane with the markers stripped, the agent lane is never routed, and cache keys are deterministic.
 
 Check: Lane and cache-key table tests pass, batch results never double-count, and the agent lane is never capped or routed.
+
+Plan:
+1. `Rtok.Proxy` lanes: `Lane` (agent, bulk, batch, files, embeddings, meta, internal) and
+   `LaneClassifier` (path, then `/lane/<name>/`, then `x-rtok-lane`; markers stripped), the
+   effective policy (global switch AND lane switch), per-lane `HttpClient` timeouts and
+   upstreams, and `LaneGate` (max_in_flight, max_queued, 429 + Retry-After). `calls.kind`
+   from the lane.
+2. Routing (`[proxy.routing.bulk|internal]`, all fields set, never the agent lane) and Flex
+   (`service_tier`, `on_429` none, backoff, default on a `TimeProvider`).
+3. Cache keys (direct tier) per catalog B9 and an in-memory TTL cache of whole 2xx bodies,
+   never Responses API traffic, scoped by caller identity, method and upstream URL.
+4. `rtok batch submit|status|fetch` and `[proxy.batch] parse_results` usage rows keyed by
+   `sha256(api, target, line id)`, `calls.service_tier` from the response.
+5. The LLM compressor on the internal lane behind `[plugins.compress.llm]`, `archive_summaries`
+   first writer wins, and the must_keep guard.
+6. Tests (unit, CsCheck, WireMock), fuzz target `lane-classify`, gates.
