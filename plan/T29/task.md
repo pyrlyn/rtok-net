@@ -41,6 +41,14 @@ Ports: rtok closed T28.0, T28.1, T28.2, T31.0, T31.1, T31.2, T205, T212, T259, T
 
 Fuzz: `lane-classify` in `tests/Rtok.Fuzz`: any path and headers give one lane with the markers stripped, the agent lane is never routed, and cache keys are deterministic.
 
+Decisions (the creator, via the coordinator):
+- Lane policy: each boolean switch is the global one AND the lane's, and a lane's `timeout_s` is
+  min(lane, global). The only exception is the Flex floor of 900 s for a flex lane without its
+  own timeout. The CsCheck property checks the switches and the timeout without flex.
+- The compressor is split. T29 owns the queue on the internal lane, `archive_summaries` (first
+  writer wins), the must_keep guard and the `summary + expand(<id>)` render, behind the flag and
+  checked at the function level. T28 owns the end-to-end hookup to the archive pointers.
+
 Check: Lane and cache-key table tests pass, batch results never double-count, and the agent lane is never capped or routed.
 
 Plan:

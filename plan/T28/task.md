@@ -15,6 +15,7 @@ Done when:
 - Skill bodies are archived outside the live zone.
 - toon tables and json_tree folding work, each archiving the original first.
 - `tools_rewrite`, `compact_schema`, `context_management`, terminal-noise stripping and `live_blobs` work. `live_blobs` never touches image or document data (rtok T55.15).
+- The compressor hookup (split from T29): with `[plugins.compress.llm]` on, a pointer outside the live zone becomes `SummaryView.Stored` (`summary + expand(<id>)`) once a summary exists, and the ids without one go to `SummaryQueue.Submit` with `CompressAuth.FromHeaders` after the rewrite pass.
 
 Tests:
 - `Rtok.Proxy.Tests` unit: in compress mode a tool_result older than `keep_turns` (4) and over `min_tokens` (1500) becomes `[archived <id>: first 8 lines …`, while the system prompt, `tools[]` and the last two turns stay byte-identical.
