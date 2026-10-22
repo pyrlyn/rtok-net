@@ -1,6 +1,6 @@
 {
   "pattern": "{src,packages,tests}/**/*.cs",
-  "ignore": ["**/obj/**", "**/bin/**", "**/*.g.cs", "**/*.verified.*"],
+  "ignore": ["**/obj/**", "**/bin/**", "**/*.g.cs", "**/*.verified.*", "**/Migrations/**"],
   "format": ["csharp"],
   "minTokens": 50,
   "threshold": 2,
