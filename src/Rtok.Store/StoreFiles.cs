@@ -68,8 +68,14 @@ internal static class StoreFiles
         }
     }
 
-    /// <summary>Writes <paramref name="body"/> to <c>dir/&lt;sha256&gt;</c>, content-addressed so
-    /// the same body twice is one file. The write goes to a sibling temp file renamed over the
+    /// <summary>Where the body with id <paramref name="sha"/> lives: <c>dir/&lt;first two
+    /// digits&gt;/&lt;sha256&gt;</c>, sharded so no directory holds tens of thousands of files
+    /// (rtok I-S3).</summary>
+    public static string ArchivePath(string dir, string sha) =>
+        System.IO.Path.Combine(dir, sha.Length > 2 ? sha[..2] : "_", sha);
+
+    /// <summary>Writes <paramref name="body"/> to <see cref="ArchivePath"/>, content-addressed
+    /// so the same body twice is one file. The write goes to a sibling temp file renamed over the
     /// target, because <c>expand</c> reads the file without a lock. Returns the path and whether
     /// this call created it: only such a file is safe to remove when the caller's insert fails.</summary>
     public static (string Path, bool Created) WriteArchive(
@@ -78,11 +84,13 @@ internal static class StoreFiles
         ReadOnlySpan<byte> body
     )
     {
+        var path = ArchivePath(dir, sha);
+        var shard = System.IO.Path.GetDirectoryName(path)!;
         CreatePrivateDirectory(dir);
-        var path = System.IO.Path.Combine(dir, sha);
+        CreatePrivateDirectory(shard);
         var created = !File.Exists(path);
         var n = Interlocked.Increment(ref _nextTemp);
-        var temp = System.IO.Path.Combine(dir, $".{sha}.tmp-{Environment.ProcessId}-{n}");
+        var temp = System.IO.Path.Combine(shard, $".{sha}.tmp-{Environment.ProcessId}-{n}");
         try
         {
             var options = new FileStreamOptions

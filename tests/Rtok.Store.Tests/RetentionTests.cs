@@ -53,7 +53,7 @@ public sealed class RetentionTests
         store.SetCallParent(child, old);
         store.InsertCallIo(fresh, Body('b'), null);
         store.InsertLog("info", "proxy", "n", "new");
-        var a = Path.Combine(h.Options.ArchiveDir!, StoreFiles.Sha256Hex(Body('a')));
+        var a = StoreFiles.ArchivePath(h.Options.ArchiveDir!, StoreFiles.Sha256Hex(Body('a')));
 
         Assert.Equal([a], store.ArchivesPendingRetention(1));
         Assert.Empty(store.ArchivesPendingRetention(0));

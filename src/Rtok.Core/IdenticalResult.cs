@@ -34,7 +34,7 @@ public static class IdenticalResult
             return null;
         }
 
-        var shortId = Names.ShortId(hit.Id);
+        var shortId = ArchiveIds.Abbreviate(hit.Id);
         var message =
             $"[rtok {shortId} · identical to a result {Math.Max(hit.Turns, 1)} turns ago · expand: rtok expand {shortId}]";
         var messageBytes = Encoding.UTF8.GetByteCount(message);

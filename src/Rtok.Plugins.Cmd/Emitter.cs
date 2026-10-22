@@ -54,7 +54,7 @@ internal sealed class Emitter(CmdSettings settings, bool trailer, uint trailerMi
 
     /// <summary>The pointer line after a filtered body; one spelling for every surface.</summary>
     public static string Trailer(string id, int lines) =>
-        $"[rtok {Names.ShortId(id)} · {lines} lines]";
+        $"[rtok {ArchiveIds.Abbreviate(id)} · {lines} lines]";
 
     /// <summary>
     /// <paramref name="text"/> up to the noise a filter may remove without a reader losing
@@ -156,7 +156,7 @@ internal sealed class Emitter(CmdSettings settings, bool trailer, uint trailerMi
             }
 
             // The host names the archive; markers and the trailer must name the same id.
-            if (!string.Equals(Names.ShortId(stored), Names.ShortId(id), StringComparison.Ordinal))
+            if (!string.Equals(ArchiveIds.Abbreviate(stored), ArchiveIds.Abbreviate(id), StringComparison.Ordinal))
             {
                 id = stored;
                 shown = Render(argv, before, body, exit, id, lines);
@@ -280,7 +280,7 @@ internal sealed class Emitter(CmdSettings settings, bool trailer, uint trailerMi
         int lines
     )
     {
-        var shortId = Names.ShortId(id);
+        var shortId = ArchiveIds.Abbreviate(id);
         var (filtered, kind) = Families.Compress(settings, argv, before, exit, shortId);
         var named = NamesTheId(filtered, shortId);
         var pointer = trailer && NeedsPointer(lines, trailerMinLines, body, filtered, named);

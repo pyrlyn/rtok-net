@@ -162,7 +162,7 @@ public sealed class StoreTests : IDisposable
         Assert.Equal(before, File.ReadAllBytes(options.DbPath));
     }
 
-    private static object? Scalar(StoreOptions options, string sql)
+    internal static object? Scalar(StoreOptions options, string sql)
     {
         using var connection = new SqliteConnection($"Data Source={options.DbPath};Pooling=False");
         connection.Open();

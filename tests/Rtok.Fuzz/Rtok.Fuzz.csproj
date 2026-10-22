@@ -21,6 +21,7 @@
     <ProjectReference Include="../../packages/Rtok.Agent.Sdk/src/Rtok.Agent.Sdk.csproj" />
     <ProjectReference Include="../../src/Rtok.Agents/Rtok.Agents.csproj" />
     <ProjectReference Include="../../src/Rtok.Agents.Hosts/Rtok.Agents.Hosts.csproj" />
+    <ProjectReference Include="../../src/Rtok.Archive/Rtok.Archive.csproj" />
     <ProjectReference Include="../../src/Rtok.Cli/Rtok.Cli.csproj" />
     <ProjectReference Include="../../src/Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../../src/Rtok.Hook.Contracts/Rtok.Hook.Contracts.csproj" />

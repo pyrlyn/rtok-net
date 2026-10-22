@@ -89,10 +89,13 @@ public sealed class InjectBudgetTests
 
     private static string Blob(int tokens) => new('x', tokens * 4);
 
-    // The id after "rtok expand " in the last line, read back from the archive.
+    // The 8-hex id after "rtok expand " in the last line, resolved to the one archived id it
+    // starts, read back from the archive.
     private static string Expand(MemoryHost host, string capped)
     {
         var id = capped[(capped.LastIndexOf(' ') + 1)..];
-        return Encoding.UTF8.GetString(host.GetArchive(id) ?? []);
+        Assert.Equal(ArchiveIds.ShortLength, id.Length);
+        var full = Assert.Single(host.Archived(), a => a.StartsWith(id, StringComparison.Ordinal));
+        return Encoding.UTF8.GetString(host.GetArchive(full) ?? []);
     }
 }

@@ -38,7 +38,7 @@ internal sealed class StdinFilter(CmdSettings settings, bool trailer, uint trail
             }
 
             // The host names the archive; markers and the trailer must name the same id.
-            if (!string.Equals(Names.ShortId(stored), Names.ShortId(id), StringComparison.Ordinal))
+            if (!string.Equals(ArchiveIds.Abbreviate(stored), ArchiveIds.Abbreviate(id), StringComparison.Ordinal))
             {
                 id = stored;
                 shown = Render(argv, input, body, lines, id) ?? shown;
@@ -92,8 +92,8 @@ internal sealed class StdinFilter(CmdSettings settings, bool trailer, uint trail
     // The compressed text plus the trailer when it needs one; null when raw is no longer.
     private Shown? Render(string[] argv, string input, byte[] body, int lines, string id)
     {
-        var (filtered, kind) = Families.Compress(settings, argv, input, 0, Names.ShortId(id));
-        var named = Emitter.NamesTheId(filtered, Names.ShortId(id));
+        var (filtered, kind) = Families.Compress(settings, argv, input, 0, ArchiveIds.Abbreviate(id));
+        var named = Emitter.NamesTheId(filtered, ArchiveIds.Abbreviate(id));
         var pointer =
             trailer && Emitter.NeedsPointer(lines, trailerMinLines, body, filtered, named);
         if (

@@ -1,5 +1,6 @@
 using System.Text;
 using Rtok.Core;
+using Rtok.Plugin.Sdk;
 using Rtok.Plugin.Sdk.Testing;
 
 namespace Rtok.Plugins.Cmd.Tests;
@@ -28,7 +29,9 @@ public sealed class EmitterTests
     {
         var id = string.Concat(Enumerable.Repeat("0123456789abcdef", 4));
         Assert.Equal("[rtok 01234567 · 5 lines]", Emitter.Trailer(id, 5));
-        Assert.True(Emitter.NamesTheId("… 4 lines omitted (expand 01234567)", Names.ShortId(id)));
+        Assert.True(
+            Emitter.NamesTheId("… 4 lines omitted (expand 01234567)", ArchiveIds.Abbreviate(id))
+        );
     }
 
     // A formatter that trims a short output still has to name the archive; an in-place cut
@@ -106,7 +109,11 @@ public sealed class EmitterTests
         var id = row.RefId!["cat:".Length..];
         Assert.Equal(body, host.GetArchive(id));
         // The trailer names the id the host gave, not the sha256 the filter guessed.
-        Assert.Contains($"[rtok {Names.ShortId(id)} · 400 lines]", shown, StringComparison.Ordinal);
+        Assert.Contains(
+            $"[rtok {ArchiveIds.Abbreviate(id)} · 400 lines]",
+            shown,
+            StringComparison.Ordinal
+        );
         Assert.True(row.AfterBytes < row.BeforeBytes);
     }
 

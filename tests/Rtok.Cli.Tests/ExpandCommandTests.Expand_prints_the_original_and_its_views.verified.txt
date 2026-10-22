@@ -1,0 +1,19 @@
+﻿$ rtok expand <id> (exit 0)
+line 1
+line 2
+line 3
+line 4
+line 5 needle
+line 6
+line 7
+line 8
+$ rtok expand <id> --lines 3-5 (exit 0)
+line 3
+line 4
+line 5 needle
+$ rtok expand <id> --grep needle (exit 0)
+5:line 5 needle
+$ rtok expand <id> --grep needle --context 1 (exit 0)
+4:line 4
+5:line 5 needle
+6:line 6

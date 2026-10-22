@@ -202,10 +202,16 @@ public sealed partial class RtokStore
     /// writer may have committed the same body meanwhile. When that cannot be read, it stays.</summary>
     private void RemoveUnreferenced(Spilled body)
     {
-        if (!body.Created || body is not { Archive: { } id, Path: { } path })
+        if (body is { Created: true, Archive: { } id, Path: { } path })
         {
-            return;
+            RemoveUnreferenced(id, path);
         }
+    }
+
+    /// <summary>Removes the archive file at <paramref name="path"/> unless a row references
+    /// <paramref name="id"/>. When that cannot be read, it stays.</summary>
+    private void RemoveUnreferenced(string id, string path)
+    {
         try
         {
             using var scope = Enter();

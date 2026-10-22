@@ -2,7 +2,7 @@
 status: in progress
 priority: P1
 complexity: 3
-readiness: 10%
+readiness: 100%
 agent: Claude Code / claude-opus-5-5
 ---
 
@@ -38,7 +38,7 @@ Fuzz: `expand-range` in `tests/Rtok.Fuzz`: line-range and id-prefix strings neve
 Check: A CsCheck property test shows that every shortening path expands back byte-identical (CRLF, non-UTF-8, empty bodies), and all 25 range strings parse.
 
 Plan:
-1. Rtok.Plugin.Sdk: `ArchiveIds.Short` (8 hex) as the one place every trailer takes its id from; `InjectBudget`'s `dropped:post_tool` marker uses it.
+1. Rtok.Plugin.Sdk: `ArchiveIds.Abbreviate` (8 hex) as the one place every trailer takes its id from; `InjectBudget`'s `dropped:post_tool` marker uses it.
 2. Rtok.Store: archive files sharded as `<archive_dir>/<id[0..2]>/<id>` (written temp + rename, as now). `RtokStore.Archive.cs`: `PutArchive(session, body, agentId)`, `GetArchive`, `ArchiveIdsWithPrefix` (a range compare, no LIKE), decisions (`PutArchiveDecision`, `ArchiveDecision`, `LivePointer`) and `FreezeRecorded` (freeze plus the expand Measurement in one immediate transaction).
 3. Rtok.Archive (new, foundation): `LineRange` (rtok's parser plus the T522 spellings), `ExpandLines` (`--lines`, `--grep`, `--context`, `[expand] max_lines`), `Expander`: the one expand handler (id, lines, grep, context → bytes or error) that the CLI calls now and MCP calls in T15.
 4. Rtok.Cli: `rtok expand <id> [--lines a-b] [--grep re] [--context N] [--config]`, command model and snapshots regenerated.

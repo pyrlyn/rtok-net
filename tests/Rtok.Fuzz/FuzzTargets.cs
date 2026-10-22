@@ -19,7 +19,7 @@ internal static class FuzzTargets
         new("mcp-config", "T53", McpConfigText.Run),
         new("shell-words", "T53", ShellWordsText.Run),
         new("toml-edit", "T53", TomlEdit.Run),
-        new("expand-range", "T9", null),
+        new("expand-range", "T9", ExpandRange.Run),
         new("log-tail", "T10", LogTailText.Run),
         new("cli-argv", "T11", CliArgv.Run),
         new("change-preview", "T12.2", ChangePreviewText.Run),

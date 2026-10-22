@@ -32,27 +32,29 @@ public sealed partial class RtokStore
             {
                 continue;
             }
-            db.Measurements.Add(
-                new Measurement
-                {
-                    Ts = Now,
-                    Session = session,
-                    Plugin = m.Plugin,
-                    Kind = m.Kind,
-                    BeforeBytes = m.BeforeBytes,
-                    AfterBytes = m.AfterBytes,
-                    EstBefore = m.EstBefore,
-                    EstAfter = m.EstAfter,
-                    RefId = m.RefId,
-                    CallId = m.CallId,
-                    OnceKey = onceKey,
-                }
-            );
+            db.Measurements.Add(MeasurementRow(session, m, onceKey));
             // Saved one by one: the next row's once check must see this one.
             db.SaveChanges();
         }
         scope.Commit();
     }
+
+    /// <summary>The <c>measurements</c> row for <paramref name="m"/>, stamped now.</summary>
+    private Measurement MeasurementRow(string session, MeasurementInput m, string? onceKey) =>
+        new()
+        {
+            Ts = Now,
+            Session = session,
+            Plugin = m.Plugin,
+            Kind = m.Kind,
+            BeforeBytes = m.BeforeBytes,
+            AfterBytes = m.AfterBytes,
+            EstBefore = m.EstBefore,
+            EstAfter = m.EstAfter,
+            RefId = m.RefId,
+            CallId = m.CallId,
+            OnceKey = onceKey,
+        };
 
     public string? KvGet(string key)
     {

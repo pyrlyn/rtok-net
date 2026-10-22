@@ -68,6 +68,10 @@ See \fBrtok\-config\-validate\fR(1).
 Download a dependency's docs at its lockfile\-pinned version and index them for docs_query.
 See \fBrtok\-docs\-fetch\fR(1).
 .TP
+\fBexpand\fR
+Print an archived original byte for byte, or the lines, grep hits or context you ask for.
+See \fBrtok\-expand\fR(1).
+.TP
 \fBfilter\fR
 Filter stdin as the output of a command, without running it.
 See \fBrtok\-filter\fR(1).

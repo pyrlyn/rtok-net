@@ -31,6 +31,7 @@ public sealed class JsonTests
         ["completions"] = "prints or installs a shell script",
         ["man"] = "prints or writes roff pages",
         ["logs watch"] = "streams the log until Ctrl-C",
+        ["expand"] = "prints the archived bytes as they were",
         ["agents install"] = "writes host files",
         ["agents update"] = "writes host files",
         ["agents uninstall"] = "writes host files",

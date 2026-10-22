@@ -36,6 +36,7 @@ Tests:
 - `Rtok.Mcp.Tests` integration: in a non-repo cwd the root comes from the client's `roots/list`, and with no roots `worktree_list` answers "pass a path or open a project" instead of git's fatal message.
 - `Rtok.Mcp.Tests` integration: `rtok mcp -- <fake server>` over NDJSON and Content-Length passes `tools/list` byte-identical, forwards a malformed frame raw and resyncs, leaves `isError` results whole and keeps the server's exit code.
 - `Rtok.Mcp.Tests` CsCheck: the wrapper shortens only `tools/call` `result.content[].text`, and the shortened text comes back byte for byte through `expand`.
+- `Rtok.Mcp.Tests` Verify: MCP `expand` through the real server returns what `rtok expand` prints for the same id and lines (both call `Rtok.Archive.Expander`, T9), and a range past the line count is an `isError` result.
 - `Rtok.Cli.Tests` integration: `rtok mcp --call <tool> --json <args>` prints the same result as the stdio `tools/call` and leaves no child process behind on any exit path.
 
 Spec: catalog A3, catalog B4 in [docs/port/catalog.md](../../docs/port/catalog.md).

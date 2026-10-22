@@ -577,6 +577,55 @@
       ]
     },
     {
+      "path": "expand",
+      "aliases": [],
+      "description": "Print an archived original byte for byte, or the lines, grep hits or context you ask for.",
+      "arguments": [
+        {
+          "type": "string",
+          "description": "The id an \"expand\" trailer names: 8 or more hex characters."
+        }
+      ],
+      "options": [
+        {
+          "names": [
+            "--lines"
+          ],
+          "type": "string?",
+          "description": "Only lines a-b, 1-based and inclusive.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--grep"
+          ],
+          "type": "string?",
+          "description": "Only lines matching this regex, printed N:line.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--context"
+          ],
+          "type": "uint",
+          "description": "Lines of context around each --grep hit.",
+          "default": "0",
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "filter",
       "aliases": [],
       "description": "Filter stdin as the output of a command, without running it.",

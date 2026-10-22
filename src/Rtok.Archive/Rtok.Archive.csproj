@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Archive and expand (plan T9): line ranges, filters, the one expand handler CLI and MCP share. -->
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+</Project>

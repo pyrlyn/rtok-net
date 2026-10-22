@@ -49,6 +49,7 @@ app.Add("logs", LogsCommands.Show);
 app.Add("logs export", LogsCommands.Export);
 app.Add("logs watch", LogsCommands.Watch);
 app.Add("hook", HookCommand.Run);
+app.Add("expand", ExpandCommand.Run);
 app.Run(args);
 
 // "rtok 0.1.0 (3ebd2f7a1)".

@@ -33,6 +33,9 @@ public sealed class FlagCoverageTests
         "plugins.cmd.agent", // `run`: the sub-agent the Bash rewrite dispatched this call for
         "plugins.cmd.stdin", // `filter`: stdin is always the payload; kept for its callers
         "plugins.cmd.archive", // `filter`: takes the `run` path for this one payload
+        "expand.lines", // `expand`: the view of one archive; [expand] max_lines caps them all
+        "expand.grep",
+        "expand.context",
     };
 
     [Fact]

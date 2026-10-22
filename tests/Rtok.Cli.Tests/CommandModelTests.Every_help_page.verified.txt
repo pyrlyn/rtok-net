@@ -19,6 +19,7 @@ Commands:
   config validate     Check a config file: unknown keys, types and ranges, with file:line; exit 1 on any problem.
   docs fetch          Download a dependency's docs at its lockfile-pinned version and index them for docs_query.
      Cargo.lock crates come from docs.rs, packages.lock.json packages from nuget.org.
+  expand              Print an archived original byte for byte, or the lines, grep hits or context you ask for.
   filter              Filter stdin as the output of a command, without running it.
   hook                Run one hook event from stdin, or serve hooks as this home's resident.
   logs                Print the last lines of rtok's log, numbered 1 = newest, across the rotated files.
@@ -200,6 +201,20 @@ Arguments:
   [0] <string>    The dependency, as the lockfile names it.
 
 Options:
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok expand --help
+Usage: expand [arguments...] [options...] [-h|--help] [--version]
+
+Print an archived original byte for byte, or the lines, grep hits or context you ask for.
+
+Arguments:
+  [0] <string>    The id an "expand" trailer names: 8 or more hex characters.
+
+Options:
+  --lines <string?>     Only lines a-b, 1-based and inclusive. [Default: null]
+  --grep <string?>      Only lines matching this regex, printed N:line. [Default: null]
+  --context <uint>      Lines of context around each --grep hit. [Default: 0]
   --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok filter --help

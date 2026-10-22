@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="../Rtok.Agents/Rtok.Agents.csproj" />
     <ProjectReference Include="../Rtok.Agents.Hosts/Rtok.Agents.Hosts.csproj" />
+    <ProjectReference Include="../Rtok.Archive/Rtok.Archive.csproj" />
     <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
     <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../Rtok.Hooks/Rtok.Hooks.csproj" />

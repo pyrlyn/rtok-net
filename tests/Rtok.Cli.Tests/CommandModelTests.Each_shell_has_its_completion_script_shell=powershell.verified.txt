@@ -4,7 +4,7 @@
 Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $children = @{
-        '' = @('agents', 'completions', 'config', 'docs', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
+        '' = @('agents', 'completions', 'config', 'docs', 'expand', 'filter', 'hook', 'logs', 'man', 'plugins', 'run')
         'agents' = @('info', 'install', 'list', 'uninstall', 'update', 'usage')
         'config' = @('get', 'init', 'path', 'set', 'show', 'validate')
         'docs' = @('fetch')
@@ -26,6 +26,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config show' = @('--sources', '--json', '--config', '-h', '--help', '--version')
         'config validate' = @('--config', '-h', '--help', '--version')
         'docs fetch' = @('--config', '-h', '--help', '--version')
+        'expand' = @('--lines', '--grep', '--context', '--config', '-h', '--help', '--version')
         'filter' = @('--stdin', '--cmd', '--archive', '--no-ref', '--config', '-h', '--help', '--version')
         'hook' = @('--host', '--serve', '-h', '--help', '--version')
         'logs' = @('--lines', '--json', '--config', '-h', '--help', '--version')
@@ -55,6 +56,10 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'config show|--config'
         'config validate|--config'
         'docs fetch|--config'
+        'expand|--lines'
+        'expand|--grep'
+        'expand|--context'
+        'expand|--config'
         'filter|--cmd'
         'filter|--config'
         'hook|--host'
@@ -70,6 +75,7 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
     )
     $hints = @{
         '|completions' = 'Print or install shell completions (bash, zsh, fish, powershell; clink for Windows cmd).'
+        '|expand' = 'Print an archived original byte for byte, or the lines, grep hits or context you ask for.'
         '|filter' = 'Filter stdin as the output of a command, without running it.'
         '|hook' = 'Run one hook event from stdin, or serve hooks as this home''s resident.'
         '|logs' = 'Print the last lines of rtok''s log, numbered 1 = newest, across the rotated files.'
@@ -181,6 +187,13 @@ Register-ArgumentCompleter -Native -CommandName 'rtok' -ScriptBlock {
         'docs fetch|-h' = 'Show help.'
         'docs fetch|--help' = 'Show help.'
         'docs fetch|--version' = 'Show version.'
+        'expand|--lines' = 'Only lines a-b, 1-based and inclusive.'
+        'expand|--grep' = 'Only lines matching this regex, printed N:line.'
+        'expand|--context' = 'Lines of context around each --grep hit.'
+        'expand|--config' = 'The config file to use instead of ~/.rtok/config.toml.'
+        'expand|-h' = 'Show help.'
+        'expand|--help' = 'Show help.'
+        'expand|--version' = 'Show version.'
         'filter|--stdin' = 'Read the payload from stdin (OpenCode tool.execute.after).'
         'filter|--cmd' = 'Command family hint (git status, cargo test, …).'
         'filter|--archive' = 'Archive stdin and print the expand trailer (same path as run).'

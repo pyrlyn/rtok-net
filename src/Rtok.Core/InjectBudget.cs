@@ -13,9 +13,9 @@ public static class InjectBudget
     /// <summary>The budget when the config sets none.</summary>
     public const int DefaultTokens = 800;
 
-    // An archive id is 64 hex digits whatever the bytes, so a placeholder of that length
+    // A printed archive id is 8 hex digits whatever the bytes, so a placeholder of that length
     // prices the marker before anything is archived.
-    private static readonly string IdPlaceholder = new('0', 64);
+    private static readonly string IdPlaceholder = new('0', ArchiveIds.ShortLength);
 
     /// <summary><c>plugins.inject.budget_tokens</c>, or <see cref="DefaultTokens"/>.</summary>
     public static int Tokens(IHost host)
@@ -223,7 +223,7 @@ public static class InjectBudget
         var tokens = host.Estimate(dropped, TextClass.Prose);
         return id.Length == 0
             ? $"dropped:post_tool:{tokens}"
-            : $"dropped:post_tool:{tokens} · expand: rtok expand {id}";
+            : $"dropped:post_tool:{tokens} · expand: rtok expand {ArchiveIds.Abbreviate(id)}";
     }
 
     // Fail open: a store that cannot archive still gets the marker, without an id.

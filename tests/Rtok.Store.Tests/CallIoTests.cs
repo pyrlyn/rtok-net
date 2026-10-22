@@ -89,7 +89,10 @@ public sealed class CallIoTests
         var archive = db.Archive.Single();
         Assert.Equal((Sha(big), 100L, "s"), (archive.Id, archive.Bytes, archive.Session));
         Assert.Equal(big, File.ReadAllBytes(archive.Path));
-        Assert.Equal(Path.Combine(h.Options.ArchiveDir!, archive.Id), archive.Path);
+        Assert.Equal(
+            Path.Combine(h.Options.ArchiveDir!, archive.Id[..2], archive.Id),
+            archive.Path
+        );
         if (!OperatingSystem.IsWindows())
         {
             Assert.Equal(
@@ -102,7 +105,7 @@ public sealed class CallIoTests
             (archive.Id, archive.Id, null, 100L),
             (io.RequestArchive, io.ResponseArchive, io.RequestJson, io.RequestBytes)
         );
-        Assert.Single(Directory.GetFiles(h.Options.ArchiveDir!));
+        Assert.Single(Directory.GetFiles(h.Options.ArchiveDir!, "*", SearchOption.AllDirectories));
     }
 
     [Fact]
@@ -133,7 +136,7 @@ public sealed class CallIoTests
             h.Store.InsertCallIo(call, Encoding.UTF8.GetBytes(new string('y', 100)), null)
         );
 
-        Assert.Empty(Directory.GetFiles(h.Options.ArchiveDir!));
+        Assert.Empty(Directory.GetFiles(h.Options.ArchiveDir!, "*", SearchOption.AllDirectories));
         using var db = h.Read();
         Assert.Empty(db.Archive);
     }

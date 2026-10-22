@@ -20,6 +20,7 @@ public sealed class MemoryHost : ICapabilities
     private readonly List<Measurement> _recorded = [];
     private readonly List<string> _logged = [];
     private readonly Dictionary<string, byte[]> _blobs = new(StringComparer.Ordinal);
+    private readonly List<string> _order = [];
     private readonly Dictionary<string, ArchiveDecision> _decisions = new(StringComparer.Ordinal);
     private readonly Dictionary<(string Sha256, string? Context), string> _session = [];
 
@@ -135,8 +136,17 @@ public sealed class MemoryHost : ICapabilities
     /// broken store does.</summary>
     public bool ArchiveFails { get; set; }
 
-    /// <summary>Content-addressed: the same bytes always get the same id, and two different
-    /// bodies never share one.</summary>
+    /// <summary>Every archive id put so far, full length, in order of first put.</summary>
+    public IReadOnlyList<string> Archived()
+    {
+        lock (_gate)
+        {
+            return [.. _order];
+        }
+    }
+
+    /// <summary>Content-addressed like the host's store: the id is the lowercase hex SHA-256 of
+    /// the bytes, so the same bytes always get the same id.</summary>
     public string PutArchive(ReadOnlySpan<byte> body)
     {
         if (ArchiveFails)
@@ -144,13 +154,14 @@ public sealed class MemoryHost : ICapabilities
             throw new IOException("archive write failed");
         }
 
-        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
-        SHA256.HashData(body, hash);
-        var id = "mem" + Convert.ToHexStringLower(hash[..8]);
+        var id = Convert.ToHexStringLower(SHA256.HashData(body));
         var copy = body.ToArray();
         lock (_gate)
         {
-            _blobs[id] = copy;
+            if (_blobs.TryAdd(id, copy))
+            {
+                _order.Add(id);
+            }
         }
 
         return id;
