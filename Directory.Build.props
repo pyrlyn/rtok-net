@@ -16,6 +16,7 @@
     <IsPackable>false</IsPackable>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <WarningsAsErrors>$(WarningsAsErrors);RS0030</WarningsAsErrors>
+    <UseSharedCompilation>false</UseSharedCompilation>
     <!-- Verify's OpenSource exemption (plan/README.md N11): renew yearly; valid only while rtok-net earns no revenue. -->
     <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
     <Verify_SponsorshipExemptionUntil>2027-10</Verify_SponsorshipExemptionUntil>
