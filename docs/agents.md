@@ -74,4 +74,9 @@ module.
 | `openhands` | OpenHands | CLI | — | yes | — | — | mcp |
 | `augment` | Augment Auggie CLI | CLI | — | yes | — | — | mcp |
 | `reasonix` | Reasonix | CLI | — | yes | — | — | mcp |
+| `trae` | Trae | Desktop | — | — | — | — | — |
+
+Not supported:
+
+- `trae`: Trae documents global MCP servers only through its Settings > MCP panel and names no user-level MCP file; the one file it documents is the project's .trae/mcp.json. Checked 2026-10-22 against <https://docs.trae.ai/ide/add-mcp-servers>.
 <!-- agents-table:end -->

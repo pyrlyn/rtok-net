@@ -1,0 +1,7 @@
+﻿{
+  Code: 1,
+  Stdout: ,
+  Stderr:
+error: trae is not supported: Trae documents global MCP servers only through its Settings > MCP panel and names no user-level MCP file; the one file it documents is the project's .trae/mcp.json
+
+}

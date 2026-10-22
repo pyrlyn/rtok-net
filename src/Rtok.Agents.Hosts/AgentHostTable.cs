@@ -651,4 +651,17 @@ internal static class AgentHostTable
             )
         ),
     ];
+
+    /// <summary>Hosts rtok was asked for and has no installer for, in <c>agents list</c> order.</summary>
+    public static IReadOnlyList<UnsupportedHost> Unsupported { get; } =
+    [
+        new(
+            "trae",
+            "Trae",
+            HostKind.Desktop,
+            new DateOnly(2026, 10, 22),
+            ["https://docs.trae.ai/ide/add-mcp-servers"],
+            "Trae documents global MCP servers only through its Settings > MCP panel and names no user-level MCP file; the one file it documents is the project's .trae/mcp.json"
+        ),
+    ];
 }

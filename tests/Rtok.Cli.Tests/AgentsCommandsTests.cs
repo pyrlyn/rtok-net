@@ -1,5 +1,6 @@
 using Rtok.Agents.Hosts.Mcp;
 using Rtok.Config;
+using Rtok.Testing;
 
 namespace Rtok.Cli.Tests;
 
@@ -27,4 +28,33 @@ public sealed class AgentsCommandsTests
                 .Concat(SetupPaths.ProxyKeys)
                 .Except(ConfigSchema.LeafKeys, StringComparer.Ordinal)
         );
+
+    /// <summary>Trae names no user-level MCP file: install says so and leaves the home empty.</summary>
+    [Fact]
+    public async Task Install_trae_is_not_supported_and_writes_nothing()
+    {
+        using var home = new TempDir("rtok-trae-");
+        var run = RtokBinary.Exec(
+            ["agents", "install", "trae"],
+            new Dictionary<string, string?>(StringComparer.Ordinal)
+            {
+                ["HOME"] = home.Path,
+                ["USERPROFILE"] = home.Path,
+                ["RTOK_HOME"] = home.Combine(".rtok"),
+                ["XDG_CONFIG_HOME"] = home.Combine(".config"),
+            }
+        );
+
+        Assert.Empty(
+            Directory.EnumerateFileSystemEntries(home.Path, "*", SearchOption.AllDirectories)
+        );
+        await Verify(
+            new
+            {
+                run.Code,
+                run.Stdout,
+                run.Stderr,
+            }
+        );
+    }
 }

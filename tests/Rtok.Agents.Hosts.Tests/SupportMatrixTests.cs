@@ -39,12 +39,38 @@ public sealed class SupportMatrixTests
     [Fact]
     public void Every_app_has_a_row()
     {
-        var rows = SupportMatrix.Table().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        Assert.Equal(2 + AgentHosts.All.Sum(h => h.Variants.Count), rows.Length);
+        var rows = Rows();
+        Assert.Equal(
+            2 + AgentHosts.All.Sum(h => h.Variants.Count) + AgentHosts.Unsupported.Count,
+            rows.Count
+        );
         Assert.Contains(
             "| `goose` | Goose | Desktop | — | yes | — | — | mcp |",
             rows,
             StringComparer.Ordinal
         );
     }
+
+    [Fact]
+    public void Trae_has_a_row_and_the_reason_it_is_not_supported()
+    {
+        var table = SupportMatrix.Table();
+        var trae = AgentHosts.Unsupported.Single(h =>
+            string.Equals(h.Id, "trae", StringComparison.Ordinal)
+        );
+
+        Assert.Contains(
+            "| `trae` | Trae | Desktop | — | — | — | — | — |",
+            Rows(),
+            StringComparer.Ordinal
+        );
+        Assert.Contains(
+            $"- `trae`: {trae.Reason}. Checked 2026-10-22 against <https://docs.trae.ai/ide/add-mcp-servers>.\n",
+            table,
+            StringComparison.Ordinal
+        );
+    }
+
+    private static List<string> Rows() =>
+        [.. SupportMatrix.Table().Split('\n').Where(l => l.StartsWith('|'))];
 }

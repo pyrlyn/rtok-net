@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Rtok.Plugin.Sdk;
 
@@ -24,7 +25,10 @@ public static class SupportMatrix
         Surface.Proxy,
     ];
 
-    /// <summary>One row per app: each module's support and the rtok surfaces the app reaches.</summary>
+    /// <summary>
+    /// One row per app: each module's support and the rtok surfaces the app reaches; then why
+    /// each unsupported host has no installer, with the day and the docs it was checked against.
+    /// </summary>
     public static string Table()
     {
         var text = new StringBuilder(
@@ -46,6 +50,21 @@ public static class SupportMatrix
                     .Append(reached.Count == 0 ? "—" : string.Join(", ", reached))
                     .Append(" |\n");
             }
+        }
+        foreach (var host in AgentHosts.Unsupported)
+        {
+            text.Append(
+                $"| `{host.Id}` | {host.Name} | {host.Kind.Label()} | — | — | — | — | — |\n"
+            );
+        }
+        text.Append("\nNot supported:\n\n");
+        foreach (var host in AgentHosts.Unsupported)
+        {
+            text.Append(
+                    $"- `{host.Id}`: {host.Reason}. Checked {host.Checked.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)} against "
+                )
+                .AppendJoin(", ", host.Sources.Select(s => $"<{s}>"))
+                .Append(".\n");
         }
         return text.ToString();
     }

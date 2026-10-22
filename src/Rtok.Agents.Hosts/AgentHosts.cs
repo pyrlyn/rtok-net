@@ -6,6 +6,9 @@ public static class AgentHosts
     /// <summary>Every host, in <c>agents list</c> order.</summary>
     public static IReadOnlyList<AgentHost> All => AgentHostTable.All;
 
+    /// <summary>Hosts rtok has no installer for, and why: <c>agents install</c> refuses them by name.</summary>
+    public static IReadOnlyList<UnsupportedHost> Unsupported => AgentHostTable.Unsupported;
+
     /// <summary>The host with id <paramref name="id"/>; null when there is none.</summary>
     public static AgentHost? Find(string id) =>
         AgentHostTable.All.FirstOrDefault(h => string.Equals(h.Id, id, StringComparison.Ordinal));
@@ -23,7 +26,7 @@ public static class AgentHosts
     }
 
     /// <summary>The hosts named, in the order given.</summary>
-    /// <exception cref="AgentsException">None is named, or one is unknown.</exception>
+    /// <exception cref="AgentsException">None is named, or one is unknown or not supported.</exception>
     public static IReadOnlyList<AgentHost> Resolve(IReadOnlyList<string> ids)
     {
         ArgumentNullException.ThrowIfNull(ids);
@@ -31,6 +34,12 @@ public static class AgentHosts
         {
             throw new AgentsException("no host given");
         }
-        return [.. ids.Select(id => Find(id) ?? throw new AgentsException($"unknown host: {id}"))];
+        return [.. ids.Select(id => Find(id) ?? throw Unknown(id))];
     }
+
+    private static AgentsException Unknown(string id) =>
+        Unsupported.FirstOrDefault(h => string.Equals(h.Id, id, StringComparison.Ordinal))
+            is { } host
+            ? new AgentsException($"{id} is not supported: {host.Reason}")
+            : new AgentsException($"unknown host: {id}");
 }
