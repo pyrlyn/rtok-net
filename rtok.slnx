@@ -74,6 +74,8 @@
     <Project Path="src/Rtok.Measure/Rtok.Measure.csproj" />
     <Project Path="src/Rtok.Core/Rtok.Core.csproj" />
     <Project Path="src/Rtok.Doctor/Rtok.Doctor.csproj" />
+    <Project Path="src/Rtok.Report/Rtok.Report.csproj" />
+    <Project Path="src/Rtok.Report.Pdf/Rtok.Report.Pdf.csproj" />
     <Project Path="src/Rtok.Hook/Rtok.Hook.csproj" />
     <Project Path="src/Rtok.Mcp.Install/Rtok.Mcp.Install.csproj" />
     <Project Path="src/Rtok.Plugins.Cmd/Rtok.Plugins.Cmd.csproj" />
@@ -107,6 +109,8 @@
     <Project Path="tests/Rtok.Measure.Tests/Rtok.Measure.Tests.csproj" />
     <Project Path="tests/Rtok.Core.Tests/Rtok.Core.Tests.csproj" />
     <Project Path="tests/Rtok.Doctor.Tests/Rtok.Doctor.Tests.csproj" />
+    <Project Path="tests/Rtok.Report.Tests/Rtok.Report.Tests.csproj" />
+    <Project Path="tests/Rtok.Report.Pdf.Tests/Rtok.Report.Pdf.Tests.csproj" />
     <Project Path="tests/Rtok.Fuzz/Rtok.Fuzz.csproj" />
     <Project Path="tests/Rtok.Fuzz.Tests/Rtok.Fuzz.Tests.csproj" />
     <Project Path="tests/Rtok.Hooks.Tests/Rtok.Hooks.Tests.csproj" />

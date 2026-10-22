@@ -14,12 +14,12 @@ namespace Rtok.Measure;
 /// request bodies: a changed <c>tools</c> array, a changed <c>system</c> prompt, else
 /// <c>unknown</c> (no body, or the change was inside <c>messages</c>).
 /// </summary>
-internal static class CacheHealth
+public static class CacheHealth
 {
     public const long BustCreateTokens = 20_000;
 
     /// <summary>One API request as the cache saw it; <see cref="Bust"/> names the cause of a bust.</summary>
-    internal sealed record Turn(
+    public sealed record Turn(
         long? CallId,
         long Input,
         long CacheCreate,
@@ -27,26 +27,34 @@ internal static class CacheHealth
         string? Bust
     );
 
-    internal sealed record Session(string Id, IReadOnlyList<Turn> Turns)
+    public sealed record Session(string Id, IReadOnlyList<Turn> Turns)
     {
         public int Busts => Turns.Count(t => t.Bust is not null);
         public long CacheRead => Turns.Sum(t => t.CacheRead);
         public long CacheCreate => Turns.Sum(t => t.CacheCreate);
     }
 
-    /// <summary>Every session with usage rows, oldest first.</summary>
-    public static IReadOnlyList<Session> Report(RtokStore store) =>
+    /// <summary>Every session with usage rows at or after <paramref name="since"/> (Unix
+    /// seconds), oldest first.</summary>
+    public static IReadOnlyList<Session> Report(RtokStore store, long since = 0)
+    {
+        ArgumentNullException.ThrowIfNull(store);
+        return
         [
             .. store
-                .UsageSessions()
-                .Select(s => new Session(s, Analyse(store.UsageTurns(s), store.CallRequest))),
+                .UsageSessions(since)
+                .Select(s => new Session(
+                    s,
+                    Analyse(store.UsageTurns(s, since), store.CallRequest)
+                )),
         ];
+    }
 
     /// <summary>
     /// Turns with busts attributed. <paramref name="body"/> is asked only for the two requests
     /// around a bust.
     /// </summary>
-    public static IReadOnlyList<Turn> Analyse(
+    internal static IReadOnlyList<Turn> Analyse(
         IReadOnlyList<UsageTurn> rows,
         Func<long, byte[]?> body
     )
@@ -70,7 +78,7 @@ internal static class CacheHealth
         return turns;
     }
 
-    public static string Table(IReadOnlyList<Session> report)
+    internal static string Table(IReadOnlyList<Session> report)
     {
         List<IReadOnlyList<string>> rows =
         [
@@ -98,7 +106,7 @@ internal static class CacheHealth
         return report.Count == 0 ? s + "no usage rows (run `rtok proxy` first)\n" : s;
     }
 
-    public static string Json(IReadOnlyList<Session> report)
+    internal static string Json(IReadOnlyList<Session> report)
     {
         var buffer = new ArrayBufferWriter<byte>();
         using (var w = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))

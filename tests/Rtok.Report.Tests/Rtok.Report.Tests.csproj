@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- JIT lane for rtok report (T31): sections, advice rules, md, html and ai goldens and the budget. -->
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+    <PackageReference Include="Verify.XunitV3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../../src/Rtok.Report/Rtok.Report.csproj" />
+    <ProjectReference Include="../../src/Rtok.Report.Pdf/Rtok.Report.Pdf.csproj" />
+  </ItemGroup>
+</Project>

@@ -78,6 +78,7 @@ public static class ConfigValidator
         ["plugins.graph.map_rank"] = ["refs", "pagerank"],
         ["plugins.graph.backend"] = GraphBackends,
         ["proxy.flex.on_429"] = ["none", "backoff", "default"],
+        ["report.format"] = ["md", "html", "pdf"],
         // Any other value would turn the semantic tier on with the placeholder hash embedding.
         ["plugins.proxy.semantic_cache.embed_backend"] = ["hash"],
     };

@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rtok report</title>
+<style>body{font-family:sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;color:#222}table{border-collapse:collapse;margin:1rem 0}th,td{border:1px solid #ccc;padding:.25rem .5rem;text-align:left}td.n,th.n{text-align:right}pre{background:#f6f6f6;padding:1rem;overflow-x:auto}svg.chart{background:#fafafa;margin:1rem 0}</style>
+</head>
+<body>
+<h1>rtok report</h1>
+<p>Window 2026-12-16 → 2027-01-15 (30d) · store <code>{tmp}/data/rtok.db</code></p>
+<section id="window">
+<h2>Window</h2>
+<table>
+<thead><tr><th>ledger</th><th class="n">in_window</th><th class="n">total</th></tr></thead>
+<tbody>
+<tr><td>calls</td><td class="n">17</td><td class="n">18</td></tr>
+<tr><td>measurements</td><td class="n">11</td><td class="n">11</td></tr>
+<tr><td>usage</td><td class="n">3</td><td class="n">3</td></tr>
+</tbody>
+</table>
+</section>
+<section id="savings">
+<h2>Savings</h2>
+<p>Estimated tokens from <code>Measurement</code> rows only: est_before − est_after, net — an <code>expand</code> row counts negative, because retrieval costs tokens. A <code>Measurement</code> row carries no turn count, so these are floors, not context-token-turns.</p>
+<table>
+<thead><tr><th>plugin</th><th class="n">rows</th><th class="n">est_before</th><th class="n">est_after</th><th class="n">saved</th></tr></thead>
+<tbody>
+<tr><td>archive</td><td class="n">2</td><td class="n">0</td><td class="n">1000</td><td class="n">-1000</td></tr>
+<tr><td>cmd</td><td class="n">5</td><td class="n">15075</td><td class="n">1560</td><td class="n">13515</td></tr>
+<tr><td>graph</td><td class="n">1</td><td class="n">100</td><td class="n">300</td><td class="n">-200</td></tr>
+<tr><td>inject</td><td class="n">2</td><td class="n">4000</td><td class="n">4000</td><td class="n">0</td></tr>
+<tr><td>read</td><td class="n">1</td><td class="n">2000</td><td class="n">500</td><td class="n">1500</td></tr>
+</tbody>
+</table>
+<svg class="chart" width="600" height="128" role="img" aria-label="saved tokens per plugin">
+<text x="0" y="16" font-size="12">archive</text><rect x="140" y="4" width="0" height="14" fill="#4a7bd0"/><text x="146" y="16" font-size="12">-1000</text>
+<text x="0" y="40" font-size="12">cmd</text><rect x="140" y="28" width="440" height="14" fill="#4a7bd0"/><text x="586" y="40" font-size="12">13515</text>
+<text x="0" y="64" font-size="12">graph</text><rect x="140" y="52" width="0" height="14" fill="#4a7bd0"/><text x="146" y="64" font-size="12">-200</text>
+<text x="0" y="88" font-size="12">inject</text><rect x="140" y="76" width="0" height="14" fill="#4a7bd0"/><text x="146" y="88" font-size="12">0</text>
+<text x="0" y="112" font-size="12">read</text><rect x="140" y="100" width="48" height="14" fill="#4a7bd0"/><text x="194" y="112" font-size="12">1500</text>
+</svg>
+<p>Total: 13815 est tokens over 11 <code>Measurement</code> rows in window.</p>
+</section>
+<section id="calls">
+<h2>Calls</h2>
+<p>Latency per surface, nearest-rank p50/p95 over the calls that recorded one.</p>
+<table>
+<thead><tr><th>surface</th><th class="n">calls</th><th class="n">timed</th><th class="n">p50_ms</th><th class="n">p95_ms</th></tr></thead>
+<tbody>
+<tr><td>hook</td><td class="n">13</td><td class="n">3</td><td class="n">3.0</td><td class="n">4.0</td></tr>
+<tr><td>mcp</td><td class="n">1</td><td class="n">1</td><td class="n">12.5</td><td class="n">12.5</td></tr>
+<tr><td>proxy</td><td class="n">3</td><td class="n">3</td><td class="n">900.0</td><td class="n">900.0</td></tr>
+</tbody>
+</table>
+<svg class="chart" width="600" height="80" role="img" aria-label="calls per surface">
+<text x="0" y="16" font-size="12">hook</text><rect x="140" y="4" width="440" height="14" fill="#4a7bd0"/><text x="586" y="16" font-size="12">13</text>
+<text x="0" y="40" font-size="12">mcp</text><rect x="140" y="28" width="33" height="14" fill="#4a7bd0"/><text x="179" y="40" font-size="12">1</text>
+<text x="0" y="64" font-size="12">proxy</text><rect x="140" y="52" width="101" height="14" fill="#4a7bd0"/><text x="247" y="64" font-size="12">3</text>
+</svg>
+<table>
+<thead><tr><th>hook</th><th class="n">calls</th><th class="n">measured</th></tr></thead>
+<tbody>
+<tr><td>Stop</td><td class="n">10</td><td class="n">0</td></tr>
+<tr><td>PreToolUse</td><td class="n">3</td><td class="n">3</td></tr>
+</tbody>
+</table>
+<p>17 of 18 <code>calls</code> rows in window (30d); surfaces beyond hook/mcp/proxy are not in the section set.</p>
+</section>
+<section id="cache">
+<h2>Cache</h2>
+<p>Prompt-cache busts by cause, from the proxy&#39;s <code>usage</code> rows.</p>
+<table>
+<thead><tr><th>session</th><th class="n">turns</th><th class="n">cache_read</th><th class="n">cache_create</th><th class="n">busts</th></tr></thead>
+<tbody>
+<tr><td>s1</td><td class="n">3</td><td class="n">30200</td><td class="n">61500</td><td class="n">1</td></tr>
+</tbody>
+</table>
+<svg class="chart" width="600" height="32" role="img" aria-label="busts per cause">
+<text x="0" y="16" font-size="12">tools</text><rect x="140" y="4" width="440" height="14" fill="#4a7bd0"/><text x="586" y="16" font-size="12">1</text>
+</svg>
+<p>Busts: 1 over 3 turns in 1 session(s).</p>
+</section>
+<section id="expand">
+<h2>Expand</h2>
+<p>How often a live-zone pointer had to be expanded (<code>archive_decisions</code> rows).</p>
+<table>
+<thead><tr><th class="n">decisions</th><th class="n">expanded</th><th class="n">rate</th><th class="n">cost</th><th class="n">cost_rows</th></tr></thead>
+<tbody>
+<tr><td class="n">10</td><td class="n">2</td><td class="n">20.0%</td><td class="n">1000</td><td class="n">2</td></tr>
+</tbody>
+</table>
+<p><code>rtok expand</code> froze 2 of 10 live-zone pointers (20.0%). Expanded: 747c28ad2205a69cd34e8a3efd323d48ae2bda83f860b2b4a23751fa509083d1, bc5135b8dc334f006532b3ad44e54b928b874b5f190798ba3175caced2e069d5.</p>
+</section>
+<section id="config">
+<h2>Config</h2>
+<p>Every effective key with its origin — the <code>config show --sources</code> page.</p>
+<table>
+<thead><tr><th>key</th><th>value</th><th>source</th></tr></thead>
+<tbody>
+<tr><td>core.archive_dir</td><td>{tmp}/archive</td><td>user {tmp}/user/.rtok/config.toml:3</td></tr>
+<tr><td>core.db_path</td><td>{tmp}/data/rtok.db</td><td>user {tmp}/user/.rtok/config.toml:2</td></tr>
+</tbody>
+</table>
+</section>
+<section id="doctor">
+<h2>Doctor</h2>
+<p>Live probes (the <code>rtok doctor</code> page), not store rows.</p>
+<pre>hooks: 2 (fixture)
+</pre>
+</section>
+<section id="recommendations">
+<h2>Recommendations</h2>
+<ol>
+<li><strong>cache-bust</strong>: session s1 turn 3 busted the prompt cache (cause tools): 31000 cache-create tokens re-written with cache_read 200 — pin the tool list; 31000 tokens would have stayed cached (1 cache bust over 3 turns in 1 session with usage rows)</li>
+<li><strong>top-sinks</strong>: cmd git cost 40000 bytes over 1 Measurement row — add a [plugins.cmd] rules entry for `git` (1 cmd Measurement row for git, 11 Measurement rows in window)</li>
+<li><strong>top-sinks</strong>: cmd cargo cost 20000 bytes over 1 Measurement row — add a [plugins.cmd] rules entry for `cargo` (1 cmd Measurement row for cargo, 11 Measurement rows in window)</li>
+<li><strong>inject-budget</strong>: inject averages 2000 est tokens/turn over 2 inject Measurement rows vs [plugins.inject] budget_tokens 800 — 2400 tokens over budget; trim modes and memory recall (2 inject Measurement rows)</li>
+<li><strong>top-sinks</strong>: read src/big.cs cost 8000 bytes over 1 Measurement row — set [plugins.read] default_mode = &quot;map&quot; (1 read Measurement row for src/big.cs, 11 Measurement rows in window)</li>
+<li><strong>expand-rate</strong>: expand rate 20.0% (2 of 10 live-zone pointers re-read) is above [expand] max_rate 5.0% — re-expansions cost 1000 est tokens over 2 rows (10 archive_decisions rows, 2 archive Measurement rows of kind expand)</li>
+<li><strong>retire-plugin</strong>: plugin archive net -1000 est tokens over 2 Measurement rows (≤ 0) — retire it rather than stack it (2 archive Measurement rows)</li>
+<li><strong>archive-window</strong>: archive keep_turns 4 with 2 of 10 pointers re-read via rtok expand (1000 est tokens over 2 rows) — old results ARE re-read; raise keep_turns or min_tokens (1500) so volatile results stay live (10 archive_decisions rows, 2 expand Measurement rows)</li>
+<li><strong>retire-plugin</strong>: plugin graph net -200 est tokens over 1 Measurement row (≤ 0) — retire it rather than stack it (1 graph Measurement row)</li>
+<li><strong>top-sinks</strong>: cmd rewrite cost 300 bytes over 3 Measurement rows — add a [plugins.cmd] rules entry for `rewrite` (3 cmd Measurement rows for rewrite, 11 Measurement rows in window)</li>
+<li><strong>retire-plugin</strong>: plugin inject net 0 est tokens over 2 Measurement rows (≤ 0) — retire it rather than stack it (2 inject Measurement rows)</li>
+<li><strong>idle-hook</strong>: Stop fired 10 times in window with no Measurement row on its path — weight on the 10 ms hook path for nothing; 0 tokens saved (10 Stop hook calls in window, 11 Measurement rows in window)</li>
+</ol>
+</section>
+</body>
+</html>

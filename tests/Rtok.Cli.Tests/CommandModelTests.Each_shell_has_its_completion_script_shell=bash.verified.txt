@@ -3,7 +3,7 @@
 
 _rtok_children() {
     case $1 in
-        '') echo 'agents batch bench completions config docs doctor expand filter hook logs man plugins proxy run stats task web wrap' ;;
+        '') echo 'agents batch bench completions config docs doctor expand filter hook logs man plugins proxy report run stats task web wrap' ;;
         'agents') echo 'info install junk list uninstall update usage' ;;
         'agents junk') echo 'clear list' ;;
         'batch') echo 'fetch status submit' ;;
@@ -47,6 +47,7 @@ _rtok_options() {
         'man') echo '--dir -h --help --version' ;;
         'plugins') echo '--json -h --help --version' ;;
         'proxy') echo '--port --upstream --mode --dry-run --config -h --help --version' ;;
+        'report') echo '--format --out --since --ai --config -h --help --version' ;;
         'run') echo '--agent --no-ref --config -h --help --version' ;;
         'stats') echo '--since --json --plugin --save-baseline --compare --calibrate --cache --price --config -h --help --version' ;;
         'task claim') echo '--agent --json --config -h --help --version' ;;
@@ -99,6 +100,7 @@ _rtok_values() {
         'logs watch') echo '--lines --config' ;;
         'man') echo '--dir' ;;
         'proxy') echo '--port --upstream --mode --config' ;;
+        'report') echo '--format --out --since --config' ;;
         'run') echo '--agent --config' ;;
         'stats') echo '--since --plugin --save-baseline --compare --config' ;;
         'task claim') echo '--agent --config' ;;

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The report's pdf renderer (plan T31, README N18): the only project that references
+       QuestPDF, and none of its public types exposes one. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Report.Pdf.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="QuestPDF" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Report/Rtok.Report.csproj" />
+  </ItemGroup>
+</Project>

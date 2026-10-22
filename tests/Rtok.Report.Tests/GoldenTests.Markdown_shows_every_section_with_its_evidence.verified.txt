@@ -1,0 +1,94 @@
+﻿# rtok report
+
+Window 2026-12-16 → 2027-01-15 (30d) · store `{tmp}/data/rtok.db`
+
+## Window
+
+| ledger | in\_window | total |
+| --- | ---: | ---: |
+| calls | 17 | 18 |
+| measurements | 11 | 11 |
+| usage | 3 | 3 |
+
+## Savings
+
+Estimated tokens from `Measurement` rows only: est\_before − est\_after, net — an `expand` row counts negative, because retrieval costs tokens. A `Measurement` row carries no turn count, so these are floors, not context-token-turns.
+
+| plugin | rows | est\_before | est\_after | saved |
+| --- | ---: | ---: | ---: | ---: |
+| archive | 2 | 0 | 1000 | -1000 |
+| cmd | 5 | 15075 | 1560 | 13515 |
+| graph | 1 | 100 | 300 | -200 |
+| inject | 2 | 4000 | 4000 | 0 |
+| read | 1 | 2000 | 500 | 1500 |
+
+Total: 13815 est tokens over 11 `Measurement` rows in window.
+
+## Calls
+
+Latency per surface, nearest-rank p50/p95 over the calls that recorded one.
+
+| surface | calls | timed | p50\_ms | p95\_ms |
+| --- | ---: | ---: | ---: | ---: |
+| hook | 13 | 3 | 3.0 | 4.0 |
+| mcp | 1 | 1 | 12.5 | 12.5 |
+| proxy | 3 | 3 | 900.0 | 900.0 |
+
+| hook | calls | measured |
+| --- | ---: | ---: |
+| Stop | 10 | 0 |
+| PreToolUse | 3 | 3 |
+
+17 of 18 `calls` rows in window (30d); surfaces beyond hook/mcp/proxy are not in the section set.
+
+## Cache
+
+Prompt-cache busts by cause, from the proxy's `usage` rows.
+
+| session | turns | cache\_read | cache\_create | busts |
+| --- | ---: | ---: | ---: | ---: |
+| s1 | 3 | 30200 | 61500 | 1 |
+
+Busts: 1 over 3 turns in 1 session(s).
+
+## Expand
+
+How often a live-zone pointer had to be expanded (`archive_decisions` rows).
+
+| decisions | expanded | rate | cost | cost\_rows |
+| ---: | ---: | ---: | ---: | ---: |
+| 10 | 2 | 20.0% | 1000 | 2 |
+
+`rtok expand` froze 2 of 10 live-zone pointers (20.0%). Expanded: 747c28ad2205a69cd34e8a3efd323d48ae2bda83f860b2b4a23751fa509083d1, bc5135b8dc334f006532b3ad44e54b928b874b5f190798ba3175caced2e069d5.
+
+## Config
+
+Every effective key with its origin — the `config show --sources` page.
+
+| key | value | source |
+| --- | --- | --- |
+| core.archive\_dir | {tmp}/archive | user {tmp}/user/.rtok/config.toml:3 |
+| core.db\_path | {tmp}/data/rtok.db | user {tmp}/user/.rtok/config.toml:2 |
+
+## Doctor
+
+Live probes (the `rtok doctor` page), not store rows.
+
+```text
+hooks: 2 (fixture)
+```
+
+## Recommendations
+
+- **cache-bust**: session s1 turn 3 busted the prompt cache (cause tools): 31000 cache-create tokens re-written with cache\_read 200 — pin the tool list; 31000 tokens would have stayed cached (1 cache bust over 3 turns in 1 session with usage rows)
+- **top-sinks**: cmd git cost 40000 bytes over 1 Measurement row — add a \[plugins.cmd\] rules entry for \`git\` (1 cmd Measurement row for git, 11 Measurement rows in window)
+- **top-sinks**: cmd cargo cost 20000 bytes over 1 Measurement row — add a \[plugins.cmd\] rules entry for \`cargo\` (1 cmd Measurement row for cargo, 11 Measurement rows in window)
+- **inject-budget**: inject averages 2000 est tokens/turn over 2 inject Measurement rows vs \[plugins.inject\] budget\_tokens 800 — 2400 tokens over budget; trim modes and memory recall (2 inject Measurement rows)
+- **top-sinks**: read src/big.cs cost 8000 bytes over 1 Measurement row — set \[plugins.read\] default\_mode = "map" (1 read Measurement row for src/big.cs, 11 Measurement rows in window)
+- **expand-rate**: expand rate 20.0% (2 of 10 live-zone pointers re-read) is above \[expand\] max\_rate 5.0% — re-expansions cost 1000 est tokens over 2 rows (10 archive\_decisions rows, 2 archive Measurement rows of kind expand)
+- **retire-plugin**: plugin archive net -1000 est tokens over 2 Measurement rows (≤ 0) — retire it rather than stack it (2 archive Measurement rows)
+- **archive-window**: archive keep\_turns 4 with 2 of 10 pointers re-read via rtok expand (1000 est tokens over 2 rows) — old results ARE re-read; raise keep\_turns or min\_tokens (1500) so volatile results stay live (10 archive\_decisions rows, 2 expand Measurement rows)
+- **retire-plugin**: plugin graph net -200 est tokens over 1 Measurement row (≤ 0) — retire it rather than stack it (1 graph Measurement row)
+- **top-sinks**: cmd rewrite cost 300 bytes over 3 Measurement rows — add a \[plugins.cmd\] rules entry for \`rewrite\` (3 cmd Measurement rows for rewrite, 11 Measurement rows in window)
+- **retire-plugin**: plugin inject net 0 est tokens over 2 Measurement rows (≤ 0) — retire it rather than stack it (2 inject Measurement rows)
+- **idle-hook**: Stop fired 10 times in window with no Measurement row on its path — weight on the 10 ms hook path for nothing; 0 tokens saved (10 Stop hook calls in window, 11 Measurement rows in window)

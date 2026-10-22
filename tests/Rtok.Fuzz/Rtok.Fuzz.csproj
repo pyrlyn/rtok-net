@@ -33,6 +33,7 @@
     <ProjectReference Include="../../src/Rtok.Plugins.Docs/Rtok.Plugins.Docs.csproj" />
     <ProjectReference Include="../../src/Rtok.Measure/Rtok.Measure.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Inject/Rtok.Plugins.Inject.csproj" />
+    <ProjectReference Include="../../src/Rtok.Report/Rtok.Report.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
     <ProjectReference Include="../../src/Rtok.Tasks/Rtok.Tasks.csproj" />
     <ProjectReference Include="../../src/Rtok.Proxy/Rtok.Proxy.csproj" />

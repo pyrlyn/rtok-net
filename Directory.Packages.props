@@ -41,6 +41,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.13" />
     <PackageVersion Include="Radzen.Blazor" Version="12.1.5" />
     <PackageVersion Include="bunit" Version="2.12.5" />
+    <PackageVersion Include="QuestPDF" Version="2026.9.1" />
+    <PackageVersion Include="PdfPig" Version="0.1.16" />
   </ItemGroup>
   <!-- PyrlynCodeStyle marks the analyzers packages/Pyrlyn.CodeStyle depends on. -->
   <ItemGroup>

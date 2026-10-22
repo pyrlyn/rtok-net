@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Xml.Linq;
 using Rtok.Testing;
 
@@ -124,6 +125,26 @@ public sealed class ArchitectureTests
         Assert.Empty(projects["Rtok.Web.Contracts"]);
     }
 
+    // QuestPDF stays behind the report's pdf renderer (README N18): one project references it and
+    // none of that project's public surface names a QuestPDF type.
+    [Fact]
+    public void Only_the_pdf_renderer_references_QuestPDF()
+    {
+        Assert.Equal(
+            ["Rtok.Report.Pdf"],
+            Packages()
+                .Where(p => p.Value.Contains("QuestPDF", StringComparer.Ordinal))
+                .Select(p => p.Key),
+            StringComparer.Ordinal
+        );
+        var leaks = typeof(Rtok.Report.Pdf.PdfRenderer)
+            .Assembly.GetExportedTypes()
+            .SelectMany(t => Surface(t).Select(s => (Type: t, Exposed: s)))
+            .Where(x => x.Exposed.Assembly.GetName().Name is "QuestPDF")
+            .Select(x => $"{x.Type.FullName} → {x.Exposed.FullName}");
+        Assert.Empty(leaks);
+    }
+
     [Theory]
     [InlineData("Rtok.Core", "Rtok.Cli", true)]
     [InlineData("Rtok.Plugin.Sdk", "Rtok.Core", true)]
@@ -134,6 +155,40 @@ public sealed class ArchitectureTests
     [InlineData("Pyrlyn.FsKit", "Rtok.Agent.Sdk", true)]
     public void An_upward_reference_is_caught(string from, string to, bool upward) =>
         Assert.Equal(upward, Upward(from, to));
+
+    // The types a public type shows: its bases, interfaces and every public member's signature.
+    private static IEnumerable<Type> Surface(Type type)
+    {
+        const BindingFlags Public =
+            BindingFlags.Public
+            | BindingFlags.Instance
+            | BindingFlags.Static
+            | BindingFlags.DeclaredOnly;
+        IEnumerable<Type> shown =
+        [
+            .. type.GetInterfaces(),
+            .. type.GetFields(Public).Select(f => f.FieldType),
+            .. type.GetProperties(Public).Select(p => p.PropertyType),
+            .. type.GetEvents(Public).Select(e => e.EventHandlerType).OfType<Type>(),
+            .. type.GetMethods(Public)
+                .SelectMany(m =>
+                    m.GetParameters().Select(p => p.ParameterType).Append(m.ReturnType)
+                ),
+            .. type.GetConstructors(Public)
+                .SelectMany(c => c.GetParameters().Select(p => p.ParameterType)),
+        ];
+        if (type.BaseType is { } baseType)
+        {
+            shown = shown.Append(baseType);
+        }
+        return shown.SelectMany(Unwrap);
+    }
+
+    private static IEnumerable<Type> Unwrap(Type type) =>
+        type.HasElementType ? Unwrap(type.GetElementType()!)
+        : type.IsGenericType
+            ? type.GetGenericArguments().SelectMany(Unwrap).Prepend(type.GetGenericTypeDefinition())
+        : [type];
 
     private static bool Upward(string from, string to) => Layer(to) > Layer(from);
 

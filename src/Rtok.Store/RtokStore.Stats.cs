@@ -35,16 +35,7 @@ public sealed partial class RtokStore
                 .Measurements.Where(m => m.Plugin == name)
                 .OrderBy(m => m.Id)
                 .AsEnumerable()
-                .Select(m => new MeasurementInput(
-                    m.Plugin,
-                    m.Kind,
-                    m.BeforeBytes,
-                    m.AfterBytes,
-                    m.EstBefore,
-                    m.EstAfter,
-                    m.RefId,
-                    m.CallId
-                )),
+                .Select(Input),
         ];
     }
 
@@ -69,29 +60,39 @@ public sealed partial class RtokStore
         ];
     }
 
-    /// <summary>Every session with <c>usage</c> rows, by its first row: oldest first.</summary>
-    public IReadOnlyList<string> UsageSessions()
+    /// <summary>Every session with <c>usage</c> rows at or after <paramref name="since"/> (Unix
+    /// seconds), by its first row: oldest first.</summary>
+    public IReadOnlyList<string> UsageSessions(long since = 0)
     {
         using var scope = Enter();
         var db = scope.Db;
+        var from = since;
         return
         [
-            .. db.Usage.GroupBy(u => u.Session).OrderBy(g => g.Min(u => u.Id)).Select(g => g.Key),
+            .. db
+                .Usage.Where(u => u.Ts >= from)
+                .GroupBy(u => u.Session)
+                .OrderBy(g => g.Min(u => u.Id))
+                .Select(g => g.Key)
+                .AsEnumerable(),
         ];
     }
 
-    /// <summary>One session's <c>usage</c> rows in request order.</summary>
-    public IReadOnlyList<UsageTurn> UsageTurns(string session)
+    /// <summary>One session's <c>usage</c> rows at or after <paramref name="since"/>, in request
+    /// order.</summary>
+    public IReadOnlyList<UsageTurn> UsageTurns(string session, long since = 0)
     {
         using var scope = Enter();
         var db = scope.Db;
         var id = session;
+        var from = since;
         return
         [
             .. db
-                .Usage.Where(u => u.Session == id)
+                .Usage.Where(u => u.Session == id && u.Ts >= from)
                 .OrderBy(u => u.Id)
-                .Select(u => new UsageTurn(u.CallId, u.Api, u.Input, u.CacheCreate, u.CacheRead)),
+                .Select(u => new UsageTurn(u.CallId, u.Api, u.Input, u.CacheCreate, u.CacheRead))
+                .AsEnumerable(),
         ];
     }
 
@@ -134,14 +135,16 @@ public sealed partial class RtokStore
         }
     }
 
-    /// <summary>The proxy's archive pointers, and how many of them were expanded.</summary>
-    public (long Decisions, long Expanded) ArchiveDecisionCounts()
+    /// <summary>The proxy's archive pointers placed at or after <paramref name="since"/> (Unix
+    /// seconds), and how many of them were expanded.</summary>
+    public (long Decisions, long Expanded) ArchiveDecisionCounts(long since = 0)
     {
         using var scope = Enter();
         var db = scope.Db;
+        var from = since;
         return (
-            db.ArchiveDecisions.LongCount(),
-            db.ArchiveDecisions.LongCount(d => d.ExpandedTs != null)
+            db.ArchiveDecisions.LongCount(d => d.Ts >= from),
+            db.ArchiveDecisions.LongCount(d => d.Ts >= from && d.ExpandedTs != null)
         );
     }
 

@@ -36,6 +36,7 @@ public sealed class JsonTests
         ["man"] = "prints or writes roff pages",
         ["logs watch"] = "streams the log until Ctrl-C",
         ["expand"] = "prints the archived bytes as they were",
+        ["report"] = "renders md, html, pdf or the ai form, not JSON",
         ["agents install"] = "writes host files",
         ["agents update"] = "writes host files",
         ["agents uninstall"] = "writes host files",

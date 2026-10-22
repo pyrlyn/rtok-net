@@ -132,6 +132,10 @@ See \fBrtok\-plugins\fR(1).
 Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
 See \fBrtok\-proxy\fR(1).
 .TP
+\fBreport\fR
+Report savings, calls, cache, expand, config and doctor with the recommendations they support.
+See \fBrtok\-report\fR(1).
+.TP
 \fBrun\fR
 Run a shell command, archive its output and print it filtered; exits with the command's code.
 See \fBrtok\-run\fR(1).

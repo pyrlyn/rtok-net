@@ -1346,6 +1346,59 @@
       ]
     },
     {
+      "path": "report",
+      "aliases": [],
+      "description": "Report savings, calls, cache, expand, config and doctor with the recommendations they support.",
+      "arguments": [],
+      "options": [
+        {
+          "names": [
+            "--format"
+          ],
+          "type": "string?",
+          "description": "md, html or pdf; [report] format when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--out"
+          ],
+          "type": "string?",
+          "description": "Write to this file instead of stdout.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--since"
+          ],
+          "type": "string?",
+          "description": "The window: 30d, 12h; [report] since when omitted.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--ai"
+          ],
+          "type": null,
+          "description": "The report for a model: TOON tables within [report] budget_tokens.",
+          "default": null,
+          "required": false
+        },
+        {
+          "names": [
+            "--config"
+          ],
+          "type": "string?",
+          "description": "The config file to use instead of ~/.rtok/config.toml.",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
       "path": "run",
       "aliases": [],
       "description": "Run a shell command, archive its output and print it filtered; exits with the command's code.",

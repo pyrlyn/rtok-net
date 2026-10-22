@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- `rtok report`: the ledgers as findings with evidence, built once as a document model and
+       rendered as md, html and the ai form (plan T31, README N18); pdf is Rtok.Report.Pdf. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Rtok.Report.Tests" />
+    <InternalsVisibleTo Include="rtok-fuzz" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../packages/Pyrlyn.FsKit/src/Pyrlyn.FsKit.csproj" />
+    <ProjectReference Include="../Rtok.Config/Rtok.Config.csproj" />
+    <ProjectReference Include="../Rtok.Core/Rtok.Core.csproj" />
+    <ProjectReference Include="../Rtok.Measure/Rtok.Measure.csproj" />
+    <ProjectReference Include="../Rtok.Store/Rtok.Store.csproj" />
+  </ItemGroup>
+</Project>

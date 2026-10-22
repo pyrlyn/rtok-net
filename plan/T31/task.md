@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P2
 complexity: 3
-readiness: 0%
-agent:
+readiness: 100%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T31. Report: md, html, pdf and `--ai`
@@ -38,5 +38,18 @@ Spec: catalog A17, catalog B22 in [docs/port/catalog.md](../../docs/port/catalog
 Ports: rtok closed T22.0, T22.1, T22.2, T22.3, T22.4, T22.5, T22.6, T34.4, T36.13.
 
 Fuzz: `report-html` in `tests/Rtok.Fuzz`: any strings in store rows render escaped in html and md.
+
+Plan:
+1. `src/Rtok.Store`: windowed report reads (calls per surface with ms, hook calls with their
+   Measurement rows, Measurement folds per plugin, archive decisions, sink rows), saturating sums.
+2. `src/Rtok.Report`: the document model (sections, paragraphs of spans, tables, code blocks,
+   bar charts, findings), `ReportFacts` from the store, `ReportBuilder` building the sections
+   once, the seven advice rules, and the md, html and `--ai` (toon tables, budget) renderers.
+3. `src/Rtok.Report.Pdf`: `PdfRenderer` on QuestPDF (A4, contents page, bookmarks, bars), the
+   licence type set in a static constructor; no public QuestPDF type.
+4. `rtok report` in `src/Rtok.Cli` with `--format/--out/--since/--ai/--config`, and the lists
+   (commands.json, goldens, JsonTests).
+5. Tests: `Rtok.Report.Tests`, `Rtok.Report.Pdf.Tests` (PdfPig reads the PDF), the arch test, the
+   pdf smoke test and the `report-html` fuzz target with its corpus.
 
 Check: Golden md, html and `--ai` outputs match on a fixture store, the `--ai` output never exceeds its budget, the AOT binary writes a PDF that opens, and the architecture test shows only `Rtok.Report.Pdf` references QuestPDF.

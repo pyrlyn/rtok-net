@@ -35,6 +35,7 @@ Commands:
   man                  Print the man page (roff), or write every page with --dir.
   plugins              List plugins: id, kind, enabled, surfaces.
   proxy                Run the API proxy in front of Anthropic, OpenAI and Gemini and record real token usage.
+  report               Report savings, calls, cache, expand, config and doctor with the recommendations they support.
   run                  Run a shell command, archive its output and print it filtered; exits with the command's code.
   stats                Report tokens per tool, Bash family and MCP group from the agents' transcripts, with rtok's rows.
   task claim           Claim a task for this agent, or the first ready task when no id is given. On GitHub and GitLab the assignee write is last-write-wins.
@@ -424,6 +425,18 @@ Options:
   --mode <string?>        passthrough or compress, instead of [proxy] mode. [Default: null]
   --dry-run               Print the effective [proxy] settings and exit.
   --config <string?>      The config file to use instead of ~/.rtok/config.toml. [Default: null]
+
+$ rtok report --help
+Usage: report [options...] [-h|--help] [--version]
+
+Report savings, calls, cache, expand, config and doctor with the recommendations they support.
+
+Options:
+  --format <string?>    md, html or pdf; [report] format when omitted. [Default: null]
+  --out <string?>       Write to this file instead of stdout. [Default: null]
+  --since <string?>     The window: 30d, 12h; [report] since when omitted. [Default: null]
+  --ai                  The report for a model: TOON tables within [report] budget_tokens.
+  --config <string?>    The config file to use instead of ~/.rtok/config.toml. [Default: null]
 
 $ rtok run --help
 Usage: run [arguments...] [options...] [-h|--help] [--version]

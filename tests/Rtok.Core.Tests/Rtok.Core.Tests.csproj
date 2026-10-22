@@ -3,6 +3,7 @@
     <ProjectReference Include="../../src/Rtok.Core/Rtok.Core.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Cmd/Rtok.Plugins.Cmd.csproj" />
     <ProjectReference Include="../../src/Rtok.Plugins.Measure/Rtok.Plugins.Measure.csproj" />
+    <ProjectReference Include="../../src/Rtok.Report.Pdf/Rtok.Report.Pdf.csproj" />
     <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
   </ItemGroup>
 </Project>

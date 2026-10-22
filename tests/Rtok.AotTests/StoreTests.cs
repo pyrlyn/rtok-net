@@ -31,6 +31,7 @@ public sealed class StoreTests : IDisposable
             var (call, child, hook) = WriteCalls(store);
             WriteState(store, call);
             AssertWritten(options, call, child, hook);
+            ReadReport(store);
 
             _clock.Advance(TimeSpan.FromDays(2));
             Assert.Single(store.ArchivesPendingRetention(1));
@@ -192,6 +193,18 @@ public sealed class StoreTests : IDisposable
         store.ClearTaskClaim("p", "R1");
         Assert.Null(store.AgentLastSeen("a1"));
         Assert.Null(store.ResolveAgent("a"));
+    }
+
+    // The report's window reads (T31), and the cache-health rows it shares with `stats --cache`.
+    private static void ReadReport(RtokStore store)
+    {
+        Assert.Equal((3L, 3L), store.CallCounts(0));
+        Assert.Equal((2L, 2L, 3L, 3L), store.LedgerCounts(0));
+        Assert.Equal([true, false, false], store.CallTimings(0).Select(t => t.Measured).ToArray());
+        Assert.Equal(2, store.MeasurementsSince(0).Count);
+        Assert.Equal((0L, 0L), store.ArchiveDecisionCounts(0));
+        Assert.Equal(["s"], store.UsageSessions(0));
+        Assert.Equal(3, store.UsageTurns("s", 0).Count);
     }
 
     private static void AssertWritten(StoreOptions options, long call, long child, long hook)

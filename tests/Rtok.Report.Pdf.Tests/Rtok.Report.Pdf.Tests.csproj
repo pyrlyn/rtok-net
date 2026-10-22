@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- JIT lane for the report's pdf renderer (T31): PdfPig reads back what QuestPDF wrote. -->
+  <ItemGroup>
+    <PackageReference Include="PdfPig" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rtok.Testing/Rtok.Testing.csproj" />
+    <ProjectReference Include="../../src/Rtok.Report.Pdf/Rtok.Report.Pdf.csproj" />
+  </ItemGroup>
+</Project>
