@@ -37,8 +37,11 @@ fi
 
 cd "$root"
 rm -rf "$out"
+# TreatWarningsAsErrors, not -warnaserror: EF's publish-time tasks warn without a code
+# ("NativeAOT support is experimental"), which -warnaserror would fail and no code can exempt.
+# Compiler and ILC warnings stay errors, minus EF's known ones (src/Rtok.Store/StoreHost.targets).
 for project in "${projects[@]}"; do
-  dotnet publish "$project" -c Release -r "$rid" -warnaserror -nologo -o "$out" \
+  dotnet publish "$project" -c Release -r "$rid" -p:TreatWarningsAsErrors=true -nologo -o "$out" \
     -p:SourceRevisionId="$revision"
 done
 

@@ -686,7 +686,10 @@ More from T8 (the real store, EF 10.0.13; `src/Rtok.Store/StoreHost.targets` hol
   needs its own Tasks reference, and the executable must reference both projects directly:
   `_EFPrepareDependenciesForPublishAOT` optimizes direct references only. Build-stage
   generation (`EFScaffoldModelStage=build`) is no way out: the task's "NativeAOT support is
-  experimental" warning has no code, so `-warnaserror` fails every Release build.
+  experimental" warning has no code, so `-warnaserror` fails every Release build. The same
+  warning fails a `-warnaserror` publish, so `eng/publish.sh` passes `TreatWarningsAsErrors=true`
+  instead, and StoreHost.targets keeps IL2104, IL3053 and IL3002 (EF Sqlite's SpatialiteLoader
+  reads `DependencyContext`, which single-warn does not fold) as warnings.
 - ILC flags the scaffolded model's `byte[]` comparers (IL3050, `Array.CreateInstance` in
   expression trees, which run interpreted). `TrimmerSingleWarn` on the model assembly folds them
   into one IL3053, like EF's own assemblies.
