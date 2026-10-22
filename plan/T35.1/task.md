@@ -1,9 +1,9 @@
 ---
-status: todo
+status: in progress
 priority: P3
 complexity: 2
-readiness: 0%
-agent:
+readiness: 10%
+agent: Claude Code / claude-opus-5-5
 ---
 
 # T35.1. Host: Trae
@@ -24,3 +24,13 @@ Tests:
 Fuzz: an installer, if built, joins T35's `agents-install` target.
 
 Check: The host table has a dated Trae row with sources, and an installer test passes if one was built.
+
+## Plan
+
+1. Check Trae's docs again (2026-10-22): global MCP is set only in Settings > MCP; the only file path given is the project's `.trae/mcp.json`. So no installer.
+2. `src/Rtok.Agents.Hosts`: add `UnsupportedHost` (id, app, kind, checked date, sources, reason) and an `AgentHostTable.Unsupported` list holding Trae. `AgentHosts.Resolve` throws `trae is not supported: <reason>` for it, so install, uninstall, update and info all refuse before writing.
+3. `SupportMatrix.Table()` gives Trae a row of `—` cells, plus a "Not supported" note with the reason, date and sources. Regenerate `docs/agents.md`.
+4. Tests:
+   - `Rtok.Agents.Hosts.Tests` unit: the Trae row is dated, has sources and a reason, and the table carries it. (The task names `Rtok.Agents.Tests`, but the host table lives in `Rtok.Agents.Hosts`.)
+   - `Rtok.Cli.Tests` Verify: `agents install trae` refuses and writes nothing.
+5. Run the gates and write `done.md`.
