@@ -109,7 +109,7 @@ internal sealed class HookScan
         }
         if (
             string.Equals(source.Agent, "claude", StringComparison.Ordinal)
-            && root["enabledPlugins"] is JsonObject plugins
+            && DoctorHome.At(root, "enabledPlugins") is JsonObject plugins
         )
         {
             foreach (var (id, on) in plugins)
@@ -156,13 +156,13 @@ internal sealed class HookScan
     internal static IEnumerable<HookEntry> Read(HookSource source, JsonNode root) =>
         source.Shape switch
         {
-            HookShape.Kimi => Tables(source, root["hooks"] as JsonArray, "hooks"),
+            HookShape.Kimi => Tables(source, DoctorHome.At(root, "hooks") as JsonArray, "hooks"),
             HookShape.CodeWhale => Tables(
                 source,
-                root["hooks"]?["hooks"] as JsonArray,
+                DoctorHome.At(root, "hooks", "hooks") as JsonArray,
                 "hooks.hooks"
             ),
-            _ => Groups(source, root["hooks"] as JsonObject),
+            _ => Groups(source, DoctorHome.At(root, "hooks") as JsonObject),
         };
 
     /// <summary><c>hooks.&lt;Event&gt;[g].hooks[h]</c>, or the flat <c>hooks.&lt;Event&gt;[g]</c>.</summary>
@@ -249,7 +249,7 @@ internal sealed class HookScan
     private void LoadPlugins()
     {
         var index = PluginIndex;
-        if (_home.TryJson(index)?["plugins"] is not JsonObject plugins)
+        if (DoctorHome.At(_home.TryJson(index), "plugins") is not JsonObject plugins)
         {
             return;
         }
@@ -262,7 +262,7 @@ internal sealed class HookScan
             var first = true;
             for (var i = 0; i < list.Count; i++)
             {
-                if (DoctorHome.Str(list[i]?["installPath"]) is not { } dir)
+                if (DoctorHome.Str(DoctorHome.At(list[i], "installPath")) is not { } dir)
                 {
                     continue;
                 }

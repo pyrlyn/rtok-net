@@ -75,13 +75,13 @@ internal static class SkillScan
                 roots.Add((home.Under(home.Cwd, root), "project", hosts));
             }
         }
-        if (home.TryJson(pluginIndex)?["plugins"] is JsonObject plugins)
+        if (DoctorHome.At(home.TryJson(pluginIndex), "plugins") is JsonObject plugins)
         {
             foreach (var (id, installs) in plugins)
             {
                 if (
                     (installs as JsonArray)
-                        ?.Select(i => DoctorHome.Str(i?["installPath"]))
+                        ?.Select(i => DoctorHome.Str(DoctorHome.At(i, "installPath")))
                         .OfType<string>()
                         .FirstOrDefault() is
                     { } dir

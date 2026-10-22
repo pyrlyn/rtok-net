@@ -82,8 +82,8 @@ public static class DoctorProbes
     {
         try
         {
-            return JsonNode.Parse(line)?["result"]?["tools"] is JsonArray tools
-                ? [.. tools.Select(t => DoctorHome.Str(t?["description"]) ?? "")]
+            return DoctorHome.At(JsonNode.Parse(line), "result", "tools") is JsonArray tools
+                ? [.. tools.Select(t => DoctorHome.Str(DoctorHome.At(t, "description")) ?? "")]
                 : null;
         }
         catch (JsonException)

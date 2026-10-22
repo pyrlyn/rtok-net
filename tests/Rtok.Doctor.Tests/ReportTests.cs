@@ -37,4 +37,21 @@ public sealed class ReportTests
         Assert.Contains(report.Mcp, s => s.Name is "web");
         Assert.Contains("hooks 3\n  PreToolUse 2\n", f.Text(), StringComparison.Ordinal);
     }
+
+    /// <summary>
+    /// A config whose root or a member on the way is not an object has nothing of rtok's in
+    /// it: the report still renders (fuzz seed <c>doctor-config/06</c>: a settings file of <c>0</c>).
+    /// </summary>
+    [Theory]
+    [InlineData(".claude/settings.json", "0")]
+    [InlineData(".claude/settings.json", "[1]")]
+    [InlineData(".claude/settings.json", """{"env": 5, "hooks": 1, "enabledPlugins": []}""")]
+    [InlineData(".claude.json", """{"mcpServers": {"rtok": 3}}""")]
+    public void A_config_of_another_shape_still_renders(string file, string text)
+    {
+        var f = new DoctorFake();
+        f.Write(f.At(file), text);
+
+        Assert.NotEmpty(f.Text());
+    }
 }

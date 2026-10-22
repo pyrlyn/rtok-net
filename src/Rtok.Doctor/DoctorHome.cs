@@ -117,6 +117,20 @@ internal sealed class DoctorHome(DoctorOptions options)
         }
     }
 
+    /// <summary>
+    /// The member at <paramref name="keys"/> under <paramref name="node"/>, stepping through
+    /// objects only; null when one is absent or a step is not an object, so a config of any
+    /// shape reads without throwing.
+    /// </summary>
+    public static JsonNode? At(JsonNode? node, params ReadOnlySpan<string> keys)
+    {
+        foreach (var key in keys)
+        {
+            node = node is JsonObject o ? o[key] : null;
+        }
+        return node;
+    }
+
     /// <summary>A string member; null when absent or not a string.</summary>
     public static string? Str(JsonNode? node) =>
         node is JsonValue v && v.GetValueKind() == JsonValueKind.String

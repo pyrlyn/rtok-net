@@ -44,7 +44,7 @@ internal sealed class ClaudeProbes
 
     /// <summary>A variable of the settings' <c>env</c> table; null when unset or empty.</summary>
     public string? SettingsEnv(string name) =>
-        DoctorHome.Str(Settings?["env"]?[name]) is { Length: > 0 } v ? v : null;
+        DoctorHome.Str(DoctorHome.At(Settings, "env", name)) is { Length: > 0 } v ? v : null;
 
     /// <summary>
     /// The servers of <c>~/.claude.json</c>, then of <c>.mcp.json</c> (the first of a name wins),
@@ -140,7 +140,10 @@ internal sealed class ClaudeProbes
             return url;
         }
         var opencode = _home.TryJson(_home.PathOf(_home.Config.Setup.Opencode.ConfigPath));
-        if (DoctorHome.Str(opencode?["env"]?["OPENAI_BASE_URL"]) is { Length: > 0 } fromOpencode)
+        if (
+            DoctorHome.Str(DoctorHome.At(opencode, "env", "OPENAI_BASE_URL")) is
+            { Length: > 0 } fromOpencode
+        )
         {
             return fromOpencode;
         }
@@ -153,7 +156,12 @@ internal sealed class ClaudeProbes
         {
             return
                 DoctorHome.Str(
-                    DoctorHome.ParseToml(text, codex)?["model_providers"]?["rtok"]?["base_url"]
+                    DoctorHome.At(
+                        DoctorHome.ParseToml(text, codex),
+                        "model_providers",
+                        "rtok",
+                        "base_url"
+                    )
                 )
                     is { Length: > 0 } b
                 ? b
@@ -211,8 +219,8 @@ internal sealed class ClaudeProbes
         try
         {
             var body = JsonNode.Parse(health);
-            return DoctorHome.Str(body?["checks"]?["upstream"]?["url"])
-                ?? DoctorHome.Str(body?["config"]?["anthropic_api_url"]);
+            return DoctorHome.Str(DoctorHome.At(body, "checks", "upstream", "url"))
+                ?? DoctorHome.Str(DoctorHome.At(body, "config", "anthropic_api_url"));
         }
         catch (JsonException)
         {
@@ -226,7 +234,7 @@ internal sealed class ClaudeProbes
     /// </summary>
     public ToolSearch ToolSearch()
     {
-        var fromSettings = Settings?["env"]?["ENABLE_TOOL_SEARCH"] switch
+        var fromSettings = DoctorHome.At(Settings, "env", "ENABLE_TOOL_SEARCH") switch
         {
             JsonValue v when v.GetValueKind() == JsonValueKind.True => "true",
             JsonValue v when v.GetValueKind() == JsonValueKind.False => "false",
@@ -299,7 +307,9 @@ internal sealed class ClaudeProbes
     /// <summary>The advice to load rtok's tools up front when Claude Code would defer them.</summary>
     public string? AlwaysLoad(ToolSearch search, IReadOnlyList<McpServerRow> servers)
     {
-        var entry = ClaudeJson?["mcpServers"]?["rtok"] ?? McpJson?["mcpServers"]?["rtok"];
+        var entry =
+            DoctorHome.At(ClaudeJson, "mcpServers", "rtok")
+            ?? DoctorHome.At(McpJson, "mcpServers", "rtok");
         var rtok = servers.FirstOrDefault(s => s.Name is "rtok");
         return
             entry is JsonObject o
