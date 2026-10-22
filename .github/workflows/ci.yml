@@ -53,12 +53,10 @@ jobs:
         run: npx --yes markdownlint-cli2@0.23.3
       - name: Duplication
         run: npx --yes jscpd@5.4.2 --config .jscpd.json .
-      - name: Scripts
-        run: shellcheck eng/*.sh
       - name: Workflows
         run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
       - name: Marketplace catalogs
-        run: eng/check-marketplace.sh
+        run: dotnet run --project eng/Rtok.Build -- --target=check-marketplace
 
   build:
     name: build (${{ matrix.name }})
@@ -114,9 +112,9 @@ jobs:
           BASE_REF: ${{ github.base_ref }}
         run: |
           if [ "$EVENT" = pull_request ]; then
-            git diff --name-only "origin/$BASE_REF...HEAD" | eng/affected-tests.sh artifacts/affected.slnf
+            dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=affected-tests --out=artifacts/affected.slnf --base="origin/$BASE_REF"
           else
-            eng/affected-tests.sh artifacts/affected.slnf --all
+            dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=affected-tests --out=artifacts/affected.slnf --all
           fi
       - name: JIT tests
         if: steps.affected.outputs.count != '0'
@@ -124,8 +122,8 @@ jobs:
       - name: Publish (AOT)
         run: |
           native=${RIDS%% *}
-          eng/publish.sh "$native" --aot-tests
-          for rid in ${RIDS#"$native"}; do eng/publish.sh "$rid"; done
+          dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=publish --rid="$native" --aot-tests
+          for rid in ${RIDS#"$native"}; do dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=publish --rid="$rid"; done
           bin=$PWD/artifacts/dist/$native
           # .NET on Windows reads the variable, so it needs a Windows path, not /d/a/...
           if [ "$RUNNER_OS" = Windows ]; then bin=$(cygpath -m "$bin"); fi
@@ -133,10 +131,13 @@ jobs:
       - name: AOT and smoke tests
         run: dotnet test --project tests/Rtok.Smoke -c Release --no-build
       - name: Smoke every RID
-        run: for rid in $RIDS; do eng/smoke.sh "$rid" "artifacts/dist/$rid"; done
+        run: for rid in $RIDS; do dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=smoke --rid="$rid" --dir="artifacts/dist/$rid"; done
       - name: Hook latency gate
         # Windows numbers are not measured yet (T52); until then the gate reports only there.
         continue-on-error: ${{ runner.os == 'Windows' }}
         run: dotnet run --project tests/Rtok.Latency -c Release --no-build -- --budget-only
       - name: Release archives (dry run)
-        run: for rid in $RIDS; do eng/package-release.sh "$rid" "$RTOK_SMOKE_BIN/rtok" --allow-missing; done
+        run: |
+          for rid in $RIDS; do
+            dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=package-release --rid="$rid" --rtok="$RTOK_SMOKE_BIN/rtok" --allow-missing
+          done

@@ -130,7 +130,7 @@ Every parser of outside input (host configs, stdin, wire bodies, transcripts, lo
 gets a SharpFuzz target in `tests/Rtok.Fuzz` from the task that lands it, named in that
 task's `Fuzz:` line (T53). A target catches only the documented failure type and checks the
 code's own invariants; `Rtok.Fuzz.Tests` replays its corpus and generated inputs on every
-`dotnet test`, and `eng/fuzz.sh` runs it under libFuzzer.
+`dotnet test`, and the `fuzz` build task (`eng/Rtok.Build`) runs it under libFuzzer.
 
 N12. **Plugins are linked statically.** NativeAOT cannot load managed assemblies at
 runtime, so a plugin is a project referenced at build time. A build includes or leaves out
@@ -302,7 +302,8 @@ src/
   Rtok.Web.Contracts/     /ws DTOs + JsonSerializerContext, shared by Rtok.Web and the client
   Rtok.Web.Client/        Blazor WebAssembly dashboard (N13), references only Rtok.Web.Contracts
 packages/                 own NuGet packages (above)
-eng/                      build-time tools (Rtok.Store.Scripts: one SQL script per migration)
+eng/                      build-time tools: Rtok.Build (Cake Frosting build tasks, T57),
+                          Rtok.Store.Scripts (one SQL script per migration)
 tests/                    *.Tests (JIT), Rtok.AotTests, Rtok.Smoke, Rtok.Benchmarks, Rtok.Fuzz
 web/                      dashboard screenshots
 plugins/  skills/  rules/  modes/   host plugin trees and data files from rtok
@@ -329,7 +330,7 @@ conflict on rebase: keep both sides.
 | L6 | file kit, JSONC, MCP install, hosts, doctor | T12.1, T12.3, T34, T35, T32, T35.3, T35.5, T35.4, T35.6, T35.2, T35.1 |
 | L7 | small packages, then inject, measure, worktrees, guard, OTel | T12.10, T12.8, T12.11, T12.2, T12.7, T21, T30, T40, T20, T47 |
 | L8 | agent SDK, ignore, usage, junk, docs plugin | T33, T12.4, T38, T39, T42 |
-| L9 | experiments, CI, tasks, host trees, report | T51, T3, T55, T58, T41, T36, T31 |
+| L9 | experiments, CI, tasks, host trees, report | T51, T3, T55, T58, T41, T36, T31, T57 |
 
 Main cross-lane dependencies: every package (T12.x) follows T12's layout; T6 needs T5;
 plugins, T13 and T15 need T6; T7 needs T12.9; T9, T10 and T13 need T8; T11 needs T12.8 and

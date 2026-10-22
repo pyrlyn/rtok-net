@@ -40,13 +40,13 @@ jobs:
           echo "PyrlynTreeSitterPackNativeRoot=$PWD/artifacts/tree-sitter-native" >> "$GITHUB_ENV"
           echo "PyrlynTreeSitterRequireAllRids=true" >> "$GITHUB_ENV"
       - name: Dry run
-        run: eng/publish-package.sh "$GITHUB_REF_NAME" --dry-run
+        run: dotnet run --project eng/Rtok.Build -- --target=publish-package --tag="$GITHUB_REF_NAME" --dry-run
       - name: NuGet login
         id: login
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
         with:
           user: ${{ secrets.NUGET_USER }}
       - name: Publish
-        run: eng/publish-package.sh "$GITHUB_REF_NAME"
+        run: dotnet run --project eng/Rtok.Build -- --target=publish-package --tag="$GITHUB_REF_NAME"
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Build tasks (T57): publish, smoke, release archives, packages, affected tests, fuzzing.
+       Run with `dotnet run project eng/Rtok.Build` and the task as target (CONTRIBUTING.md).
+       JIT only. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Rtok.Build</RootNamespace>
+    <RtokJitOnly>true</RtokJitOnly>
+    <RtokSurface>true</RtokSurface>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Cake.Frosting" />
+    <PackageReference Include="CliWrap" />
+  </ItemGroup>
+</Project>

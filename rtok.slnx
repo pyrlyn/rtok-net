@@ -61,6 +61,7 @@
     <Project Path="packages/Rtok.Plugin.Sdk/tests/Rtok.Plugin.Sdk.Tests.csproj" />
   </Folder>
   <Folder Name="/eng/">
+    <Project Path="eng/Rtok.Build/Rtok.Build.csproj" />
     <Project Path="eng/Rtok.Store.Scripts/Rtok.Store.Scripts.csproj" />
   </Folder>
   <Folder Name="/src/">

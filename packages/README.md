@@ -15,7 +15,9 @@ packages/<Name>/
   tests/<Name>.Tests.csproj   xUnit v3 on MTP; Xunit is a global using
 ```
 
-Create one with `eng/new-package.sh <Name> "<description>"`. It writes this layout and adds
+Create one with
+`dotnet run --project eng/Rtok.Build -- --target=new-package --name=<Name> --summary="<description>"`.
+It writes this layout and adds
 both projects to `rtok.slnx`, so `dotnet build rtok.slnx` and `dotnet test` cover them.
 
 `packages/Directory.Build.props` and `.targets` give every package its NuGet metadata,
@@ -36,10 +38,10 @@ version. A release bumps it, adds the `## <version>` entry to CHANGELOG.md and i
 ## Publishing
 
 ```bash
-eng/publish-package.sh Pyrlyn.FsKit/v0.1.0 --dry-run
+dotnet run --project eng/Rtok.Build -- --target=publish-package --tag=Pyrlyn.FsKit/v0.1.0 --dry-run
 ```
 
-The script checks that the tag matches the project version and CHANGELOG.md, that the README
+The task checks that the tag matches the project version and CHANGELOG.md, that the README
 has no TODO left, runs the package's tests, packs with warnings as errors and pushes. With
 `--dry-run` it pushes to a temporary local feed. On GitHub, pushing the tag runs
 `.github/workflows/packages.yml`: a dry run, then a push to nuget.org through NuGet trusted

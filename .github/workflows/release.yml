@@ -1,5 +1,5 @@
 # Release archives per RID for a v<version> tag (plan/T3). Each OS runner publishes its RIDs
-# with NativeAOT, packs rtok-<rid>.tar.gz (.zip on Windows) with eng/package-release.sh and
+# with NativeAOT, packs rtok-<rid>.tar.gz (.zip on Windows) with the package-release build task and
 # smoke-tests the unpacked archive. The last job creates a draft GitHub release with every
 # archive and SHA256SUMS; publishing the draft and `ketch push` (ketch.toml) stay manual.
 # Dispatch runs the same build without a release. Actions are pinned to commit SHAs.
@@ -63,11 +63,15 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update -qq && sudo apt-get install -y -qq clang zlib1g-dev
       - name: Publish (AOT)
-        run: for rid in $RIDS; do eng/publish.sh "$rid"; done
+        run: |
+          dotnet build eng/Rtok.Build -c Release
+          for rid in $RIDS; do dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=publish --rid="$rid"; done
       - name: Pack
         run: |
           native=${RIDS%% *}
-          for rid in $RIDS; do eng/package-release.sh "$rid" "artifacts/dist/$native/rtok"; done
+          for rid in $RIDS; do
+            dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=package-release --rid="$rid" --rtok="artifacts/dist/$native/rtok"
+          done
       - name: Smoke the archives
         run: |
           mkdir -p artifacts/unpacked
@@ -77,7 +81,7 @@ jobs:
             else
               tar -C artifacts/unpacked -xzf "artifacts/release/rtok-$rid.tar.gz"
             fi
-            eng/smoke.sh "$rid" "artifacts/unpacked/rtok-$rid"
+            dotnet run --project eng/Rtok.Build -c Release --no-build -- --target=smoke --rid="$rid" --dir="artifacts/unpacked/rtok-$rid"
           done
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -98,8 +102,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
       - name: Marketplace catalogs
-        run: eng/check-marketplace.sh --strict
+        run: dotnet run --project eng/Rtok.Build -- --target=check-marketplace --strict
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: release-*

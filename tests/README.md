@@ -47,7 +47,8 @@ dotnet run --project tests/Rtok.Fuzz -c Release -- --list
   outside input (plan/README.md N11). A target lives in `Targets/`, catches only the failure
   type its code documents, checks that code's invariants through `FuzzInput.Check`, and keeps
   seeds in `corpus/<target>/`. Unwired targets name the task that wires them (`--list`).
-  `eng/fuzz.sh <target> [libFuzzer flags]` publishes it, instruments the assemblies with
+  `dotnet run --project eng/Rtok.Build -- --target=fuzz --fuzz-target=<target> [--flags="<libFuzzer flags>"]`
+  publishes it, instruments the assemblies with
   `sharpfuzz` and runs it under [libfuzzer-dotnet](https://github.com/Metalnem/libfuzzer-dotnet),
   built from source with a clang that ships libFuzzer (`CLANG=/opt/homebrew/opt/llvm/bin/clang`
   on macOS). Add a crash input to the target's corpus once it is fixed.

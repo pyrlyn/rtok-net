@@ -41,13 +41,13 @@ Output lands in `artifacts/publish/<Project>/<config>_<rid>/`. Trim and AOT warn
 
 ## CI and releases
 
-`.github/workflows/ci.yml` runs one job per OS (macOS arm64, Ubuntu x64 and arm64, Windows x64) and one lint job on Ubuntu. Every job does the same steps through scripts in `eng/`, which also run locally:
+`.github/workflows/ci.yml` runs one job per OS (macOS arm64, Ubuntu x64 and arm64, Windows x64) and one lint job on Ubuntu. Every job does the same steps through the build tasks in `eng/Rtok.Build` (Cake Frosting, plan/T57), which run the same way on every OS; without `--target` it lists them all:
 
 ```bash
-git diff --name-only main...HEAD | eng/affected-tests.sh artifacts/affected.slnf   # JIT tests a change touches
-eng/publish.sh osx-arm64 --aot-tests        # AOT rtok, rtok-hook (and the AOT lane) into artifacts/dist/<rid>/
-eng/smoke.sh osx-arm64 artifacts/dist/osx-arm64
-eng/package-release.sh osx-arm64 artifacts/dist/osx-arm64/rtok --allow-missing
+dotnet run --project eng/Rtok.Build -- --target=affected-tests --out=artifacts/affected.slnf --base=main   # JIT tests a change touches
+dotnet run --project eng/Rtok.Build -- --target=publish --rid=osx-arm64 --aot-tests   # AOT rtok, rtok-hook (and the AOT lane) into artifacts/dist/<rid>/
+dotnet run --project eng/Rtok.Build -- --target=smoke --rid=osx-arm64 --dir=artifacts/dist/osx-arm64
+dotnet run --project eng/Rtok.Build -- --target=package-release --rid=osx-arm64 --rtok=artifacts/dist/osx-arm64/rtok --allow-missing
 ```
 
 `linux-musl-*` publishes and smoke-tests in Alpine containers (docker). A `v<version>` tag runs `.github/workflows/release.yml`: archives `rtok-<rid>.tar.gz` (`.zip` on Windows) with checksums go into a draft GitHub release. Publishing the draft and `ketch push` (`ketch.toml`) are manual. The Claude and Codex marketplace catalogs (`.claude-plugin/`, `.agents/plugins/`) are published by merging to `main`. Actions are pinned to commit SHAs; update the SHA and its version comment together.
@@ -56,4 +56,4 @@ eng/package-release.sh osx-arm64 artifacts/dist/osx-arm64/rtok --allow-missing
 
 Add a package version to `Directory.Packages.props` together with the task that first needs it. Libraries are `IsAotCompatible` automatically.
 
-Own NuGet packages live in `packages/<Name>/`; create one with `eng/new-package.sh` and publish with a `<Name>/v<version>` tag. Layout, versioning and publishing: [packages/README.md](packages/README.md).
+Own NuGet packages live in `packages/<Name>/`; create one with the `new-package` build task and publish with a `<Name>/v<version>` tag. Layout, versioning and publishing: [packages/README.md](packages/README.md).
